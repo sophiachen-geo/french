@@ -21,6 +21,9 @@
   const LIENS = A.liens, LIEN = {}; LIENS.forEach(l => { LIEN[l.id] = l; });
   const P = A.ponts;
   const banque = () => A.banque.filter(it => LIEN[it.rel] && it.ok && it.ok.length);
+  /* Sortes de lien qu'on ne propose pas à la question 1, parce qu'elles seraient aussi défendables pour ces paires
+     (un but peut se lire comme une conséquence ; « quand » et « si » se rejoignent ; une cause suit souvent dans le temps). */
+  const AMBIGU = { but: ['cause'], condition: ['temps'], cause: ['temps', 'but'], temps: ['condition', 'cause'] };
   const pontsDe = rel => Object.keys(P).filter(k => P[k].rel === rel);
   const cle = id => PR.cle(P[id].e);
   const statutPont = id => PR.statut(P[id].e);
@@ -134,7 +137,10 @@
     const it = list[Math.floor(Math.random() * list.length)];
     st.vus.add(it.id);
     st.item = it; st.etape = 1; st.essais = 0; st.lienOk = false; st.choix = null; st.retourne = false;
-    st.liensOpts = shuffle([it.rel].concat(shuffle(A.voisins[it.rel] || []).slice(0, 2), shuffle(LIENS.map(l => l.id).filter(x => x !== it.rel && !(A.voisins[it.rel] || []).includes(x))).slice(0, 1)));
+    const exclus = AMBIGU[it.rel] || [];
+    const voisins = (A.voisins[it.rel] || []).filter(x => !exclus.includes(x));
+    const autres = LIENS.map(l => l.id).filter(x => x !== it.rel && !voisins.includes(x) && !exclus.includes(x));
+    st.liensOpts = shuffle([it.rel].concat(shuffle(voisins).slice(0, 2), shuffle(autres)).slice(0, 4));
     st.pontsOpts = shuffle(it.ok.map(o => ({ p: o.p, ok: true, o })).concat(it.non.map(n => ({ p: n.p, ok: false, n }))));
     render(true);
   }
