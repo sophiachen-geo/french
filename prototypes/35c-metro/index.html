@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Le métro des ponts</title>
+<meta name="description" content="Outil 2, variante C : deux phrases forment un trajet. Choisis la ligne (la sorte de lien), puis la station (le pont). Ensuite : schémas, règle et pont retourné.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,600&family=Overpass+Mono:wght@600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script>(function () { try { var t = JSON.parse(localStorage.getItem('metro:theme')); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {} })();</script>
+</head>
+<body>
+<a class="skip" href="#carte">Aller à la carte</a>
+
+<header class="top">
+  <div class="top-in">
+    <span class="brand">
+      <svg class="logo" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true" focusable="false"><path d="M3 10h9l8 12h9" fill="none" style="stroke:var(--l-temps)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 22h9l8-12h9" fill="none" style="stroke:var(--l-but)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 3v26" fill="none" style="stroke:var(--l-cause)" stroke-width="3.6" stroke-linecap="round"/><circle cx="16" cy="16" r="5" fill="#fff" stroke="#111418" stroke-width="2.4"/></svg>
+      <span class="brand-t"><span class="brand-k">Outil 2 · C</span><span class="brand-sep"> · </span><span class="brand-n">Le métro des ponts</span></span>
+    </span>
+    <div class="top-act">
+      <button type="button" class="tb-btn" id="codes" aria-haspopup="dialog" aria-label="Les codes : comment lire la carte"><span aria-hidden="true">?</span></button>
+      <button type="button" class="tb-btn" id="theme" aria-label="Changer de thème (clair ou sombre)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5v17A8.5 8.5 0 0 0 12 3.5Z" fill="currentColor"/></svg></button>
+    </div>
+    <nav class="top-nav" aria-label="Navigation">
+      <a href="../index.html">← Tous les prototypes</a>
+      <a href="../0-atlas/index.html">Ma feuille de progression</a>
+      <a href="../../index.html">Site complet</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+  <div class="play">
+    <section class="ticket" id="ticket" aria-label="Ton trajet"></section>
+    <section class="map q1" id="carte" aria-labelledby="ask-t">
+      <div class="ask" id="ask" aria-live="polite"></div>
+      <div class="map-body" id="map-body">
+        <ol class="lines" id="lines"></ol>
+        <svg class="corr-ov" id="ov" aria-hidden="true" focusable="false"></svg>
+      </div>
+      <div class="map-foot" id="map-foot"></div>
+    </section>
+  </div>
+  <aside class="panel" id="panel" aria-label="Explication"></aside>
+</main>
+
+<dialog class="dlg" id="dlg-codes" aria-labelledby="dlg-codes-h">
+  <div class="dlg-head"><h2 id="dlg-codes-h">Les codes</h2><button type="button" class="dlg-x" data-close aria-label="Fermer"></button></div>
+  <div class="dlg-body" id="codes-body"></div>
+</dialog>
+
+<dialog class="dlg" id="dlg-lignes" aria-labelledby="dlg-lignes-h">
+  <div class="dlg-head"><h2 id="dlg-lignes-h">Quelle ligne pratiquer ?</h2><button type="button" class="dlg-x" data-close aria-label="Fermer"></button></div>
+  <div class="dlg-body" id="lignes-body"></div>
+</dialog>
+
+<script>window.CADRES_BASE = '../../';</script>
+<script src="../../assets/registry.js"></script>
+<script src="../../content/meta.js"></script>
+<script src="../../content/onglet-01.js"></script>
+<script src="../../content/onglet-02.js"></script>
+<script src="../../content/onglet-03.js"></script>
+<script src="../../content/onglet-04.js"></script>
+<script src="../../content/onglet-05.js"></script>
+<script src="../../content/onglet-06.js"></script>
+<script src="../../content/onglet-07.js"></script>
+<script src="../../content/onglet-08.js"></script>
+<script src="../../content/onglet-09.js"></script>
+<script src="../../content/onglet-10.js"></script>
+<script src="../../content/onglet-11.js"></script>
+<script src="../../content/onglet-12.js"></script>
+<script src="../../content/guide.js"></script>
+<script src="../../content/relier.js"></script>
+<script src="../../content/fiches.js"></script>
+<script src="../../content/methode.js"></script>
+<script src="../../content/regles.js"></script>
+<script src="../../content/essentiels.js"></script>
+<script src="../../content/visuels.js"></script>
+<script src="../../assets/core.js"></script>
+<script src="../../assets/viz.js"></script>
+<script src="../../assets/progres.js"></script>
+<script src="../3-pont/catalogue.js"></script>
+<script src="../3-pont/banque/temps.js"></script>
+<script src="../3-pont/banque/cause.js"></script>
+<script src="../3-pont/banque/but.js"></script>
+<script src="../3-pont/banque/condition.js"></script>
+<script src="../3-pont/banque/opposition.js"></script>
+<script src="../3-pont/banque/concession.js"></script>
+<script src="../3-pont/banque/comparaison.js"></script>
+<script src="../3-pont/banque/ajout.js"></script>
+<script src="../3-pont/banque/relatif.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
