@@ -31,7 +31,7 @@
   --main: #6a5be2;   --main-soft: #ecebff;
 
   --l0: #e0a100;     /* entre amis */
-  --l1: #8a94ad;     /* neutre */
+  --l1: #6b7591;     /* neutre */
   --l2: #0d1a3a;     /* formel */
 
   --shadow: 0 1px 0 rgba(13, 26, 58, .04), 0 8px 24px -16px rgba(13, 26, 58, .28);
@@ -110,7 +110,7 @@ button { font: inherit; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .i-moon { display: none; } :root:not([data-theme="light"]) .i-sun { display: block; } }
 @media (min-width: 720px) {
   .toplinks { order: 2; flex: 0 1 auto; margin-left: auto; border: 0; }
-  .theme-btn { margin-left: 0; }
+  .theme-btn { margin-left: 0; order: 3; }
 }
 
 /* ---------- Schémas (VIZ) dans ce prototype ---------- */
@@ -127,6 +127,8 @@ button { font: inherit; }
 .mini .vz-head .vz-l { display: none; }
 .mini .vz-axis { font-size: .74rem; }
 .mini .vz-svg { max-width: 100%; }
+.mini-c { margin: 6px 0 0; font-size: .86rem; color: var(--ink-3); }
+.mini-c b { color: var(--ink-2); }
 
 /* ---------- Accueil ---------- */
 .home { display: grid; gap: 26px; padding-block: 30px 40px; }
@@ -135,6 +137,7 @@ button { font: inherit; }
   text-wrap: balance;
 }
 .q:focus { outline: none; }
+.nw { white-space: nowrap; }
 .q-sub { margin: 18px 0 0; font-size: 1.2rem; line-height: 1.45; color: var(--ink-2); max-width: 26ch; }
 
 .line { list-style: none; margin: 0; padding: 0; position: relative; }
@@ -161,7 +164,7 @@ button { font: inherit; }
 }
 .int:hover { border-color: var(--ink); transform: translateY(-2px); box-shadow: 0 6px 0 var(--hl); }
 .int:focus-visible { outline-offset: 2px; box-shadow: 0 6px 0 var(--hl); }
-.int .glyph { grid-area: glyph; width: 112px; opacity: .95; }
+.int .glyph { grid-area: glyph; width: 132px; }
 .int-je { grid-area: je; font: 700 clamp(1.4rem, 6vw, 1.75rem)/1.1 var(--f-display); letter-spacing: -.015em; }
 .int-q { grid-area: q; font-size: 1rem; line-height: 1.4; color: var(--ink-2); }
 .int-go { grid-area: go; color: var(--ink-3); }
@@ -226,7 +229,7 @@ button { font: inherit; }
 }
 .seg input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; pointer-events: none; }
 .seg label {
-  position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 52px;
+  position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-height: 58px;
   padding: 0 6px; border-radius: 999px; cursor: pointer; text-align: center;
   font: 700 1rem/1.05 var(--f-display); color: var(--ink-2); transition: color .2s ease;
 }
@@ -243,6 +246,7 @@ body.on-intent { padding-bottom: 96px; }
 @media (min-width: 900px) {
   .seg { position: static; padding: 0; border: 0; background: none; box-shadow: none; }
   .seg-in { width: 520px; margin: 0; }
+  .seg label { flex-direction: row; gap: 8px; min-height: 52px; }
   .seg-l { position: static; width: auto; height: auto; overflow: visible; clip: auto; float: left; margin: 0 0 8px; padding: 0;
     font: 700 .82rem var(--f-display); text-transform: uppercase; letter-spacing: .1em; color: var(--ink-3); }
   .seg-l + .seg-in { clear: left; }
@@ -251,14 +255,14 @@ body.on-intent { padding-bottom: 96px; }
 
 /* Repère de registre : trois points, celui du registre est plein */
 .meter { display: inline-flex; gap: 3px; flex: none; }
-.meter i { width: 8px; height: 8px; border-radius: 50%; background: var(--line-2); }
-.meter.m0 i:nth-child(1) { background: var(--l0); }
-.meter.m1 i:nth-child(2) { background: var(--l1); }
-.meter.m2 i:nth-child(3) { background: var(--l2); }
-.seg input:checked + label .meter i { background: color-mix(in srgb, var(--on-solid) 30%, transparent); }
+.meter i { width: 9px; height: 9px; border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 1.75px var(--line-2); }
+.meter.m0 i:nth-child(1) { background: var(--l0); box-shadow: none; }
+.meter.m1 i:nth-child(2) { background: var(--l1); box-shadow: none; }
+.meter.m2 i:nth-child(3) { background: var(--l2); box-shadow: none; }
+.seg input:checked + label .meter i { box-shadow: inset 0 0 0 1.75px color-mix(in srgb, var(--on-solid) 55%, transparent); }
 .seg input:checked + label .meter.m0 i:nth-child(1),
 .seg input:checked + label .meter.m1 i:nth-child(2),
-.seg input:checked + label .meter.m2 i:nth-child(3) { background: var(--on-solid); }
+.seg input:checked + label .meter.m2 i:nth-child(3) { background: var(--on-solid); box-shadow: none; }
 
 /* ---------- Cartes de formules ---------- */
 .group { margin-top: 34px; }
@@ -340,6 +344,7 @@ body.on-intent { padding-bottom: 96px; }
 .qc-e { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; margin: 0 0 4px; font: 800 1.6rem/1.15 var(--f-display); letter-spacing: -.015em; }
 .qc-r { display: inline-flex; align-items: center; gap: 7px; font: 700 .74rem var(--f-display); text-transform: uppercase; letter-spacing: .08em; }
 .qc-x { margin: 0; font-size: 1.08rem; line-height: 2.1; }
+.qc mark { background: var(--hl); color: var(--hl-ink); }
 .band-btn {
   margin-top: 18px; min-height: 50px; padding: 0 22px; border-radius: 999px; border: 2.5px solid var(--band-ink);
   background: transparent; color: var(--band-ink); font: 700 1.02rem var(--f-display); cursor: pointer;
@@ -369,6 +374,8 @@ body.on-intent { padding-bottom: 96px; }
 @media (min-width: 1100px) { .panels { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } }
 .panel { min-width: 0; padding: 18px 18px 4px; border-radius: 24px; border: 2px solid var(--line); background: var(--surface); }
 .panel .vz { margin-bottom: 14px; }
+.panel .vz-g { min-width: 0; }
+.panel .vz-cell { overflow-wrap: anywhere; }
 .panel .vz-t { font: 800 1.25rem/1.2 var(--f-display); letter-spacing: -.01em; }
 .panel .vz-i { font-size: .95rem; }
 .panel .vz-x { font-size: .86em; }
@@ -382,15 +389,16 @@ body.on-intent { padding-bottom: 96px; }
   border-radius: 999px; background: var(--hl); color: var(--hl-ink); font: 800 1.15rem/1.2 var(--f-display);
 }
 .tree-from .dot { width: 22px; height: 22px; border-radius: 50%; background: var(--hl-ink); box-shadow: inset 0 0 0 6px var(--hl); border: 3px solid var(--hl-ink); }
-.tree-to { list-style: none; margin: 0 0 0 21px; padding: 0; display: grid; gap: 12px; }
+.tree-to { list-style: none; margin: 0 0 0 21px; padding: 0; }
 .tree-to li { position: relative; padding-left: 38px; }
+.tree-to li + li { margin-top: 12px; }
 .tree-to li:first-child { padding-top: 14px; }
-.tree-to li::before {
-  content: ''; position: absolute; left: 0; top: -12px; height: calc(50% + 12px); width: 30px;
-  border-left: 4px solid var(--ink); border-bottom: 4px solid var(--ink); border-bottom-left-radius: 16px;
-}
-.tree-to li:first-child::before { top: 0; height: calc(50% + 7px); }
-.tree-to li:not(:last-child)::after { content: ''; position: absolute; left: 0; top: 50%; bottom: -12px; border-left: 4px solid var(--ink); }
+.tree-to li::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; border-left: 4px solid var(--ink); }
+.tree-to li + li::before { top: -12px; }
+.tree-to li:last-child::before { bottom: calc(50% - 2px); }
+.tree-to li:first-child:last-child::before { bottom: calc(50% - 9px); }
+.tree-to li::after { content: ''; position: absolute; left: 0; width: 30px; top: calc(50% - 2px); height: 4px; background: var(--ink); }
+.tree-to li:first-child::after { top: calc(50% + 5px); }
 .go {
   position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "rel glyph" "je glyph";
   gap: 2px 14px; align-items: center; min-height: 76px; padding: 12px 16px; border-radius: 20px;
@@ -445,8 +453,10 @@ a.chip:hover { border-color: var(--ink); }
 
 /* ---------- Mouvement ---------- */
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-#app.enter > * { animation: rise .38s ease both; }
-.card { animation: rise .42s ease both; animation-delay: calc(min(var(--i, 0), 8) * 45ms); }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+/* Pas de transform sur le conteneur : il deviendrait le repère du sélecteur fixe en bas d'écran. */
+#app.enter > * { animation: fade .3s ease backwards; }
+.card { animation: rise .42s ease backwards; animation-delay: calc(min(var(--i, 0), 8) * 45ms); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }

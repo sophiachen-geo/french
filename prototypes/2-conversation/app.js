@@ -109,13 +109,13 @@
 
   /* ---------- Schéma construit avec tes propres mots ---------- */
   const short = (s, n) => {
-    n = n || 16;
+    n = n || 20;
     s = String(s || '').trim().replace(/[\s.,;:!?…]+$/, '').replace(/^[\s,;:]+/, '');
     if (s.length <= n) return s;
     const cut = s.slice(0, n), sp = cut.lastIndexOf(' ');
     return (sp > n * 0.5 ? cut.slice(0, sp) : cut).replace(/[\s,;:']+$/, '') + '…';
   };
-  const tw = t => Math.max(14, String(t).length * 2.2 + 7);
+  const tw = t => Math.max(14, String(t).length * 1.85 + 7);
   function splitAt(w, re) {
     const m = w.match(re);
     if (!m) return [w, ''];
@@ -375,7 +375,7 @@
     const es = ESS[t.tab];
     return `<div class="msg me" style="${fnStyle(t.tab)}">
       <p class="me-tag">${D.icon(t.tab, 16)}<span>${esc(es.je)}</span></p>
-      <p class="bub"><span class="sr">Toi : </span><span class="line">${sentenceHTML(t)}</span></p>
+      <div class="bub"><p class="rq"><span class="rq-w">Sam</span> ${esc(t.invite || '')}</p><p><span class="sr">Toi : </span><span class="line">${sentenceHTML(t)}</span></p></div>
     </div>`;
   }
   function howHTML(t) {
@@ -390,8 +390,9 @@
       <div class="how-live"><p class="how-l">Ta phrase en schéma</p><div class="live" data-live>${V.render(liveSpec(t), { title: false })}</div></div>
       ${ref ? `<div class="how-ref"><p class="how-l">La formule, avec un exemple</p>${ref}</div>` : ''}
       <p class="trap"><span class="trap-k">À éviter</span> ${V.md(es.attention)}</p>
-      <details class="all-viz"><summary>Tous les schémas : ${esc(es.je.toLowerCase())}</summary><div class="all-in">${allHTML}</div></details>
-      <p class="how-go"><a href="${esc(itemLink(t.tab, s.e))}">« ${esc(s.e.split(' / ')[0])} » dans le site complet ${D.ui('link', 16)}</a></p>
+      <div class="how-f"><button type="button" class="link-btn all-btn" data-act="allviz" aria-expanded="false">${D.ui('list', 16)} Tous les schémas</button>
+        <a class="how-go" href="${esc(itemLink(t.tab, s.e))}">« ${esc(s.e.split(' / ')[0])} » dans le site complet ${D.ui('link', 16)}</a></div>
+      <div class="all-in" hidden><p class="how-l">${esc(es.je)} : tous les schémas</p>${allHTML}</div>
     </section>`;
   }
   function markRow(root, match) {
@@ -490,7 +491,7 @@
     let best = null, score = -1;
     SEQS.filter(q => q.kind === kind).forEach(q => {
       const set = new Set(q.tabs);
-      const sc = lcs(seq, q.tabs) * 2 + seq.filter((t, i) => seq.indexOf(t) === i && set.has(t)).length;
+      const sc = lcs(seq, q.tabs) * 2 + seq.filter((t, i) => seq.indexOf(t) === i && set.has(t)).length + (q.tabs[0] === seq[0] ? 1 : 0);
       if (sc > score) { score = sc; best = q; }
     });
     return score > 0 ? best : null;
@@ -505,6 +506,7 @@
       let h = `<li class="s-sam"><span class="av av-s" aria-hidden="true">S</span><span class="sr">Sam ouvre la conversation</span></li>`;
       for (let i = 0; i < MAX; i++) {
         const t = turns[i];
+        h += '<li class="s-sep" aria-hidden="true"></li>';
         if (t) h += `<li class="s-step${t.done ? '' : ' now'}" style="${fnStyle(t.tab)}">${D.icon(t.tab, 15)}<span>${esc(D.SHORT[t.tab])}</span></li>`;
         else if (i === turns.length && st.phase === 'starters' && st.sel) h += `<li class="s-step now" style="${fnStyle(st.sel)}">${D.icon(st.sel, 15)}<span>${esc(D.SHORT[st.sel])}</span></li>`;
         else h += `<li class="s-slot"><span>${i + 1}</span><span class="sr">tour ${i + 1} à venir</span></li>`;
@@ -619,7 +621,7 @@
     if (T === 12) {
       if (!st.usedSuite && st.x.suite && (st.scn.type === 'nouvelle' || st.lastSam === 'partage')) { ack = st.x.suite; st.usedSuite = true; }
       else ack = st.lastSam === 'open' ? D.ACK[12] : 'Ha ha, oui !';
-    } else ack = D.ACK[T];
+    } else ack = (st.scn.type === 'nouvelle' && D.ACK_N[T]) || D.ACK[T];
     const lines = [[ack, 'ack']];
     let N = null;
     if (n < MAX) {
@@ -664,7 +666,7 @@
       x += w + 1.2;
       return m;
     });
-    return { lanes: 2, legend: [['main', 'Sam'], ['cadre', 'toi']], rows: [{ label: 'Votre échange', sub: `${turns.length} répliques chacun`, marks }] };
+    return { lanes: 2, legend: [['main', 'Sam'], ['cadre', 'toi']], rows: [{ label: 'Votre échange', sub: `toi : ${turns.length} répliques`, marks }] };
   }
   function showBilan(tok) {
     if (tok !== st.token) return;
@@ -687,7 +689,7 @@
     const redis = turns.map(t => {
       const line = fullText(t.st.say, t.words);
       const parts = t.st.say.split('…');
-      return line ? `<span class="rd" style="${fnStyle(t.tab)}">${esc(line)}</span>` : `<span class="rd" style="${fnStyle(t.tab)}"><b>${esc(parts[0].trim())}</b> …</span>`;
+      return line ? `<span class="rd" style="${fnStyle(t.tab)}">${esc(/[.?!…»]$/.test(line) ? line : line + '.')}</span>` : `<span class="rd" style="${fnStyle(t.tab)}"><b>${esc(parts[0].trim())}</b> …</span>`;
     }).join(' ');
     const html = `<section class="bilan" aria-labelledby="bilan-t">
       <header class="bl-h"><p class="kick">Bilan</p><h2 id="bilan-t" tabindex="-1">Ton fil de conversation</h2>
@@ -753,7 +755,10 @@
     if (!act) return;
     if (act === 'moves') { st.phase = 'moves'; st.sel = null; renderDock('title'); }
     else if (act === 'rot') { st.rot++; renderDock('chip'); }
-    else if (act === 'idea') {
+    else if (act === 'allviz') {
+      const box = b.closest('.how') && $('.all-in', b.closest('.how'));
+      if (box) { box.hidden = !box.hidden; b.setAttribute('aria-expanded', String(!box.hidden)); }
+    } else if (act === 'idea') {
       const p = $('#idea'); p.hidden = !p.hidden; b.setAttribute('aria-expanded', String(!p.hidden));
     } else if (act === 'restarter') {
       const t = st.turns.pop();

@@ -122,6 +122,13 @@ window.P2 = (function () {
     11: 'OK, c’est clair.',
     12: 'Ha ha, prends ton temps !'
   };
+  /* Variante quand Sam vient d'annoncer une nouvelle : tu parles de SA situation. */
+  const ACK_N = {
+    4: 'Oui, tu as raison.',
+    5: 'Oui, c’est ça !',
+    9: 'Ouais, je pense comme toi.',
+    11: 'Oui, c’est exactement ça.'
+  };
   const CLOSING = 'Merci, c’était le fun de jaser avec toi ! On se reparle bientôt.';
 
   /* Formes « prêtes à dire » : « … » marque le trou que tu complètes à voix haute.
@@ -211,5 +218,5 @@ window.P2 = (function () {
   };
   const ui = (name, size) => `<svg class="ui" viewBox="0 0 24 24" width="${size || 20}" height="${size || 20}" aria-hidden="true" focusable="false">${UI[name] || ''}</svg>`;
 
-  return { SCN, ASK, ACK, CLOSING, SAY, ROW_ALIAS, SHORT, HUE, icon, ui, MAX_TURNS: 4 };
+  return { SCN, ASK, ACK, ACK_N, CLOSING, SAY, ROW_ALIAS, SHORT, HUE, icon, ui, MAX_TURNS: 4 };
 })();

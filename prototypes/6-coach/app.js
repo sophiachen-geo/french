@@ -262,7 +262,7 @@
   }
   function boxLegend(st) {
     const c = boxCounts(st);
-    return `<ul class="bx-legend">${[1, 2, 3, 4, 5].map(b => `<li><i style="background:var(--b${b})"></i>B${b}<b>${c[b]}</b></li>`).join('')}<li><i class="bx-none"></i>pas encore<b>${c[0]}</b></li></ul>`;
+    return `<ul class="bx-legend">${[1, 2, 3, 4, 5].map(b => `<li><i style="background:var(--b${b})"></i>Boîte ${b}<b>${c[b]}</b></li>`).join('')}<li><i class="bx-none"></i>pas encore<b>${c[0]}</b></li></ul>`;
   }
   function miniRing(pct) {
     const r = 9, Cf = 2 * Math.PI * r;
@@ -281,8 +281,8 @@
     const steps = D.steps, total = steps.reduce((a, s) => a + s.duree, 0);
     const dur = s => (s.duree < 60 ? s.duree + ' s' : s.duree % 60 ? `${Math.floor(s.duree / 60)} min ${s.duree % 60}` : s.duree / 60 + ' min');
     return `<div class="timebar"><p class="tb-k">Ta séance · ${Math.round(total / 60)} minutes</p>
-      <div class="tb-track" role="img" aria-label="${steps.map(s => `${s.titre} ${dur(s)}`).join(', ')}">${steps.map(s => `<span style="flex-grow:${s.duree}"></span>`).join('')}</div>
-      <div class="tb-labels" aria-hidden="true">${steps.map(s => `<span style="flex-grow:${s.duree}"><b>${s.titre}</b>${dur(s)}</span>`).join('')}</div></div>`;
+      <div class="tb-track" role="img" aria-label="${steps.map(s => `${s.titre} ${dur(s)}`).join(', ')}">${steps.map(s => `<span style="--g:${s.duree}"></span>`).join('')}</div>
+      <div class="tb-labels" aria-hidden="true">${steps.map(s => `<span style="--g:${s.duree}"><b>${s.titre}</b>${dur(s)}</span>`).join('')}</div></div>`;
   }
 
   /* « Le chemin de ta réponse » : les 3 fonctions placées sur les moments d'une conversation. */
@@ -533,13 +533,11 @@
       return `<li class="${cls}"><a href="#seance/${s.id}/${st.n}"${st.n === step ? ' aria-current="step"' : ''}><span class="st-dot">${done && st.n !== step ? I.check : STEP_ICON[st.n]}</span><span class="st-t">${st.titre}</span><span class="sr">${done ? ' (fait)' : ''}</span></a></li>`;
     }).join('');
     return `<div class="sess" data-step="${step}">
-      <div class="s-top">
-        <a class="s-quit" href="#accueil" aria-label="Quitter la séance">${I.x}</a>
-        <p class="s-title"><span>Séance</span> ${esc(sc.court)}</p>
-        <span class="s-time">≈ 5 min</span>
-      </div>
       <div class="s-sticky">
-        <nav aria-label="Étapes de la séance"><ol class="stepper" style="--p:${((step - 1) / 3).toFixed(3)}">${steps}</ol></nav>
+        <div class="s-row">
+          <a class="s-quit" href="#accueil" aria-label="Quitter la séance « ${esc(sc.court)} »">${I.x}</a>
+          <nav class="s-nav" aria-label="Étapes de la séance"><ol class="stepper" style="--p:${((step - 1) / 3).toFixed(3)}">${steps}</ol></nav>
+        </div>
         ${step === 2 ? fnSwitch() : ''}
       </div>
       <div class="s-body">${inner}</div>
@@ -550,7 +548,7 @@
     const st = D.steps[step - 1], et = ETAPE[st.methode];
     return `<header class="s-head"><p class="eyebrow">Étape ${step} sur 4 <span class="meth" title="${esc(et.objectif)}">méthode · ${esc(et.titre.toLowerCase())}</span></p><h1 tabindex="-1">${title}</h1>${lead ? `<p class="lead">${lead}</p>` : ''}</header>`;
   }
-  const footBtn = (href, label, primary, icon) => `<a class="btn ${primary ? 'btn-primary' : 'btn-ghost'}" href="${href}">${icon === 'left' ? I.left : ''}${label}${icon === 'right' ? I.right : ''}</a>`;
+  const footBtn = (href, label, primary, icon) => `<a class="btn ${primary ? 'btn-primary' : 'btn-ghost'}" href="${href}">${icon === 'left' ? I.left : ''}<span class="fl">${label}</span>${icon === 'right' ? I.right : ''}</a>`;
 
   /* --- Étape 1 : Écoute --- */
   function stepEcoute() {
@@ -602,14 +600,14 @@
     return `<section class="fn-sec s${slot}" id="fn-${g.tab}" aria-labelledby="fnh-${g.tab}">
       <header class="fn-head"><span class="disc" aria-hidden="true">${slot}</span><div><p class="fn-k">Temps ${slot} · ${esc(MOMENT[g.tab].label)}</p><h2 id="fnh-${g.tab}">${esc(e.je)}</h2><p class="fn-q">${esc(e.quand)}</p></div></header>
       ${g.ids.map(id => formulaCard(id, st)).join('')}
-      ${qc ? `<p class="qc"><span class="qc-flag">QC</span><span>Au Québec, on entend aussi <strong>${esc(qc.e)}</strong>${qc.r ? ` <span class="reg">${esc(qc.r)}</span>` : ''} — <em>${esc(qc.ex)}</em></span></p>` : ''}
+      ${qc ? `<p class="qc"><span class="qc-flag">QC</span><span>Au Québec, on entend aussi <strong>${esc(qc.e)}</strong>${qc.r ? ` <span class="reg">${esc(qc.r)}</span>` : ''}<em class="qc-ex">${esc(qc.ex)}</em></span></p>` : ''}
       ${cs ? `<details class="contrast"${wide ? ' open' : ''}><summary><span class="ct-k">Ne confonds pas</span><span class="ct-t">${md(e.attention)}</span></summary><div class="ct-viz">${viz(cs, true)}</div></details>` : ''}
     </section>`;
   }
   function stepPrepare() {
     const s = SESSION;
     const inner = `${stepHead(2, 'Prépare', 'Deux formules par fonction. Lis l’exemple, puis regarde le schéma : il montre comment la formule relie tes idées.')}
-      <p class="legend-key" aria-label="Code couleur des schémas"><span><i class="lk lk-cadre"></i><b>orange</b> : l’action du cadre, ce que l’expression introduit</span><span><i class="lk lk-main"></i><b>violet</b> : la phrase principale</span></p>
+      <p class="legend-key"><span><i class="lk lk-cadre" aria-hidden="true"></i><span><b>Orange</b> : l’action du cadre, ce que l’expression introduit</span></span><span><i class="lk lk-main" aria-hidden="true"></i><span><b>Violet</b> : la phrase principale</span></span></p>
       <div class="prep-grid">${s.groups.map((g, k) => fnSection(g, k + 1, state)).join('')}</div>
       ${s.bonus.length ? `<section class="bonus" aria-labelledby="h-bonus"><div class="sec-head"><h2 id="h-bonus">Bonus : à revoir aujourd’hui</h2><p class="muted">Ces formules viennent d’autres fonctions. Glisse-les dans ta réponse si tu peux : c’est l’étape « réemployer » de la méthode.</p></div><div class="bonus-grid">${s.bonus.map(id => formulaCard(id, state)).join('')}</div></section>` : ''}`;
     return sessionShell(2, inner, `${footBtn(`#seance/${s.id}/1`, 'Écoute', false, 'left')}${footBtn(`#seance/${s.id}/3`, 'Passer à l’oral', true, 'right')}`);
@@ -639,7 +637,8 @@
   function stepParle() {
     const s = SESSION, sc = D.scenes[s.id];
     const ids = sessionIds(), n = ids.length, k = ids.filter(id => s.ticks.has(id)).length;
-    const relances = s.fns.map(t => ESS[t].relance);
+    const rel = typeof sc.relance === 'string' ? sc.relance : ESS[sc.relance || s.fns[0]].relance;
+    const others = s.fns.map(t => ESS[t].relance).filter(r => r !== rel);
     const inner = `${stepHead(3, 'Parle', 'Réponds à voix haute pendant une minute. Coche chaque formule dès que tu l’utilises : pas besoin d’être parfaite.')}
       <div class="speak-grid">
         <div class="speak-left">
@@ -647,8 +646,8 @@
           ${timerHTML()}
           <aside class="tip" aria-labelledby="h-tip">
             <p class="tip-k" id="h-tip">${I.bulb}Pour continuer :</p>
-            <p class="tip-q">« ${esc(relances[0])} »</p>
-            <p class="tip-more">Autres relances : ${relances.slice(1).map(r => `« ${esc(r)} »`).join(' · ')}</p>
+            <p class="tip-q">« ${esc(rel)} »</p>
+            <p class="tip-more">Quand l’autre a répondu, tu peux encore dire : ${others.map(r => `« ${esc(r)} »`).join(' ou ')}</p>
           </aside>
         </div>
         <div class="speak-right">
@@ -674,9 +673,9 @@
     const ci = card(id), slot = slotOf(id), r = SESSION.ratings[id];
     const from = state.cards[id] ? state.cards[id].box : 0;
     return `<fieldset class="rate s${slot}">
-      <legend><span class="disc" aria-hidden="true">${slot === 'b' ? '+' : slot}</span><span class="r-e">${esc(ci.e)}</span>${consPill(ci.c)}${SESSION.ticks.has(id) ? `<span class="r-used">${I.check}utilisée</span>` : ''}</legend>
+      <legend><span class="disc" aria-hidden="true">${slot === 'b' ? '+' : slot}</span><span class="r-e">${esc(ci.e)}</span>${consPill(ci.c)}<span class="r-meta">${SESSION.ticks.has(id) ? `<span class="r-used">${I.check}utilisée</span>` : ''}${boxBadge(id, state)}</span></legend>
       <div class="r-opts">${RATES.map(([v, l]) => `<label class="r-opt r-${v}"><input type="radio" name="r-${id.replace('.', '-')}" value="${v}" data-id="${id}"${r === v ? ' checked' : ''}><span>${l}</span></label>`).join('')}</div>
-      <p class="r-move" data-move="${id}">${r ? moveHTML(from, nextBox(from, r)) : '<span class="muted">Choisis : le coach décidera quand elle revient.</span>'}</p>
+      <p class="r-move" data-move="${id}">${r ? moveHTML(from, nextBox(from, r)) : ''}</p>
     </fieldset>`;
   }
   function stepBilan() {

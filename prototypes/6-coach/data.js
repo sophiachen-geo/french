@@ -108,65 +108,67 @@ window.COACH = {
     12: { spec: 'tours', rows: [0, 2] }
   },
 
-  /* Pour chaque situation : un titre court, qui parle, et une réponse possible
+  /* Pour chaque situation : un titre court, qui parle, la relance à proposer
+     (n° de fonction = sa relance dans essentiels ; texte = relance écrite pour la situation)
+     et une réponse possible
      (une phrase par fonction, dans l'ordre de scenario.fonctions). */
   scenes: {
-    quebec: { court: 'Pourquoi le Québec', qui: 'Une collègue, à la pause café', reponse: [
+    quebec: { court: 'Pourquoi le Québec', qui: 'Une collègue, à la pause café', relance: 6, reponse: [
       "J'ai choisi le Québec **parce que** je voulais vivre dans une société francophone.",
       "Je suis venue **pour** trouver un emploi dans mon domaine et apprendre le français.",
       "Je suis arrivée **il y a** deux ans et, **depuis que** j'habite à Montréal, je me sens de plus en plus chez moi."
     ] },
-    emploi: { court: 'Ton nouvel emploi', qui: 'Ta voisine, dans l’escalier', reponse: [
+    emploi: { court: 'Ton nouvel emploi', qui: 'Ta voisine, dans l’escalier', relance: 8, reponse: [
       "**Je trouve que** ça se passe bien : mes collègues sont vraiment accueillants.",
       "**Quand** j'ai commencé, je ne comprenais pas tout, mais maintenant c'est beaucoup plus facile.",
       "**Par contre**, les journées sont longues, **même si** j'aime ce que je fais."
     ] },
-    loterie: { court: 'La loterie', qui: 'Un ami, au dépanneur', reponse: [
+    loterie: { court: 'La loterie', qui: 'Un ami, au dépanneur', relance: 7, reponse: [
       "**Si** je gagnais à la loterie, j'achèterais d'abord une maison avec un grand jardin.",
       "Je voyagerais aussi, **pour** voir ma famille plus souvent.",
       "**En plus**, je donnerais une partie de l'argent à des organismes, **par exemple** une banque alimentaire."
     ] },
-    ville: { court: 'Montréal ou ta ville', qui: 'Une amie de ton cours', reponse: [
+    ville: { court: 'Montréal ou ta ville', qui: 'Une amie de ton cours', relance: 8, reponse: [
       "Ma ville d'origine est calme, **alors que** Montréal bouge tout le temps.",
       "**À mon avis**, c'est plus facile de se faire des amis ici.",
       "J'habite dans un quartier **où** il y a plein de petits cafés **que** j'adore."
     ] },
-    fds: { court: 'Ta fin de semaine', qui: 'Ton collègue, lundi matin', reponse: [
+    fds: { court: 'Ta fin de semaine', qui: 'Ton collègue, lundi matin', relance: 'Et toi, qu’est-ce que tu as fait en fin de semaine ?', reponse: [
       "Samedi matin, j'ai fait mes courses ; **après avoir** dîné, je suis allée voir des amis.",
       "On a fait une marche sur le mont Royal. **En plus**, il faisait super beau !",
       "**Bref**, c'était une très belle fin de semaine."
     ] },
-    transport: { court: 'Le transport en commun', qui: 'Un voisin, à l’arrêt d’autobus', reponse: [
+    transport: { court: 'Le transport en commun', qui: 'Un voisin, à l’arrêt d’autobus', relance: 8, reponse: [
       "**Je pense que** le métro est vraiment pratique.",
       "**Comme** je n'ai pas d'auto, je le prends tous les jours.",
       "**Par contre**, l'hiver, les autobus sont souvent en retard."
     ] },
-    quartier: { court: 'Ton quartier', qui: 'Une nouvelle amie', reponse: [
+    quartier: { court: 'Ton quartier', qui: 'Une nouvelle amie', relance: 2, reponse: [
       "C'est un quartier **où** il y a beaucoup de familles, avec un grand parc **que** j'adore.",
       "Il y a des épiceries, des cafés… **En plus**, le métro est à cinq minutes à pied.",
       "**À mon avis**, c'est un des quartiers les plus agréables de la ville."
     ] },
-    annee: { court: 'Tes projets', qui: 'Une amie, au café', reponse: [
+    annee: { court: 'Tes projets', qui: 'Une amie, au café', relance: 6, reponse: [
       "**Le but, c'est de** trouver un emploi dans mon domaine.",
       "**Si** je réussis mon examen de français, je m'inscrirai à une formation.",
       "Mais **avant de** commencer, je veux prendre quelques semaines de vacances."
     ] },
-    appart: { court: 'Un appartement trouvé', qui: 'Ton amie Marie-Ève', reponse: [
+    appart: { court: 'Un appartement trouvé', qui: 'Ton amie Marie-Ève', relance: 12, reponse: [
       "**Ah oui ?** Bravo ! Il est dans quel quartier ?",
       "Tu cherchais depuis longtemps, **donc** ça doit être un gros soulagement.",
       "Moi, **quand** j'ai cherché le mien, **il y a** deux ans, ça m'a pris trois mois !"
     ] },
-    loyer: { court: 'Hausse de loyer', qui: 'Ton voisin de palier', reponse: [
+    loyer: { court: 'Hausse de loyer', qui: 'Ton voisin de palier', relance: 'Qu’est-ce que tu vas faire ?', reponse: [
       "**Vraiment ?** Dix pour cent, c'est énorme !",
       "**Je ne pense pas qu'**il ait le droit de faire ça sans justification.",
       "**Si** j'étais toi, je contacterais le Tribunal administratif du logement."
     ] },
-    cours: { court: 'Arrêter la francisation', qui: 'Une amie de ta classe de francisation', reponse: [
+    cours: { court: 'Arrêter la francisation', qui: 'Une amie de ta classe de francisation', relance: 12, reponse: [
       "**Qu'est-ce que tu veux dire ?** Tu veux arrêter complètement ?",
       "**Même si** c'est fatigant, tu as fait beaucoup de progrès.",
       "Continue, **parce que** le français va t'ouvrir beaucoup de portes ici."
     ] },
-    rdv: { court: 'Rendez-vous annulé', qui: 'Ta collègue Sophie', reponse: [
+    rdv: { court: 'Rendez-vous annulé', qui: 'Ta collègue Sophie', relance: 'Qu’est-ce que tu vas faire, maintenant ?', reponse: [
       "Encore ? **Je comprends**, c'est vraiment frustrant.",
       "Ça fait des semaines que tu attends, **alors** c'est normal d'être à bout.",
       "**Si jamais** ça recommence, appelle le 811 : on peut t'aider à trouver une autre clinique."
