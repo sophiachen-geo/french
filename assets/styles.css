@@ -294,6 +294,18 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 1.5rem 0; }
   .toc nav { padding: 0; }
 }
 
+/* Schémas « en un coup d'œil » */
+.glance { margin: 0 0 28px; }
+.glance-head h2 { font-size: var(--fs-xl); font-weight: 750; margin-bottom: 4px; }
+.glance-head p { color: var(--muted); font-size: var(--fs-sm); max-width: 40rem; }
+.glance-grid { display: grid; gap: 14px; }
+.glance-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px clamp(14px, 2.4vw, 22px) 6px; }
+.glance-card .vz { margin-bottom: 12px; }
+.glance-card .vz-t { font-family: var(--f-display); font-size: var(--fs-lg); }
+.glance-page { margin-bottom: 8px; }
+.home-viz { margin: 12px 0 10px; }
+.toc .toc-first { border-top: 0; margin-top: 0; padding-top: 5px; }
+
 /* Filtres */
 .filters {
   display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
