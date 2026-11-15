@@ -68,90 +68,69 @@ td a { font-weight:700; text-decoration:none; }
 <body>
 <nav class="bar" aria-label="Navigation">
   <strong>Prototypes de design</strong>
-  <a href="0-atlas/index.html">Atlas des schémas</a>
+  <a href="0-atlas/index.html">Feuille maîtresse</a>
   <a href="../index.html">Site complet</a>
 </nav>
 <main class="wrap">
-  <h1>Quatre façons de rendre le site simple pour converser</h1>
-  <p class="lede">Le site complet est un catalogue : 12 onglets, des centaines d’expressions. En conversation, on se demande plutôt « qu’est-ce que je veux faire, là, maintenant ? », et on a besoin de trois ou quatre formules, avec un dessin qui montre comment elles marchent. Chaque prototype répond à cette question d’une autre manière, avec ton vrai contenu.</p>
+  <h1>Deux outils et une feuille maîtresse</h1>
+  <p class="lede">Le site se sépare en deux outils qui pratiquent des choses différentes, et une feuille qui suit ta progression dans les deux. Ta progression est enregistrée dans ce navigateur et partagée entre tous les outils.</p>
 
   <div class="diag">
-    <div><b>Moins de choix à l’écran</b><span>4 ou 5 formules clés par intention ; tout le reste est accessible dans le site complet.</span></div>
-    <div><b>Des schémas partout</b><span>Frises du temps, cadre (orange) contre phrase principale (violet), cause → effet, jauges de certitude.</span></div>
-    <div><b>Des liens visibles</b><span>Après « donner mon avis », on propose « justifier » puis « nuancer » : les enchaînements de ton document.</span></div>
+    <div><b>1 + 4 · Découvrir</b><span>Trouver de nouvelles façons de construire tes phrases, de la plus simple à la plus riche.</span></div>
+    <div><b>3 + 5 · Coller des morceaux</b><span>Relier deux phrases avec le bon pont, et voir les liens entre les fonctions.</span></div>
+    <div><b>Feuille maîtresse</b><span>Tous les schémas sur une page, avec ce que tu maîtrises, ce qui est en cours et ce qui est à revoir.</span></div>
   </div>
 
-  <h2>Les prototypes</h2>
-  <p class="h-sub">Ouvre-les sur ton téléphone : ils sont pensés d’abord pour le mobile.</p>
-  <div class="protos" id="protos"></div>
+  <h2>Outil 1 · Découvrir (1 + 4)</h2>
+  <p class="h-sub">Trois façons de combiner « Je veux… » et l’antisèche. Choisis celle que tu préfères, ou ce que tu gardes de chacune.</p>
+  <div class="protos" id="g-decouvrir"></div>
 
-  <h2>Comparer</h2>
-  <p class="h-sub">Ce sur quoi chaque prototype met l’accent (évaluation de conception, pas un classement).</p>
-  <div class="cmp-wrap"><table id="cmp"></table></div>
+  <h2>Outil 2 · Coller des morceaux (3 + 5)</h2>
+  <p class="h-sub">L’atelier de ponts : deux phrases, la sorte de lien, le pont, la réponse avec les schémas et la règle, puis le pont retourné.</p>
+  <div class="protos" id="g-coller"></div>
 
-  <div class="combo">
-    <h3>Ils peuvent se combiner</h3>
-    <p>Ce ne sont pas des choix exclusifs : un même site peut avoir une entrée « Je veux… », une antisèche pour la conversation, un atelier de ponts pour s’exercer et une carte pour voir les liens. Dis-moi ce que tu gardes de chacun, et je fusionne.</p>
-  </div>
+  <h2>Feuille maîtresse</h2>
+  <div class="protos" id="g-feuille"></div>
+
+  <h2>Les prototypes de départ</h2>
+  <p class="h-sub">Pour comparer avec les versions combinées.</p>
+  <div class="protos" id="g-depart"></div>
 </main>
 <script>
 (function () {
-  const P = [
-    { n: 1, dir: '1-je-veux', nom: 'Je veux…',
-      concept: 'Une seule question : « Qu’est-ce que tu veux faire ? ». Un bouton par intention, puis 4 ou 5 formules en très gros, avec leur exemple et leur schéma.',
-      pour: 'Trouver vite quoi dire, au téléphone, pendant ou juste avant une conversation.',
-      simplifie: 'Plus de grammaire en façade : on part du verbe d’intention (expliquer pourquoi, nuancer, réagir).',
-      notes: [3, 2, 2, 2, 1] },
-    { n: 3, dir: '3-pont', nom: 'Pont d’idées',
-      concept: 'Deux idées, un pont entre elles. Choisis la relation (cause, but, concession…) et le connecteur : la phrase se construit et le schéma se dessine avec tes propres mots.',
-      pour: 'Comprendre comment relier deux propositions et quel mode suit le connecteur.',
-      simplifie: 'Le subjonctif et l’ordre des propositions deviennent visibles au lieu d’être des règles abstraites.',
-      notes: [2, 2, 3, 3, 1] },
-    { n: 4, dir: '4-antiseche', nom: 'Antisèche',
-      concept: 'Toute la méthode sur un écran : 12 tuiles, chacune avec trois formules, une variante québécoise et un mini-schéma. Une tuile s’ouvre en fiche complète.',
-      pour: 'Un coup d’œil en pleine conversation ; une vue d’ensemble à imprimer mentalement.',
-      simplifie: 'Tout est visible d’un coup, sans navigation : la hiérarchie fait le tri.',
-      notes: [3, 2, 1, 3, 1] },
-    { n: 5, dir: '5-carte', nom: 'Carte des liens',
-      concept: 'Un plan de métro : les 4 modules sont des lignes, les 12 fonctions des stations, et les correspondances montrent quelles fonctions s’enchaînent.',
-      pour: 'Voir les liens entre les fonctions et préparer un discours plus long (itinéraire).',
-      simplifie: 'Les enchaînements (opinion → justification → concession) deviennent un trajet.',
-      notes: [2, 2, 3, 2, 1] }
-  ];
-  const CRIT = ['Simplicité', 'Conversation réelle', 'Liens entre fonctions', 'Vue d’ensemble', 'Pratique régulière'];
-  const dots = v => `<span class="dots" role="img" aria-label="${v} sur 3">${[1, 2, 3].map(i => `<i class="${i <= v ? 'on' : ''}"></i>`).join('')}</span>`;
-  document.getElementById('protos').innerHTML = P.map(p => `
-    <article class="proto" id="p${p.n}">
-      <a class="shot" href="${p.dir}/index.html" aria-label="Ouvrir le prototype ${p.n}">
-        <img src="shots/${p.n}-mobile.jpg" alt="Capture du prototype ${p.n} sur téléphone" loading="lazy" width="390" height="844" onerror="this.style.visibility='hidden'">
-      </a>
-      <div>
-        <span class="p-n">PROTOTYPE ${p.n}</span>
-        <h3>${p.nom}</h3>
-        <p class="concept">${p.concept}</p>
-        <dl class="facts">
-          <div><dt>Idéal pour</dt><dd>${p.pour}</dd></div>
-          <div><dt>Ce qui devient simple</dt><dd>${p.simplifie}</dd></div>
-        </dl>
-        <div class="actions">
-          <a class="btn" href="${p.dir}/index.html">Ouvrir le prototype</a>
-          <a class="btn btn-g" href="shots/${p.n}-desktop.jpg">Capture ordinateur</a>
+  const G = {
+    'g-decouvrir': [
+      { id: '14a', dir: '14a-antiseche-ouverte', nom: 'A · L’antisèche qui s’ouvre', concept: 'L’antisèche est l’accueil : 12 tuiles avec leur mini-schéma. Une tuile s’ouvre sur l’écran « Je veux… » (formules en grand, registre, schémas), puis sur d’autres formes à découvrir.', pour: 'Voir tout d’un coup d’œil, puis creuser une intention.' },
+      { id: '14b', dir: '14b-je-veux-poche', nom: 'B · Je veux… + l’antisèche en poche', concept: 'On part de « Qu’est-ce que tu veux faire ? ». L’antisèche reste dans ta poche, en bas de l’écran, pour sauter d’une intention à l’autre. Un bouton te fait découvrir une forme que tu n’as pas encore vue.', pour: 'Chercher quoi dire pendant une conversation.' },
+      { id: '14c', dir: '14c-escalier', nom: 'C · L’escalier des formes', concept: 'Pour chaque intention, un escalier : marche 1 les formes essentielles, marche 2 d’autres façons de dire, marche 3 les formes soutenues ou à reconnaître. Tu montes en marquant ce que tu connais.', pour: 'Enrichir ses phrases étape par étape.' }
+    ],
+    'g-coller': [
+      { id: '35', dir: '35-atelier', nom: 'Atelier de ponts', concept: 'Une grande banque de paires de phrases qui couvre tous les types de connecteurs. À chaque paire : la sorte de lien, le pont, la réponse (schémas des choix, bon pont, règle), puis le pont retourné. La carte des ponts montre ta progression, station par station.', pour: 'S’exercer à relier ses idées, connecteur par connecteur.' }
+    ],
+    'g-feuille': [
+      { id: '0', dir: '0-atlas', nom: 'Feuille maîtresse', concept: 'Tous les schémas du site, avec une pastille de statut sur chaque ligne, ta progression par fonction et à l’atelier, la liste « à revoir » et tes 14 derniers jours.', pour: 'Savoir où tu en es, et marquer ce que tu connais.' }
+    ],
+    'g-depart': [
+      { id: '1', dir: '1-je-veux', nom: '1 · Je veux…', concept: 'Une question, des formules en très gros, un sélecteur de registre.', pour: '' },
+      { id: '4', dir: '4-antiseche', nom: '4 · Antisèche', concept: 'Toute la méthode sur un écran, avec un mini-schéma par fonction.', pour: '' },
+      { id: '3', dir: '3-pont', nom: '3 · Pont d’idées', concept: 'Deux idées, un pont : la phrase se construit avec son schéma (version d’exploration).', pour: '' },
+      { id: '5', dir: '5-carte', nom: '5 · Carte des liens', concept: 'Le tableau de toutes les correspondances et le plan de métro, avec bulles à côté de la case touchée.', pour: '' }
+    ]
+  };
+  Object.keys(G).forEach(gid => {
+    document.getElementById(gid).innerHTML = G[gid].map(p => `
+      <article class="proto">
+        <a class="shot" href="${p.dir}/index.html" aria-label="Ouvrir ${p.nom}">
+          <img src="shots/${p.id}-mobile.jpg" alt="Capture de ${p.nom} sur téléphone" loading="lazy" width="390" height="844" onerror="this.style.visibility='hidden'">
+        </a>
+        <div>
+          <h3>${p.nom}</h3>
+          <p class="concept">${p.concept}</p>
+          ${p.pour ? `<dl class="facts"><div><dt>Idéal pour</dt><dd>${p.pour}</dd></div></dl>` : ''}
+          <div class="actions"><a class="btn" href="${p.dir}/index.html">Ouvrir</a><a class="btn btn-g" href="shots/${p.id}-desktop.jpg">Capture ordinateur</a></div>
         </div>
-      </div>
-    </article>`).join('') + `
-    <article class="proto" id="atlas">
-      <a class="shot" href="0-atlas/index.html" aria-label="Ouvrir l’atlas des schémas">
-        <img src="shots/0-mobile.jpg" alt="Capture de l’atlas des schémas" loading="lazy" width="390" height="844" onerror="this.style.visibility='hidden'">
-      </a>
-      <div>
-        <span class="p-n">EN PLUS</span>
-        <h3>Atlas des schémas</h3>
-        <p class="concept">Tous les schémas réunis sur une page : le temps, la cause, la conséquence, le but, l’hypothèse, la concession, la certitude, les relatifs, le discours, la conversation, les modes et les registres.</p>
-        <div class="actions"><a class="btn" href="0-atlas/index.html">Ouvrir l’atlas</a></div>
-      </div>
-    </article>`;
-  document.getElementById('cmp').innerHTML = `<thead><tr><th scope="col">Prototype</th>${CRIT.map(c => `<th scope="col">${c}</th>`).join('')}</tr></thead>
-    <tbody>${P.map(p => `<tr><th scope="row"><a href="#p${p.n}">${p.n}. ${p.nom}</a></th>${p.notes.map(dots).map(d => `<td>${d}</td>`).join('')}</tr>`).join('')}</tbody>`;
+      </article>`).join('');
+  });
 })();
 </script>
 </body>

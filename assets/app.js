@@ -541,7 +541,8 @@
       <div class="nav-mod">
         <p class="nav-h">Essais</p>
         <a href="prototypes/index.html">Prototypes de design</a>
-        <a href="prototypes/0-atlas/index.html">Atlas des schémas</a>
+        <a href="prototypes/35-atelier/index.html">Atelier de ponts</a>
+        <a href="prototypes/0-atlas/index.html">Feuille maîtresse</a>
       </div>`;
   }
   function setNavCurrent(view) {
