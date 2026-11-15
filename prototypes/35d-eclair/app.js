@@ -12,6 +12,9 @@
   const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   const md = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\*(.+?)\*/g, '<i>$1</i>');
   const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  /* Espaces fines insécables devant ; : ! ? » et après « (dans le texte seulement, pas dans les balises). */
+  const typo = t => t.replace(/ ([;:!?»])/g, '\u202F$1').replace(/« /g, '«\u202F');
+  const put = (el, h) => { if (el) el.innerHTML = String(h).replace(/>([^<]+)</g, (m, x) => '>' + typo(x) + '<'); };
   const reduce = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const store = {
     get(k, d) { try { const v = localStorage.getItem('eclair:' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
@@ -232,7 +235,7 @@
     S.ecran = 'accueil'; S.revue = null;
     const nErr = paresErreurs().length;
     const d = store.get('dernier', null);
-    app.innerHTML = `
+    put(app, `
       <section class="accueil">
         <div class="acc-h"><div><h1>Série éclair</h1><p>Deux phrases, un pont. Une carte à la fois.</p></div>
           <button type="button" class="aide-btn" data-act="codes" aria-label="Les codes (légende)">?</button></div>
@@ -243,14 +246,14 @@
           ${nErr ? '' : '<p class="note" id="note-err">Quand tu te trompes de pont, la paire arrive ici.</p>'}
         </div>
         ${d && d.n ? `<p class="dernier">Dernière série <b>${d.ok}/${d.n}</b><span class="mini" aria-hidden="true">${d.res.map(r => `<i class="${r ? 'ok' : 'ko'}"></i>`).join('')}</span></p>` : ''}
-      </section>`;
+      </section>`);
   }
 
   /* ---------- Écran : choisir un lien ---------- */
   function vueLiens() {
     S.ecran = 'liens';
     const b = banque();
-    app.innerHTML = `
+    put(app, `
       <section>
         <div class="ecran-h"><button type="button" class="rond" data-act="accueil" aria-label="Retour à l’accueil">${IC.gauche}</button><h1>Choisis un lien</h1>
           <button type="button" class="aide-btn" data-act="codes" aria-label="Les codes (légende)">?</button></div>
@@ -258,7 +261,7 @@
           const n = b.filter(it => it.rel === l.id).length;
           return `<button type="button" class="tuile l-${l.id}" data-serie-lien="${l.id}"${n ? '' : ' disabled'}><span class="l-ic">${icLien(l.id, 22)}</span><b>${esc(COURT[l.id])}</b><small>${esc(l.q)}</small></button>`;
         }).join('')}</div>
-      </section>`;
+      </section>`);
     const f = $('.tuile'); if (f) f.focus({ preventScroll: true });
   }
 
@@ -280,8 +283,8 @@
 
   function vueCarte(nouvelle) {
     const c = cur(), it = c.it, connu = c.phase !== 'q1';
-    const gap = c.choix ? `<span class="gap-p fait">${esc(P[(c.choix.ok ? c.choix : c.pontsOpts.find(o => o.ok)).p].e)}</span>` : '<span class="gap-p">?</span>';
-    app.innerHTML = `${session()}
+    const gap = c.choix ? `<span class="gap-p fait">${esc(P[c.choix.ok ? c.choix.p : it.ok[0].p].e)}</span>` : '<span class="gap-p">?</span>';
+    put(app, `${session()}
       <article class="carte${connu ? ` connu l-${it.rel}` : ''}" id="carte" aria-label="Paire de phrases">
         <div class="carte-top"><span class="carte-k">${S.revue != null ? 'Revoir' : S.mode === 'erreurs' ? 'Mes erreurs' : S.mode === 'lien' ? 'Un lien' : 'Série'}</span>
           <span id="puce">${connu ? lienPuce(it.rel) : '<span class="puce puce-vide">Lien ?</span>'}</span></div>
@@ -291,7 +294,7 @@
           <p class="src"><span class="tag" aria-label="Phrase B">B</span><span>${esc(it.b)}</span></p>
         </div>
         <section class="zone" id="zone" aria-live="polite"></section>
-      </article>`;
+      </article>`);
     majZone(false);
     if (nouvelle) {
       try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch (e) { window.scrollTo(0, 0); }
@@ -308,9 +311,7 @@
 
   function majZone(anim) {
     const c = cur(), z = $('#zone');
-    if (c.phase === 'q1' || c.phase === 'q1-aide') z.innerHTML = zoneQ1(c);
-    else if (c.phase === 'q2') z.innerHTML = zoneQ2(c);
-    else z.innerHTML = zoneExp(c);
+    put(z, c.phase === 'q1' || c.phase === 'q1-aide' ? zoneQ1(c) : c.phase === 'q2' ? zoneQ2(c) : zoneExp(c));
     if (anim) { z.classList.remove('entre'); void z.offsetWidth; z.classList.add('entre'); }
   }
 
@@ -412,7 +413,7 @@
       btn.classList.add('is-ok');
       btn.querySelector('.etat').innerHTML = IC.ok;
       $$('#zone .ch').forEach(b => { b.setAttribute('aria-disabled', 'true'); if (b !== btn && !b.classList.contains('is-ko')) b.classList.add('is-off'); });
-      $('#fb').innerHTML = `<b style="color:var(--good)">Oui : ${esc(COURT[id])}.</b>`;
+      put($('#fb'), `<b style="color:var(--good)">Oui : ${esc(COURT[id])}.</b>`);
       $('#fb').classList.add('bon');
       setConnu(c);
       setTimeout(() => { S.busy = false; if (cur() !== c) return; c.phase = 'q2'; majZone(true); const q = $('#zone .q'); if (q) q.focus({ preventScroll: true }); vise($('#zone')); }, 520);
@@ -423,11 +424,12 @@
         setConnu(c);
         majZone(false);
         const b2 = $(`#zone [data-lien="${id}"]`); if (b2) b2.classList.add('secoue');
-        const go = $('#zone [data-act="continuer"]'); if (go) go.focus({ preventScroll: true });
+        const go = $('#zone [data-act="continuer"]');
+        if (go) { go.focus({ preventScroll: true }); try { go.scrollIntoView({ block: 'nearest', behavior: reduce() ? 'auto' : 'smooth' }); } catch (e) { /* rien */ } }
       } else {
         btn.classList.add('is-ko', 'secoue');
         btn.setAttribute('aria-disabled', 'true');
-        $('#fb').innerHTML = `<b>Pas ça.</b> Indice : ${esc(indice(c.it.rel))}`;
+        put($('#fb'), `<b>Pas ça.</b> Indice : ${esc(indice(c.it.rel))}`);
       }
     }
   }
@@ -486,7 +488,7 @@
     const manques = [];
     S.serie.forEach(c => { if (c.choix && !c.choix.ok) c.it.ok.forEach(o => { if (!manques.includes(o.p)) manques.push(o.p); }); });
     const nErr = paresErreurs().length;
-    app.innerHTML = `
+    put(app, `
       <section class="bilan">
         <p class="bilan-k">${S.mode === 'erreurs' ? 'Mes erreurs' : S.mode === 'lien' ? esc(COURT[S.lien]) : 'Série'} terminée</p>
         <h1 class="score" tabindex="-1" id="score">${ok}<span>/${n}</span></h1>
@@ -502,7 +504,7 @@
           <button type="button" class="btn-s" data-act="erreurs"${nErr ? '' : ' disabled'}>${IC.erreurs} Mes erreurs${nErr ? ` (${nErr})` : ''}</button>
         </div>
         <p><button type="button" class="btn-t" data-act="accueil">Accueil</button></p>
-      </section>`;
+      </section>`);
     try { window.scrollTo(0, 0); } catch (e) { /* rien */ }
     if (focusTop) { const s = $('#score'); if (s) s.focus({ preventScroll: true }); }
   }
@@ -535,7 +537,7 @@
   let dernierFocus = null;
   function ouvrirCodes() {
     if (!dlg || dlg.open) return;
-    if (!$('#codes-in').innerHTML) $('#codes-in').innerHTML = codesHTML();
+    if (!$('#codes-in').innerHTML) put($('#codes-in'), codesHTML());
     dernierFocus = document.activeElement;
     if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
     const f = $('#codes [data-act="fermer"]'); if (f) f.focus();

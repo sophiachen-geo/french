@@ -216,10 +216,11 @@ h1, h2 { font-family: var(--f-d); letter-spacing: -.02em; }
 
 .bloc { padding: 14px 0 0; margin-top: 14px; border-top: 1.5px solid var(--line); scroll-margin-top: 72px; }
 .bloc:first-of-type { border-top: 0; margin-top: 0; padding-top: 0; }
-.bloc-h { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; font: 700 .8rem/1.2 var(--f-m); text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.bloc-h { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 10px; font: 700 .8rem/1.2 var(--f-m); text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
 .bloc-h .bi { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: var(--soft); color: var(--ink); flex: none; }
 .bloc-h .bi.vert { background: var(--good); color: var(--card); }
 .bloc-h b { font: 800 1.05rem/1.2 var(--f-b); text-transform: none; letter-spacing: 0; color: var(--ink); }
+.bloc-h > span:not(.bi), .bloc-h b { white-space: nowrap; }
 .bloc-h .code { margin-left: 2px; }
 
 .ph { margin: 0; font-size: 1.22rem; line-height: 1.8; font-weight: 500; }
