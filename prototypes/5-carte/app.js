@@ -759,7 +759,7 @@
           <span class="tl-bar" aria-hidden="true"><i class="m-seq" style="width:${(2 * l.nSeq / MAXS * 100).toFixed(1)}%"></i><i class="m-sh" style="width:${(l.shared.length / MAXS * 100).toFixed(1)}%"></i></span>
           <span class="tl-x">${l.nSeq ? `${l.nSeq} enchaînement${l.nSeq > 1 ? 's' : ''} · ` : ''}${l.shared.slice(0, 3).map(x => '« ' + esc(x.head) + ' »').join(', ')}${l.shared.length > 3 ? '…' : ''}</span></span>
       </button></li>`).join('');
-    return `<div class="mx-wrap"><div><div class="mx-scroll"><div class="mx" role="group" aria-label="Tableau des correspondances">${head}${rows}</div></div>
+    return `<div class="mx-wrap"><div><p class="mx-hint">Fais glisser le tableau pour voir toutes les colonnes.</p><div class="mx-scroll"><div class="mx" role="group" aria-label="Tableau des correspondances">${head}${rows}</div></div>
       <div class="mx-key"><span>Lien plus fort →</span>${[1, 2, 3, 4, 5].map(v => `<i class="mx-sw v${v}"></i>`).join('')}<span class="mx-dotk"><i></i> enchaînement attesté</span></div></div>
       <div class="tl-box"><h3>Les 8 liens les plus forts</h3><p class="pn-help">Barre pleine : enchaînements des modèles ; hachures : expressions en commun.</p><ol class="mx-top">${top}</ol></div></div>`;
   }
