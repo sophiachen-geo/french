@@ -155,12 +155,12 @@
   }
   /* Raison courte sous un schéma : la première moitié de l'explication, sans répéter le nom du pont. */
   function raisonCourte(why) {
-    let s = String(why || '').split(/\s;\s|\.\s/)[0];
+    let s = String(why || '').split(/\s[;:]\s|\.\s/)[0];
     s = s.replace(/^«\s*[^»]+»\s*/, '').replace(/[*]/g, '');
     s = s.charAt(0).toUpperCase() + s.slice(1);
     return cut(s.replace(/[.\s]+$/, ''), 96);
   }
-  const indice = rel => { const a = LIEN[rel].aide || ''; const i = a.indexOf(' :'); return (i > 0 ? a.slice(0, i) : a).replace(/\.$/, '') + '.'; };
+  const indice = rel => { const a = LIEN[rel].aide || ''; const i = a.indexOf(' :'); const t = (i > 0 ? a.slice(0, i) : a).replace(/\.$/, '') + '.'; return t.charAt(0).toLowerCase() + t.slice(1); };
 
   /* ---------- Voix ---------- */
   const canSpeak = 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function';
@@ -256,7 +256,7 @@
           <button type="button" class="aide-btn" data-act="codes" aria-label="Les codes (légende)">?</button></div>
         <div class="tuiles">${LIENS.map(l => {
           const n = b.filter(it => it.rel === l.id).length;
-          return `<button type="button" class="tuile l-${l.id}" data-serie-lien="${l.id}"${n ? '' : ' disabled'}><span class="l-ic">${icLien(l.id, 22)}</span><b>${esc(COURT[l.id])}</b><small>${esc(l.q)}<br>${Math.min(n, N_SERIE)} paires</small></button>`;
+          return `<button type="button" class="tuile l-${l.id}" data-serie-lien="${l.id}"${n ? '' : ' disabled'}><span class="l-ic">${icLien(l.id, 22)}</span><b>${esc(COURT[l.id])}</b><small>${esc(l.q)}</small></button>`;
         }).join('')}</div>
       </section>`;
     const f = $('.tuile'); if (f) f.focus({ preventScroll: true });
@@ -364,7 +364,7 @@
       const p = P[o.p];
       const sub = o.ok ? 'C’est le bon pont.' : raisonCourte(o.n.why);
       const c2 = o.ok ? o.o.c : 'b';
-      return `<div class="sch ${o.ok ? 'ok' : 'ko'}${mien ? ' mien' : ''}"><span class="sch-mk" aria-label="${o.ok ? 'Bon pont' : 'Pas ce pont'}">${o.ok ? IC.ok : IC.ko}</span>${mien && !o.ok ? '<span class="sch-mien">ton choix</span>' : ''}${schema(o.p, it, c2, sub)}</div>`;
+      return `<div class="sch ${o.ok ? 'ok' : 'ko'}${mien ? ' mien' : ''}"><span class="sch-mk" aria-label="${o.ok ? 'Bon pont' : 'Pas ce pont'}">${o.ok ? IC.ok : IC.ko}</span>${mien && !o.ok ? '<p class="sch-mien">Ton choix</p>' : ''}${schema(o.p, it, c2, sub)}</div>`;
     };
     const visibles = [c.pontsOpts.find(o => o.p === main.p)];
     if (!bonChoisi) visibles.push(ch);
@@ -511,7 +511,7 @@
   function codesHTML() {
     const ex = (cls, t) => `<span class="ph"><span class="${cls}">${t}</span></span>`;
     return `<div class="codes-top"><h2 id="codes-h">Les codes</h2><button type="button" class="rond" data-act="fermer" aria-label="Fermer">${IC.croix}</button></div>
-      <h3>Les sortes de lien (une couleur chacune)</h3>
+      <h3>Une couleur par sorte de lien</h3>
       <ul class="lg-liens">${LIENS.map(l => `<li class="l-${l.id}"><span class="l-ic">${icLien(l.id, 17)}</span>${esc(COURT[l.id])}</li>`).join('')}</ul>
       <h3>Dans les phrases</h3>
       <ul class="lg">

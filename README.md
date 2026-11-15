@@ -37,7 +37,9 @@ Chaque onglet est un fichier `content/onglet-NN.js` contenant du Markdown :
 ## Structure
 
 ```
-index.html            page unique (routage par #ancre)
+index.html            accueil : les deux outils et la progression
+reference/index.html  référence complète (12 onglets, routage par #ancre)
+prototypes/           outils (Découvrir, Atelier de ponts), feuille maîtresse, autres prototypes
 assets/app.js         moteur : rendu, filtres, recherche, renvois, activités
 assets/styles.css     thèmes et mise en page
 assets/registry.js    registre du contenu

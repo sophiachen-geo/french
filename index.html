@@ -3,111 +3,254 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Les cadres de la phrase et de la conversation</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Construire, relier et développer ses idées en français — français standard et usages québécois. Expressions classées par fonction communicative.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="assets/styles.css">
+<title>Les cadres de la phrase</title>
+<meta name="description" content="Construire, relier et développer ses idées en français — français standard et usages québécois. Deux outils : découvrir de nouvelles formes, coller des morceaux.">
 <script>
+  /* Anciens liens du site (…/french/#onglet-4) → la référence complète */
   (function () {
-    try { var t = JSON.parse(localStorage.getItem('cadres:theme')); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+    var h = location.hash;
+    if (/^#(onglet-\d+|guide|regles|methode|relier|fiches|accueil)(--|$)/.test(h) && h !== '#accueil') location.replace('reference/index.html' + h);
+    try { var t = JSON.parse(localStorage.getItem('a14:theme')); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
   })();
 </script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap">
+<style>
+/* Accueil — deux portes, une progression. Encre marine, surligneur jaune, cinq couleurs de moments en signature. */
+:root {
+  --bg: #f4f6fb; --card: #ffffff; --ink: #121a33; --ink-2: #3a4463; --muted: #6a7390; --line: #dde2ee; --soft: #eef1f8;
+  --hl: #ffd84d; --hl-soft: #fff3c2; --focus: #2457d6;
+  --c1: #0f766e; --c2: #2457d6; --c3: #b45309; --c4: #be185d; --c5: #4d7c0f;
+  --t1: #2457d6; --t2: #e0603a; --ok: #15803d;
+  --shadow: 0 1px 2px rgba(18, 26, 51, .06), 0 14px 36px rgba(18, 26, 51, .10);
+  --f: 'Figtree', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0d1222; --card: #161d31; --ink: #edf1fa; --ink-2: #c5ccdd; --muted: #93a0ba; --line: #283250; --soft: #1d2640;
+  --hl-soft: #4a3f12; --focus: #8db0ff; --c1: #34c3b2; --c2: #79a6ff; --c3: #f0a24a; --c4: #f472b6; --c5: #a3d65c;
+  --t1: #79a6ff; --t2: #ff8a65; --ok: #4ade80; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 14px 36px rgba(0,0,0,.4); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0d1222; --card: #161d31; --ink: #edf1fa; --ink-2: #c5ccdd; --muted: #93a0ba; --line: #283250; --soft: #1d2640;
+  --hl-soft: #4a3f12; --focus: #8db0ff; --c1: #34c3b2; --c2: #79a6ff; --c3: #f0a24a; --c4: #f472b6; --c5: #a3d65c;
+  --t1: #79a6ff; --t2: #ff8a65; --ok: #4ade80; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 14px 36px rgba(0,0,0,.4); color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 500 1.0625rem/1.55 var(--f); }
+a { color: inherit; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 10px; }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+header { padding-block: 16px 0; }
+.top { display: flex; align-items: center; gap: 12px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; text-decoration: none; letter-spacing: -.01em; }
+.mark { display: grid; grid-template-columns: repeat(5, 5px); gap: 2px; }
+.mark i { height: 22px; border-radius: 2px; }
+.mark i:nth-child(1) { background: var(--c1); } .mark i:nth-child(2) { background: var(--c2); } .mark i:nth-child(3) { background: var(--c3); }
+.mark i:nth-child(4) { background: var(--c4); } .mark i:nth-child(5) { background: var(--c5); }
+.theme { margin-left: auto; display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); }
+
+.hero { padding-block: clamp(28px, 6vw, 56px) 22px; }
+.eyebrow { margin: 0 0 10px; font-size: .82rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { margin: 0; font-size: clamp(2.2rem, 1.3rem + 4.2vw, 3.9rem); font-weight: 900; letter-spacing: -.03em; line-height: 1.02; max-width: 15ch; text-wrap: balance; }
+h1 mark { background: linear-gradient(transparent 58%, var(--hl) 58%); color: inherit; padding: 0 .06em; }
+.lede { margin: 14px 0 0; font-size: 1.2rem; color: var(--ink-2); max-width: 36rem; }
+
+.resume { display: flex; align-items: center; gap: 14px; text-decoration: none; background: var(--card); border: 2px solid var(--ink); border-radius: 18px; padding: 14px 18px; margin-bottom: 18px; box-shadow: var(--shadow); }
+.resume[hidden] { display: none; }
+.resume-k { flex: none; background: var(--ink); color: var(--card); font-weight: 800; font-size: .8rem; border-radius: 999px; padding: 5px 11px; }
+.resume-t { display: grid; min-width: 0; }
+.resume-t b { font-size: 1.1rem; }
+.resume-t span { color: var(--muted); font-size: .92rem; }
+.arrow { margin-left: auto; font-size: 1.5rem; font-weight: 800; }
+
+.doors { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 760px) { .doors { grid-template-columns: 1fr 1fr; gap: 18px; } }
+.door { position: relative; display: grid; grid-template-rows: auto auto 1fr auto; gap: 10px; text-decoration: none; background: var(--card); border-radius: 24px; padding: 22px 22px 20px; box-shadow: var(--shadow); border-top: 8px solid var(--d); overflow: hidden; transition: transform .15s; }
+.door:hover { transform: translateY(-3px); }
+.d1 { --d: var(--t1); } .d2 { --d: var(--t2); }
+.door-n { display: inline-flex; align-items: center; gap: 8px; font-size: .82rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--d); }
+.door-n span { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--d); color: var(--card); letter-spacing: 0; }
+.door h2 { margin: 0; font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.2rem); font-weight: 900; letter-spacing: -.02em; line-height: 1.05; }
+.door p { margin: 0; color: var(--ink-2); }
+.ill { display: flex; align-items: center; justify-content: center; min-height: 112px; background: var(--soft); border-radius: 16px; padding: 14px; }
+.door-f { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.prog { font-size: .92rem; color: var(--muted); }
+.prog b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.go { display: inline-flex; align-items: center; gap: 8px; background: var(--d); color: #fff; font-weight: 800; border-radius: 12px; padding: 10px 16px; }
+:root[data-theme="dark"] .go { color: #0d1222; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .go { color: #0d1222; } }
+
+/* Illustrations */
+.cardstack { position: relative; width: 210px; height: 92px; }
+.cardstack .c { position: absolute; inset: 0; background: var(--card); border-radius: 12px; border-top: 5px solid var(--c3); box-shadow: 0 6px 16px rgba(0,0,0,.08); padding: 10px 12px; }
+.cardstack .c:nth-child(1) { transform: translate(14px, -8px) rotate(4deg); border-top-color: var(--c2); }
+.cardstack .c:nth-child(2) { transform: translate(7px, -4px) rotate(2deg); border-top-color: var(--c1); }
+.cardstack .c b { display: block; font-size: 1.35rem; font-weight: 900; letter-spacing: -.02em; }
+.slot { display: inline-block; margin-top: 4px; border: 2px dashed #15803d; color: #15803d; border-radius: 8px; padding: 1px 8px; font-size: .8rem; font-weight: 800; }
+:root[data-theme="dark"] .slot { border-color: #4ade80; color: #4ade80; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .slot { border-color: #4ade80; color: #4ade80; } }
+.bridge { width: 100%; max-width: 300px; height: auto; overflow: visible; }
+.bridge .bx { fill: var(--card); stroke-width: 2.5; }
+.bridge .ba { stroke: #6a5be2; } .bridge .bb { stroke: #e0603a; }
+.bridge text { fill: var(--ink); font: 700 11px var(--f); }
+.bridge .arc { fill: none; stroke: var(--ink); stroke-width: 3; }
+.bridge .ar { stroke: var(--ink); stroke-width: 2; }
+.bridge .lab { fill: #121a33; font-weight: 900; font-size: 12px; }
+.bridge .hlr { fill: var(--hl); }
+
+.me { margin-top: 18px; display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); background: var(--card); border-radius: 22px; padding: 18px 20px; box-shadow: var(--shadow); }
+@media (min-width: 760px) { .me { grid-template-columns: auto 1fr auto; align-items: center; } }
+.me h2 { margin: 0; font-size: 1.25rem; font-weight: 900; }
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.kpi { background: var(--soft); border-radius: 12px; padding: 8px 10px; }
+.kpi b { display: block; font-size: 1.4rem; font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.kpi span { font-size: .76rem; color: var(--muted); line-height: 1.2; display: block; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 10px 16px; border-radius: 12px; border: 2px solid var(--ink); text-decoration: none; font-weight: 800; white-space: nowrap; }
+
+.how { margin-top: 34px; }
+.how h2, .more h2 { font-size: .82rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 760px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+.steps li { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; align-items: start; }
+.steps .n { grid-row: span 2; display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--ink); font-weight: 900; }
+.steps b { font-weight: 800; }
+.steps span:not(.n) { color: var(--ink-2); font-size: .95rem; }
+
+.more { margin-top: 34px; padding-top: 18px; border-top: 1px solid var(--line); padding-bottom: 60px; }
+.links { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); }
+.links a { display: grid; gap: 2px; text-decoration: none; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--card); }
+.links a:hover { border-color: var(--ink-2); }
+.links b { font-weight: 800; }
+.links span { font-size: .88rem; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
 </head>
 <body>
-<a class="skip" href="#view">Aller au contenu</a>
-
-<header class="top">
-  <div class="top-in">
-    <button type="button" class="icon-btn menu-btn" id="menu-btn" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="side">
-      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    </button>
-    <a class="brand" href="#accueil" aria-label="Accueil — Les cadres de la phrase et de la conversation">
-      <span class="brand-mark" aria-hidden="true"><span>+</span></span>
-      <span class="brand-t">Cadres <em>de la phrase</em></span>
-    </a>
-    <div class="search" id="search">
-      <label class="sr" for="q">Rechercher une expression</label>
-      <svg class="search-i" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 20 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Rechercher : bien que, fait que, subj.…" aria-controls="results" aria-expanded="false" role="combobox" aria-autocomplete="list">
-      <kbd class="search-k" aria-hidden="true">/</kbd>
-      <div class="results" id="results" role="listbox" aria-label="Résultats" hidden></div>
-    </div>
-    <button type="button" class="icon-btn search-btn" id="search-btn" aria-label="Rechercher">
-      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 20 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    </button>
-    <button type="button" class="rules-btn" id="rules-btn" aria-controls="drawer" aria-expanded="false">Règles</button>
-    <button type="button" class="icon-btn" id="theme-btn" aria-label="Changer de thème">
-      <svg class="i-sun" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      <svg class="i-moon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
-    </button>
+<header class="wrap">
+  <div class="top">
+    <a class="brand" href="./"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>Les cadres de la phrase</a>
+    <button type="button" class="theme" id="theme" aria-label="Changer de thème"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5v17A8.5 8.5 0 0 0 12 3.5Z" fill="currentColor"/></svg></button>
   </div>
 </header>
 
-<div class="shell">
-  <aside class="side" id="side" aria-label="Navigation">
-    <nav class="nav" id="nav"></nav>
-  </aside>
-  <div class="scrim" id="scrim" hidden></div>
-  <main class="view" id="view" tabindex="-1"></main>
-</div>
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">Français standard · usages québécois</p>
+    <h1>Construis, relie et développe tes idées en <mark>français</mark>.</h1>
+    <p class="lede">Deux outils, une seule progression. Commence par l’un ou l’autre.</p>
+  </section>
 
-<aside class="drawer" id="drawer" aria-labelledby="drawer-title" hidden>
-  <div class="drawer-head">
-    <div>
-      <p class="eyebrow">VII · accessibles partout</p>
-      <h2 id="drawer-title">Règles transversales</h2>
-    </div>
-    <button type="button" class="icon-btn" id="drawer-close" aria-label="Fermer les règles">
-      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    </button>
-  </div>
-  <nav class="drawer-toc" id="drawer-toc" aria-label="Règles"></nav>
-  <div class="drawer-body" id="drawer-body"></div>
-</aside>
+  <a class="resume" id="resume" href="#" hidden><span class="resume-k">Reprendre</span><span class="resume-t"><b id="resume-b"></b><span id="resume-s"></span></span><span class="arrow" aria-hidden="true">→</span></a>
 
-<dialog class="sheet" id="sheet" aria-labelledby="sheet-title">
-  <div class="sheet-in">
-    <div class="sheet-head">
-      <div>
-        <p class="eyebrow" id="sheet-kicker"></p>
-        <h2 id="sheet-title"></h2>
+  <div class="doors">
+    <a class="door d1" href="prototypes/14a-antiseche-ouverte/index.html">
+      <span class="door-n"><span>1</span>Découvrir</span>
+      <h2>De nouvelles façons de dire ce que tu veux dire</h2>
+      <div class="ill" aria-hidden="true">
+        <div class="cardstack"><div class="c"></div><div class="c"></div><div class="c"><b>parce que</b><span class="slot">+ une phrase</span></div></div>
       </div>
-      <button type="button" class="icon-btn" data-close aria-label="Fermer">
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-    <div class="sheet-body" id="sheet-body"></div>
+      <div class="door-f"><span class="prog" id="p1">Une formule à la fois, avec un exemple et un schéma.</span><span class="go">Découvrir <span aria-hidden="true">→</span></span></div>
+    </a>
+    <a class="door d2" href="prototypes/35-atelier/index.html">
+      <span class="door-n"><span>2</span>Coller des morceaux</span>
+      <h2>Relie deux phrases avec le bon pont</h2>
+      <div class="ill" aria-hidden="true">
+        <svg class="bridge" viewBox="0 0 300 96">
+          <rect class="bx ba" x="4" y="52" width="104" height="34" rx="8"/><text x="56" y="73" text-anchor="middle">Je reste ici.</text>
+          <rect class="bx bb" x="192" y="52" width="104" height="34" rx="8"/><text x="244" y="73" text-anchor="middle">Il pleut.</text>
+          <path class="arc" d="M108 69 Q150 6 192 69"/>
+          <path class="ar" d="M122 69V52M136 69V36M150 69V31M164 69V36M178 69V52"/>
+          <rect class="hlr" x="112" y="6" width="76" height="20" rx="5"/><text class="lab" x="150" y="20" text-anchor="middle">parce que</text>
+        </svg>
+      </div>
+      <div class="door-f"><span class="prog" id="p2">163 paires de phrases, tous les types de liens.</span><span class="go">S’exercer <span aria-hidden="true">→</span></span></div>
+    </a>
   </div>
-</dialog>
 
-<style id="hide-style"></style>
+  <section class="me" aria-labelledby="me-h">
+    <h2 id="me-h">Ma progression</h2>
+    <div class="kpis">
+      <div class="kpi"><b id="k1">0</b><span>formes que tu connais</span></div>
+      <div class="kpi"><b id="k2">0</b><span>ponts maîtrisés</span></div>
+      <div class="kpi"><b id="k3">0</b><span>à revoir</span></div>
+      <div class="kpi"><b id="k4">0</b><span>jours actifs sur 14</span></div>
+    </div>
+    <a class="btn" href="prototypes/0-atlas/index.html">Voir ma feuille</a>
+  </section>
+
+  <section class="how" aria-labelledby="how-h">
+    <h2 id="how-h">Comment ça marche</h2>
+    <ol class="steps">
+      <li><span class="n">1</span><b>Découvre</b><span>Choisis ce que tu veux dire, puis parcours ses formules. Marque « Je connais » ou « À revoir ».</span></li>
+      <li><span class="n">2</span><b>Colle des morceaux</b><span>Deux phrases : trouve la sorte de lien, puis le pont. La réponse te montre le schéma et la règle.</span></li>
+      <li><span class="n">3</span><b>Suis ta progression</b><span>Tout ce que tu fais dans les deux outils se retrouve dans ta feuille.</span></li>
+    </ol>
+  </section>
+
+  <section class="more" aria-labelledby="more-h">
+    <h2 id="more-h">Pour aller plus loin</h2>
+    <div class="links">
+      <a href="reference/index.html"><b>Référence complète</b><span>Les 12 onglets, toutes les expressions, les fiches.</span></a>
+      <a href="reference/index.html#regles"><b>Règles de grammaire</b><span>Choisir le mode, nom ou infinitif, verbes et prépositions.</span></a>
+      <a href="prototypes/index.html"><b>Prototypes de design</b><span>Les autres versions des deux outils, pour comparer.</span></a>
+    </div>
+  </section>
+</main>
 
 <script src="assets/registry.js"></script>
 <script src="content/meta.js"></script>
-<script src="content/onglet-01.js"></script>
-<script src="content/onglet-02.js"></script>
-<script src="content/onglet-03.js"></script>
-<script src="content/onglet-04.js"></script>
-<script src="content/onglet-05.js"></script>
-<script src="content/onglet-06.js"></script>
-<script src="content/onglet-07.js"></script>
-<script src="content/onglet-08.js"></script>
-<script src="content/onglet-09.js"></script>
-<script src="content/onglet-10.js"></script>
-<script src="content/onglet-11.js"></script>
-<script src="content/onglet-12.js"></script>
-<script src="content/guide.js"></script>
-<script src="content/relier.js"></script>
-<script src="content/fiches.js"></script>
-<script src="content/methode.js"></script>
-<script src="content/regles.js"></script>
 <script src="content/essentiels.js"></script>
-<script src="content/visuels.js"></script>
-<script src="assets/core.js"></script>
-<script src="assets/viz.js"></script>
-<script src="assets/app.js"></script>
+<script src="assets/progres.js"></script>
+<script src="prototypes/3-pont/catalogue.js"></script>
+<script>
+(function () {
+  'use strict';
+  const PR = window.PROGRES, A = window.ATELIER;
+  const get = k => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
+  const all = PR.toutes();
+  let formes = 0, revoir = 0;
+  Object.keys(all).forEach(k => {
+    const r = all[k];
+    if (r.revoir) revoir++;
+    if ((r.outils.decouvrir || r.outils.atlas) && PR.statut(k) === 'maitrise') formes++;
+  });
+  const ponts = A ? Object.keys(A.ponts).map(id => A.ponts[id].e) : [];
+  const RP = PR.resume(ponts);
+  const jours = PR.jours();
+  let actifs = 0;
+  for (let i = 0; i < 14; i++) { const d = new Date(Date.now() - i * 864e5).toISOString().slice(0, 10); if (jours[d]) actifs++; }
+  document.getElementById('k1').textContent = formes;
+  document.getElementById('k2').textContent = RP.maitrise;
+  document.getElementById('k3').textContent = revoir;
+  document.getElementById('k4').textContent = actifs;
+  if (formes) document.getElementById('p1').innerHTML = `<b>${formes}</b> formes que tu connais`;
+  const sc = get('atelier:score');
+  if (sc && sc.faits) document.getElementById('p2').innerHTML = `<b>${RP.maitrise}</b> ponts maîtrisés sur ${RP.total} · ${sc.faits} paires faites`;
+  /* Reprendre là où tu étais (outil « Découvrir ») */
+  const last = get('a14:last');
+  const ess = (window.SITE && SITE.meta.essentiels || []).find(e => last && e.tab === last.t);
+  if (last && ess) {
+    const r = document.getElementById('resume');
+    r.href = `prototypes/14a-antiseche-ouverte/index.html#t${last.t}-${(last.i || 0) + 1}`;
+    document.getElementById('resume-b').textContent = `Découvrir · ${ess.je}`;
+    document.getElementById('resume-s').textContent = `carte ${(last.i || 0) + 1}`;
+    r.hidden = false;
+  } else if (sc && sc.faits) {
+    const r = document.getElementById('resume');
+    r.href = 'prototypes/35-atelier/index.html';
+    document.getElementById('resume-b').textContent = 'Coller des morceaux';
+    document.getElementById('resume-s').textContent = `${sc.faits} paires faites`;
+    r.hidden = false;
+  }
+  document.getElementById('theme').addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('a14:theme', JSON.stringify(next)); } catch (e) { /* rien */ }
+  });
+})();
+</script>
 </body>
 </html>

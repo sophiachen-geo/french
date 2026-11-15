@@ -539,10 +539,11 @@
         ${link('methode', 'Méthode et progression')}
       </div>
       <div class="nav-mod">
-        <p class="nav-h">Essais</p>
-        <a href="prototypes/index.html">Prototypes de design</a>
-        <a href="prototypes/35-atelier/index.html">Atelier de ponts</a>
-        <a href="prototypes/0-atlas/index.html">Feuille maîtresse</a>
+        <p class="nav-h">Les outils</p>
+        <a href="../index.html">← Accueil</a>
+        <a href="../prototypes/14a-antiseche-ouverte/index.html">Découvrir</a>
+        <a href="../prototypes/35-atelier/index.html">Coller des morceaux</a>
+        <a href="../prototypes/0-atlas/index.html">Ma progression</a>
       </div>`;
   }
   function setNavCurrent(view) {

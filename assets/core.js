@@ -371,7 +371,7 @@
 
 
   /* Lien vers le site principal depuis une sous-page (prototypes) : window.CADRES_BASE = '../../' */
-  const siteLink = hash => (window.CADRES_BASE ? window.CADRES_BASE + 'index.html' : '') + hash;
+  const siteLink = hash => (window.CADRES_BASE ? window.CADRES_BASE + 'reference/index.html' : '') + hash;
   /* Expression d'un onglet retrouvée par sa clé (« parce que », « bien que »…). */
   const findItem = (key, tab) => { const l = BY_KEY.get(norm(key)) || []; return l.find(it => !tab || it.tab === tab) || null; };
 
