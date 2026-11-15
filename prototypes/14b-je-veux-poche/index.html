@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Je veux… en poche</title>
+<meta name="description" content="Prototype 1 + 4, variante B : partir de ce que tu veux dire, avec l’antisèche des 12 intentions toujours en poche, et découvrir une nouvelle forme de phrase à chaque visite.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+<script>
+  (function () {
+    try { var t = localStorage.getItem('p14b:theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) { /* stockage indisponible */ }
+  })();
+</script>
+</head>
+<body>
+<a class="skip" href="#app">Aller au contenu</a>
+<a class="skip" href="#poche-h">Aller à l’antisèche</a>
+
+<header class="topbar" id="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="#" aria-label="Prototype 1 + 4, variante B : Je veux… + poche — accueil"><span class="brand-p">Prototype 1 + 4 · B</span><span class="brand-sep" aria-hidden="true">·</span><span class="brand-j">Je veux… + poche</span></a>
+    <nav class="toplinks" aria-label="Prototypes">
+      <a href="../index.html">← Tous les prototypes</a>
+      <a href="../../index.html">Site complet</a>
+    </nav>
+    <button type="button" class="theme-btn" id="theme-btn" aria-label="Passer au thème sombre">
+      <svg class="i-sun" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <svg class="i-moon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="layout">
+  <main id="app" tabindex="-1"></main>
+
+  <aside class="poche" id="poche" aria-labelledby="poche-h">
+    <button type="button" class="poche-bar" id="poche-bar" aria-expanded="false" aria-controls="poche-sheet">
+      <span class="pb-strip" aria-hidden="true"></span>
+      <span class="pb-icon" id="pb-icon" aria-hidden="true"></span>
+      <span class="pb-txt"><span class="pb-k">Antisèche en poche</span><span class="pb-cur" id="pb-cur">Les 12 intentions</span></span>
+      <svg class="pb-up" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="poche-sheet" id="poche-sheet">
+      <div class="ph">
+        <div class="ph-top">
+          <h2 class="ph-t" id="poche-h" tabindex="-1">Antisèche</h2>
+          <p class="ph-sub">Les 12 intentions. Touche une tuile pour y aller.</p>
+          <button type="button" class="ph-close" id="poche-close">
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 3l10 10M13 3 3 13" stroke="currentColor" stroke-width="2.2" fill="none"/></svg>
+            Fermer
+          </button>
+        </div>
+        <div class="ph-ctrl">
+          <div class="side-seg" role="group" aria-label="Côté de l’antisèche">
+            <button type="button" data-side="recto" aria-pressed="true">Recto</button>
+            <button type="button" data-side="verso" aria-pressed="false">Verso</button>
+          </div>
+          <button type="button" class="tog tog-qc" id="tog-qc" aria-pressed="false"><span class="tog-box" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.4 4.8 9 10 3" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>Québec</button>
+          <button type="button" class="tog" id="tog-ex" aria-pressed="false"><span class="tog-box" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M2 6.4 4.8 9 10 3" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>Exemples</button>
+        </div>
+      </div>
+      <div class="poche-body" id="poche-body">
+        <section id="recto" class="side" aria-label="Recto : les 12 intentions">
+          <div class="tiles" id="tiles"></div>
+        </section>
+        <section id="verso" class="side" aria-label="Verso : repères" hidden></section>
+      </div>
+    </div>
+  </aside>
+</div>
+<div class="scrim" id="scrim" hidden></div>
+<p class="sr" id="live" aria-live="polite"></p>
+
+<noscript><p class="wrap">Ce prototype a besoin de JavaScript.</p></noscript>
+
+<script>window.CADRES_BASE = '../../';</script>
+<script src="../../assets/registry.js"></script>
+<script src="../../content/meta.js"></script>
+<script src="../../content/onglet-01.js"></script>
+<script src="../../content/onglet-02.js"></script>
+<script src="../../content/onglet-03.js"></script>
+<script src="../../content/onglet-04.js"></script>
+<script src="../../content/onglet-05.js"></script>
+<script src="../../content/onglet-06.js"></script>
+<script src="../../content/onglet-07.js"></script>
+<script src="../../content/onglet-08.js"></script>
+<script src="../../content/onglet-09.js"></script>
+<script src="../../content/onglet-10.js"></script>
+<script src="../../content/onglet-11.js"></script>
+<script src="../../content/onglet-12.js"></script>
+<script src="../../content/guide.js"></script>
+<script src="../../content/relier.js"></script>
+<script src="../../content/fiches.js"></script>
+<script src="../../content/methode.js"></script>
+<script src="../../content/regles.js"></script>
+<script src="../../content/essentiels.js"></script>
+<script src="../../content/visuels.js"></script>
+<script src="../../assets/core.js"></script>
+<script src="../../assets/viz.js"></script>
+<script src="../../assets/progres.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
