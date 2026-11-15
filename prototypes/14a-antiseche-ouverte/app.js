@@ -1142,6 +1142,7 @@
     if (!REG_IDS.includes(r) || r === REG) return;
     REG = r;
     store.set('reg', r);
+    document.documentElement.dataset.reg = r;
     const seg = $('.seg');
     if (seg) seg.dataset.reg = r;
     const inp = $('#reg-' + r);
@@ -1320,6 +1321,7 @@
   function init() {
     const app = $('#app');
     if (!app) return;
+    document.documentElement.dataset.reg = REG;
     app.innerHTML = shellHTML();
     initTheme();
     applyEx(store.get('ex', '0') === '1');

@@ -64,6 +64,8 @@
   const mapSpecs = tab => V.forTab(tab).filter(s => s.type === 'map');
   const cleanLabel = l => String(l).replace(/\s*\[[^\]]+\]/g, '');
   const altsOf = l => cleanLabel(l).split(/\s+\/\s+/).map(pk);
+  const altPairs = l => cleanLabel(l).split(/\s+\/\s+/).map(a => { const m = a.match(/\s\+\s(.+)$/); return { k: pk(a), cons: m ? m[1] : '' }; });
+  const consOk = (a, b) => !a || !b || C.consKind(a) === C.consKind(b);
   const boldKeys = r => Array.from(String((r.from || '') + ' ' + (r.to || '')).matchAll(/\*\*(.+?)\*\*/g)).map(m => pk(m[1]));
 
   const rekey = obj => {
@@ -106,6 +108,9 @@
       const al = (ALIAS2[tab] || {})[k] || (ALIAS[tab] || {})[k];
       if (al) {
         if (al.charAt(0) === '#') { const c = customFor(tab, pk(al.slice(1)), f.e); if (c) return Object.assign(c, { own: false, via: al.slice(1) }); }
+        if (al.charAt(0) === '@') {
+          for (const s of mapSpecs(tab)) { const r = s.rows.find(x => boldKeys(x).includes(pk(al.slice(1)))); if (r) return { spec: s, row: r, own: false, map: true, via: al.slice(1) }; }
+        }
         const r = byLabel(tab, al);
         if (r) return Object.assign(r, { own: false });
       }
@@ -115,7 +120,7 @@
     }
     /* 4. Même libellé dans un schéma de l'onglet. */
     for (const k of keys) for (const s of rowSpecs(tab)) {
-      const r = s.rows.find(x => altsOf(x.label).includes(k));
+      const r = s.rows.find(x => altPairs(x.label).some(a => a.k === k && consOk(a.cons, f.cons)));
       if (r) return { spec: s, row: r, own: true };
     }
     /* 5. Mot en gras dans un schéma « A → B ». */
@@ -307,7 +312,10 @@
     const qcNotes = [];         // « Points particuliers au Québec » (HTML)
     let n = 0;
 
-    const idKeys = f => f.arrow ? [pk(f.track)] : uniq([pk(f.track)].concat(splitAlts(f.e).map(pk))).filter(Boolean);
+    /* Identité d'une forme : sa clé ; pour un mot court (« en », « après », « si »…), la clé + ce qui suit. */
+    const short = f => !!f.cons && !/\s/.test(String(f.e).trim()) && pk(f.e).length <= 5;
+    const ident = f => f.arrow ? pk(f.track) : short(f) ? `${pk(f.e)} ${pk(f.cons)}` : pk(f.track);
+    const seen1 = new Set();
     function add(f) {
       f.tab = tab;
       f.n = ++n;
@@ -315,19 +323,29 @@
       f.pk = pk(f.track);
       f.lvl = levelOf(f.codes, f.badge);
       const firstWord = /^[^\s,]+,/.test(f.e) ? [pk(f.e.split(',')[0])] : [];
-      f.dkeys = f.arrow ? [pk(f.track)] : uniq(splitAlts(f.e).map(pk).concat(firstWord)).filter(Boolean);
+      f.dkeys = f.arrow ? [pk(f.track)] : uniq([ident(f)].concat(splitAlts(f.e).map(pk), firstWord)).filter(Boolean);
       f.ckeys = splitAlts(f.e).map(ckey);
       forms.push(f);
       FORMS[f.id] = f;
       return f;
     }
-    const take = f => { const ks = idKeys(f); if (ks.some(k => seen.has(k))) return false; ks.forEach(k => seen.add(k)); return true; };
+    function take(f) {
+      const id = ident(f);
+      if (f.step === 1) {
+        [id, pk(f.track)].concat(f.arrow ? [] : splitAlts(f.e).map(pk)).forEach(k => { seen1.add(k); seen.add(k); });
+        return true;
+      }
+      if (seen.has(id)) return false;
+      if (!f.arrow && !short(f) && splitAlts(f.e).some(a => seen1.has(pk(a)))) return false;
+      seen.add(id);
+      return true;
+    }
 
     /* Marche 1 : essentiels */
     E.cles.forEach(c => {
       const arrow = /→/.test(c.c || '');
       const f = { step: 1, src: 'cle', e: c.e, c: c.c || '', cons: c.c ? c.c.replace(/^\+\s*/, '') : '', ex: c.ex, codes: codesOf(c.r || 'C'), arrow };
-      f.track = arrow ? `${c.e} ${f.cons}` : c.e;
+      f.track = arrow ? `${c.e} ${f.cons}`.replace(/conditionnel présent/, 'conditionnel') : c.e;
       take(f); add(f);
     });
     E.qc.forEach(q => {
@@ -377,24 +395,29 @@
       }
       if (/≠/.test(it.plain) || subIsDist(it.sub)) return;
       if (/points grammaticaux/i.test(it.section.title || '') && /→/.test(it.plain)) return;
-      if (PREP_ONLY.test(it.plain)) { pre = it.plain; return; }
+      if (PREP_ONLY.test(it.plain)) { pre = /\+/.test(it.plain) ? it.plain : ''; return; }
       const arrow = /^→/.test(it.rest || '');
       const sentence = !it.cons && isSentence(it.plain);
       let e = it.head;
       if (!it.cons && /\s\+\s/.test(it.plain)) e = it.plain;
       if (sentence) e = it.plain;
+      let rest = !arrow && it.rest ? it.rest : '', restNu = '';
+      const rm = rest.match(/^(.*?)\s*:\s+(.+)$/);
+      if (rm) { rest = rm[1]; restNu = rm[2].replace(/[\s.]+$/, ''); }
       const f = {
         step: 2, src: 'item', e, cons: it.cons || '', codes: it.regs, item: it, arrow, sentence,
+        consLabel: arrow ? `${it.cons} ${it.rest}` : (it.cons || ''),
         c: it.cons ? `+ ${it.cons}${arrow ? ' ' + it.rest : ''}` : '',
-        restNote: !arrow && it.rest ? it.rest.replace(/^[\s,:;]+|[\s.;]+$/g, '') : '',
+        restNote: rest.replace(/^[\s,:;(]+|[\s.;)]+$/g, ''), restNu,
         sec: { key: it.section.id, num: it.section.num, title: it.section.title },
         group: it.sub || it.row || '',
         groupQC: subIsQC(it.sub)
       };
       if (pre && /,/.test(it.plain)) { f.restNote = pre; }
       pre = '';
-      f.track = arrow ? `${it.head} ${it.cons} ${it.rest}`
-        : (!it.cons && /\s\+\s/.test(it.plain)) ? it.plain.replace(/\s+\+\s+/g, ' ') : e;
+      f.track = arrow ? `${it.head} ${it.cons} ${it.rest}`.replace(/→\s*/, '→ ').replace(/conditionnel présent/, 'conditionnel')
+        : (!it.cons && /\s\+\s/.test(it.plain)) ? it.plain.replace(/\s+\+\s+/g, ' ')
+        : short(f) ? `${e} ${it.cons}` : e;
       if (!take(f)) return;
       const k = pk(f.track);
       if (it.regs.some(r => r === 'S' || r === 'R' || r === 'D')) f.step = 3;
@@ -440,7 +463,8 @@
       if (!ex && f.diag && f.diag.own && !f.diag.custom && !f.diag.map && f.diag.row.ex) { ex = f.diag.row.ex; exSrc = 'viz'; }
       if (f.sentence) { ex = f.e; exSrc = 'self'; }
       f.ex = ex; f.exSrc = exSrc;
-      f.nuance = nu || sens || (f.diag && f.diag.own && !f.diag.custom && !f.diag.map ? f.diag.row.sub || '' : '');
+      const sub = f.diag && f.diag.own && !f.diag.custom && !f.diag.map ? f.diag.row.sub || '' : '';
+      f.nuance = nu || sens || f.restNu || (/^\+/.test(sub) ? '' : sub);
     });
 
     const m = { tab, forms, confondre: uniq(confondre), qcNotes: uniq(qcNotes) };
@@ -612,7 +636,7 @@
     const s = statusOf(f);
     return `<li><button type="button" class="chip lvl-${f.lvl}" id="c-${f.id}" data-chip="${f.id}" data-g="${gid}" aria-expanded="false" aria-controls="det-${gid}">
       <span class="sd" data-st="${s.st}" data-rv="${s.revoir}" aria-hidden="true"></span>
-      <span class="chip-e">${T(f.e)}</span>${f.cons ? `<span class="chip-c">+&nbsp;${esc(f.cons)}</span>` : ''}${badgeHTML(f)}
+      <span class="chip-e">${T(f.e)}</span>${f.consLabel ? `<span class="chip-c">+&nbsp;${esc(f.consLabel)}</span>` : ''}${badgeHTML(f)}
       <span class="sr chip-st">, ${ST_TXT[s.st].toLowerCase()}${s.revoir ? ', à revoir' : ''}</span>
     </button></li>`;
   }

@@ -152,7 +152,7 @@ button { font: inherit; color: inherit; }
 .i-moon { display: block; } .i-sun { display: none; }
 :root[data-theme="dark"] .i-moon { display: none; } :root[data-theme="dark"] .i-sun { display: block; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .i-moon { display: none; } :root:not([data-theme="light"]) .i-sun { display: block; } }
-@media (max-width: 380px) { .brand-p { display: none; } .brand-sep { display: none; } }
+@media (max-width: 380px) { .brand { font-size: .84rem; gap: 5px; } }
 @media (min-width: 720px) {
   .toplinks { order: 2; flex: 0 1 auto; margin-left: auto; border: 0; }
   .theme-btn { margin-left: 0; order: 3; }
