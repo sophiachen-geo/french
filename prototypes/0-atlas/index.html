@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Atlas des schémas</title>
+<title>Feuille maîtresse</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap">
@@ -41,17 +41,54 @@ section > p { color:var(--sub); margin:0 0 12px; }
 .plate { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px clamp(14px,2.4vw,22px) 4px; margin-bottom:12px; }
 .plate .vz-t { font:700 1.1rem/1.2 var(--f-d); }
 :focus-visible { outline:2.5px solid var(--acc); outline-offset:2px; border-radius:4px; }
+.prog { display: grid; gap: 12px; margin: 18px 0 8px; }
+.prog-top { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: 8px; }
+.kpi { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.kpi b { display: block; font: 800 1.6rem/1.1 var(--f-d); font-variant-numeric: tabular-nums; }
+.kpi span { font-size: .8rem; color: var(--sub); }
+.prog-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+.prog-card h2 { font: 700 1.05rem/1.2 var(--f-d); margin: 0 0 10px; }
+.bars { display: grid; gap: 7px; }
+.bar-row { display: grid; grid-template-columns: minmax(0, 11rem) minmax(0, 1fr) 3.2rem; gap: 10px; align-items: center; font-size: .86rem; text-decoration: none; color: var(--ink); }
+.bar-row:hover .bar-l { text-decoration: underline; }
+.bar-l { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar { display: flex; height: 12px; border-radius: 6px; overflow: hidden; background: var(--line); }
+.bar i { display: block; height: 100%; }
+.b-m { background: var(--acc); } .b-c { background: color-mix(in srgb, var(--acc) 55%, var(--card)); } .b-v { background: color-mix(in srgb, var(--acc) 25%, var(--card)); }
+.bar-n { font: 600 .78rem/1 ui-monospace, Menlo, monospace; color: var(--sub); text-align: right; font-variant-numeric: tabular-nums; }
+.keyline { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 10px 0 0; font-size: .76rem; color: var(--sub); }
+.keyline span { display: inline-flex; align-items: center; gap: 5px; }
+.keyline i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.revoir { display: flex; flex-wrap: wrap; gap: 6px; }
+.revoir span { border: 1.5px solid var(--or); border-radius: 999px; padding: 2px 10px; font-size: .86rem; }
+.days { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; align-items: end; height: 64px; }
+.days i { display: block; background: var(--acc); border-radius: 3px 3px 0 0; min-height: 2px; }
+.days-l { display: flex; justify-content: space-between; font-size: .72rem; color: var(--sub); margin-top: 4px; }
+.prog-2 { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 760px) { .prog-2 { grid-template-columns: 1.4fr 1fr; } }
+.stat { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-right: 6px; border-radius: 50%; border: 2px solid var(--acc); background: var(--card); vertical-align: -5px; cursor: pointer; padding: 0; flex: none; }
+.stat::after { content: ""; width: 10px; height: 10px; border-radius: 50%; }
+.stat.s-vu::after { background: color-mix(in srgb, var(--acc) 30%, transparent); }
+.stat.s-en-cours::after { background: color-mix(in srgb, var(--acc) 65%, transparent); }
+.stat.s-maitrise { background: var(--acc); }
+.stat.s-maitrise::after { background: var(--card); width: 6px; height: 6px; }
+.plate .vz-l { grid-template-columns: auto minmax(0, 1fr); column-gap: 8px; }
+.plate .vz-l > .stat { grid-row: 1; grid-column: 1; margin: 0; align-self: center; }
+.plate .vz-l > :not(.stat) { grid-column: 2; }
+section > h2 .sec-p { margin-left: auto; font: 600 .8rem/1 ui-monospace, Menlo, monospace; color: var(--sub); }
+.btn-small { border: 1.5px solid var(--line); background: var(--card); color: var(--sub); border-radius: 8px; padding: 4px 10px; font: inherit; font-size: .8rem; cursor: pointer; }
 </style>
 </head>
 <body>
 <nav class="bar" aria-label="Navigation">
-  <strong>Atlas des schémas</strong>
+  <strong>Feuille maîtresse · atlas des schémas</strong>
   <a href="../index.html">← Tous les prototypes</a>
   <a href="../../index.html">Site complet</a>
 </nav>
 <main class="wrap">
-  <h1>Atlas des schémas</h1>
-  <p class="lede">Tous les schémas du site sur une seule page. Chaque ligne montre ce que fait une expression ; touche son nom pour la retrouver dans le site complet.</p>
+  <h1>Feuille maîtresse</h1>
+  <p class="lede">Tous les schémas sur une page, et ta progression dans les deux outils : <b>découvrir</b> (prototypes 1 + 4) et <b>coller des morceaux</b> (atelier de ponts). Touche la pastille d’une ligne pour la marquer « je connais ».</p>
+  <section class="prog" id="prog" aria-label="Ta progression"></section>
   <p class="key"><span class="k-or"><i></i>action introduite par l’expression (le cadre)</span><span class="k-vi"><i></i>phrase principale</span></p>
   <div class="tools"><button type="button" id="ex" aria-pressed="true">Exemples affichés</button></div>
   <nav class="nav" id="nav" aria-label="Fonctions"></nav>
@@ -81,6 +118,8 @@ section > p { color:var(--sub); margin:0 0 12px; }
 <script src="../../content/visuels.js"></script>
 <script src="../../assets/core.js"></script>
 <script src="../../assets/viz.js"></script>
+<script src="../../assets/progres.js"></script>
+<script src="../3-pont/catalogue.js"></script>
 <script>
 (function () {
   const S = window.SITE, C = window.CADRES, V = window.VIZ;
@@ -111,7 +150,88 @@ section > p { color:var(--sub); margin:0 0 12px; }
     const b = document.getElementById('ex');
     b.setAttribute('aria-pressed', String(examples));
     b.textContent = examples ? 'Exemples affichés' : 'Exemples masqués';
+    decorer();
+    progression();
   }
+
+  /* ---------- Statut de chaque ligne de schéma ---------- */
+  const PR = window.PROGRES;
+  const ORDRE = { nouveau: 0, vu: 1, 'en-cours': 2, maitrise: 3 };
+  const LIB = { nouveau: 'nouveau', vu: 'vu', 'en-cours': 'en cours', maitrise: 'maîtrisé' };
+  const partsOf = t => t.replace(/\[[^\]]*\]/g, '').split(/\s\/\s/).map(x => x.trim()).filter(Boolean);
+  const statutDe = parts => parts.map(x => PR.statut(x)).sort((a, b) => ORDRE[a] - ORDRE[b])[0] || 'nouveau';
+  function decorer() {
+    document.querySelectorAll('.plate .vz-row:not(.vz-head) .vz-e').forEach(e => {
+      if (e.previousElementSibling && e.previousElementSibling.classList.contains('stat')) return;
+      const parts = partsOf(e.textContent);
+      if (!parts.length) return;
+      const s = statutDe(parts);
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'stat s-' + s;
+      btn.dataset.parts = JSON.stringify(parts);
+      btn.title = `${parts.join(' / ')} : ${LIB[s]} — touche pour marquer « je connais »`;
+      btn.setAttribute('aria-label', btn.title);
+      e.parentNode.insertBefore(btn, e);
+    });
+    document.querySelectorAll('section[id^="f"]').forEach(sec => {
+      const t = +sec.id.slice(1);
+      const items = C.TABS[t] ? C.TABS[t].items.filter(i => i.filterable).map(i => i.head) : [];
+      const r = PR.resume(items);
+      const h = sec.querySelector('h2');
+      if (h && !h.querySelector('.sec-p')) h.insertAdjacentHTML('beforeend', `<span class="sec-p">${r.maitrise}/${r.total}</span>`);
+    });
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('.stat');
+    if (!b) return;
+    const parts = JSON.parse(b.dataset.parts);
+    const all = parts.every(p => PR.statut(p) === 'maitrise');
+    parts.forEach(p => { const r = PR.get(p); if (all ? (r && r.connu) : !(r && r.connu)) PR.marquer(p, 'connu', 'atlas'); });
+    draw();
+  });
+
+  /* ---------- Tableau de bord ---------- */
+  function barre(r) {
+    const t = Math.max(r.total, 1);
+    return `<span class="bar" role="img" aria-label="${r.maitrise} maîtrisés, ${r['en-cours']} en cours, ${r.vu} vus sur ${r.total}"><i class="b-m" style="width:${r.maitrise / t * 100}%"></i><i class="b-c" style="width:${r['en-cours'] / t * 100}%"></i><i class="b-v" style="width:${r.vu / t * 100}%"></i></span>`;
+  }
+  function progression() {
+    const tabs = Object.keys(S.tabs).map(Number).sort((a, b) => a - b);
+    const tous = tabs.flatMap(t => C.TABS[t].items.filter(i => i.filterable).map(i => i.head));
+    const R = PR.resume(tous);
+    const A = window.ATELIER;
+    const ponts = A ? Object.keys(A.ponts).map(k => A.ponts[k].e) : [];
+    const RP = PR.resume(ponts);
+    const jours = PR.jours();
+    const days = []; for (let i = 13; i >= 0; i--) { const d = new Date(Date.now() - i * 864e5).toISOString().slice(0, 10); days.push([d, jours[d] || 0]); }
+    const maxd = Math.max(1, ...days.map(d => d[1]));
+    const rev = PR.aRevoir();
+    document.getElementById('prog').innerHTML = `
+      <div class="prog-top">
+        <div class="kpi"><b>${R.maitrise}</b><span>formes maîtrisées sur ${R.total}</span></div>
+        <div class="kpi"><b>${R['en-cours'] + R.vu}</b><span>formes découvertes, à consolider</span></div>
+        <div class="kpi"><b>${RP.maitrise}<small style="font-size:.9rem;color:var(--sub)"> / ${RP.total}</small></b><span>ponts maîtrisés à l’atelier</span></div>
+        <div class="kpi"><b>${rev.length}</b><span>à revoir</span></div>
+      </div>
+      <div class="prog-2">
+        <div class="prog-card"><h2>Par fonction</h2><div class="bars">${tabs.map(t => {
+          const r = PR.resume(C.TABS[t].items.filter(i => i.filterable).map(i => i.head));
+          return `<a class="bar-row" href="#f${t}"><span class="bar-l">${t}. ${ess[t] ? ess[t].je : S.tabs[t].title}</span>${barre(r)}<span class="bar-n">${r.maitrise}/${r.total}</span></a>`;
+        }).join('')}${A ? `<a class="bar-row" href="../35-atelier/index.html"><span class="bar-l">Atelier de ponts</span>${barre(RP)}<span class="bar-n">${RP.maitrise}/${RP.total}</span></a>` : ''}</div>
+          <p class="keyline"><span><i class="b-m"></i>maîtrisé</span><span><i class="b-c"></i>en cours</span><span><i class="b-v"></i>vu</span><span><i style="background:var(--line)"></i>nouveau</span></p></div>
+        <div class="prog-card"><h2>À revoir</h2>${rev.length ? `<div class="revoir">${rev.slice(0, 24).map(k => `<span>${k}</span>`).join('')}</div>` : '<p style="margin:0;color:var(--sub)">Rien pour l’instant. Les erreurs de l’atelier et les formes marquées « à revoir » apparaîtront ici.</p>'}
+          <h2 style="margin-top:16px">Tes 14 derniers jours</h2>
+          <div class="days" role="img" aria-label="Exercices faits par jour sur 14 jours">${days.map(([d, n]) => `<i title="${d} : ${n}" style="height:${n / maxd * 100}%"></i>`).join('')}</div>
+          <div class="days-l"><span>il y a 2 semaines</span><span>aujourd’hui</span></div>
+          <p style="margin:12px 0 0"><button type="button" class="btn-small" id="raz">Remettre ma progression à zéro</button></p></div>
+      </div>`;
+    const raz = document.getElementById('raz');
+    raz.addEventListener('click', () => {
+      if (raz.dataset.sure) { PR.effacer(); draw(); return; }
+      raz.dataset.sure = '1'; raz.textContent = 'Confirmer : tout effacer';
+    });
+  }
+  PR.surChangement(() => { /* autre onglet */ });
   document.getElementById('ex').addEventListener('click', () => {
     examples = !examples;
     try { localStorage.setItem('atlas:ex', examples ? '1' : '0'); } catch (e) {}

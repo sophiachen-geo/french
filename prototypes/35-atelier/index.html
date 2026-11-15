@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Atelier de ponts</title>
+<meta name="description" content="Deux phrases : trouve le lien, puis le pont qui les relie. Schémas, règle et pont retourné à chaque réponse.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script>(function () { try { var t = JSON.parse(localStorage.getItem('atelier:theme')); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {} })();</script>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <span class="brand"><svg viewBox="0 0 32 20" width="32" height="20" aria-hidden="true"><path d="M2 16 Q16 -2 30 16" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M2 16h28M9 16V9M16 16V5M23 16V9" stroke="currentColor" stroke-width="2"/></svg>Prototype 3 + 5 · Atelier de ponts</span>
+    <nav class="top-nav" aria-label="Navigation"><a href="../index.html">← Tous les prototypes</a><a href="../0-atlas/index.html">Ma feuille de progression</a><a href="../../index.html">Site complet</a></nav>
+    <button type="button" class="icon" id="theme" aria-label="Changer de thème"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5v17A8.5 8.5 0 0 0 12 3.5Z" fill="currentColor"/></svg></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>Atelier de ponts</h1>
+    <p>Deux phrases. Trouve d’abord <b>la sorte de lien</b>, puis <b>le pont</b> qui les colle ensemble.</p>
+  </section>
+
+  <div class="filters" id="filters" role="group" aria-label="Choisir ce que tu pratiques"></div>
+
+  <div class="layout">
+    <section class="ex" id="ex" aria-live="polite"></section>
+    <aside class="side" aria-labelledby="carte-h">
+      <div class="side-card">
+        <div class="side-h"><h2 id="carte-h">La carte des ponts</h2><p>Chaque station est un pont. Plus elle est pleine, mieux tu le maîtrises. Touche une station pour t’exercer avec ce pont.</p></div>
+        <div id="score" class="score"></div>
+        <div id="carte" class="carte"></div>
+        <p class="legende"><span><i class="st s-nouveau"></i>nouveau</span><span><i class="st s-vu"></i>vu</span><span><i class="st s-en-cours"></i>en cours</span><span><i class="st s-maitrise"></i>maîtrisé</span></p>
+      </div>
+    </aside>
+  </div>
+</main>
+<script>window.CADRES_BASE = '../../';</script>
+<script src="../../assets/registry.js"></script>
+<script src="../../content/meta.js"></script>
+<script src="../../content/onglet-01.js"></script>
+<script src="../../content/onglet-02.js"></script>
+<script src="../../content/onglet-03.js"></script>
+<script src="../../content/onglet-04.js"></script>
+<script src="../../content/onglet-05.js"></script>
+<script src="../../content/onglet-06.js"></script>
+<script src="../../content/onglet-07.js"></script>
+<script src="../../content/onglet-08.js"></script>
+<script src="../../content/onglet-09.js"></script>
+<script src="../../content/onglet-10.js"></script>
+<script src="../../content/onglet-11.js"></script>
+<script src="../../content/onglet-12.js"></script>
+<script src="../../content/guide.js"></script>
+<script src="../../content/relier.js"></script>
+<script src="../../content/fiches.js"></script>
+<script src="../../content/methode.js"></script>
+<script src="../../content/regles.js"></script>
+<script src="../../content/essentiels.js"></script>
+<script src="../../content/visuels.js"></script>
+<script src="../../assets/core.js"></script>
+<script src="../../assets/viz.js"></script>
+<script src="../../assets/progres.js"></script>
+<script src="../3-pont/catalogue.js"></script>
+<script src="../3-pont/banque/temps.js"></script>
+<script src="../3-pont/banque/cause.js"></script>
+<script src="../3-pont/banque/but.js"></script>
+<script src="../3-pont/banque/condition.js"></script>
+<script src="../3-pont/banque/opposition.js"></script>
+<script src="../3-pont/banque/concession.js"></script>
+<script src="../3-pont/banque/comparaison.js"></script>
+<script src="../3-pont/banque/ajout.js"></script>
+<script src="../3-pont/banque/relatif.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

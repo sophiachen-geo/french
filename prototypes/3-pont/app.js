@@ -545,6 +545,7 @@
 
   /* ---------- Carte des liens entre les fonctions ---------- */
   function renderMap(cur) {
+    if (!document.getElementById('map-svg')) return;
     const W = 360, H = 268, cx = W / 2, cy = H / 2 - 4, rx = 128, ry = 100;
     const order = ['temps', 'cause', 'consequence', 'but', 'condition', 'concession', 'precision'];
     const pos = {};
