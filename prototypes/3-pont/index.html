@@ -27,8 +27,10 @@
 <main id="app" class="wrap">
 
   <section class="intro" aria-labelledby="h-intro">
-    <p class="kicker mono">Plan n° 03 — atelier de ponts</p>
-    <h1 id="h-intro">Deux idées. Un pont. <span class="hl">Une phrase.</span></h1>
+    <div class="intro-t">
+      <p class="kicker mono">Plan n° 03 — atelier de ponts</p>
+      <h1 id="h-intro">Deux idées. Un pont. <span class="hl">Une phrase.</span></h1>
+    </div>
     <ol class="steps mono" aria-label="Comment ça marche">
       <li><span>1</span> Choisis une situation</li>
       <li><span>2</span> Choisis le lien</li>
@@ -74,24 +76,44 @@
         </p>
       </section>
 
+
+      <section class="panel map" id="map" aria-labelledby="h-map">
+        <h2 class="sh" id="h-map"><span class="sh-n mono">08</span>Les ponts se répondent · <span class="sh-s">liens entre les fonctions</span></h2>
+        <div class="map-grid">
+          <div class="map-svg" id="map-svg"></div>
+          <div>
+            <ul class="map-list" id="map-list"></ul>
+            <h3 class="sub mono">Enchaîne plusieurs ponts</h3>
+            <ul class="chains" id="chains"></ul>
+          </div>
+        </div>
+      </section>
     </div>
     <div class="col col-r">
 
       <section class="panel phrase" id="phrase" aria-labelledby="h-phrase">
-        <h2 class="sh" id="h-phrase"><span class="sh-n mono">04</span>Ta phrase</h2>
-        <p class="ph-meta" id="ph-meta"></p>
-        <p class="ph-ask" id="ph-ask"></p>
+        <div class="ph-head">
+          <h2 class="sh" id="h-phrase"><span class="sh-n mono">04</span>Ta phrase</h2>
+          <div class="ph-tools">
+            <button type="button" class="btn" id="btn-say"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg><span>Écouter</span></button>
+            <button type="button" class="btn" id="btn-practice" aria-pressed="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.8"/></svg><span>M’exercer (cacher)</span></button>
+          </div>
+        </div>
+        <div class="ph-top">
+          <p class="ph-meta" id="ph-meta"></p>
+          <p class="ph-ask" id="ph-ask"></p>
+        </div>
         <div class="ph-stage">
           <p class="ph-text" id="ph-text" tabindex="-1" aria-live="polite"></p>
           <button type="button" class="ph-hide" id="ph-hide"></button>
         </div>
-        <div class="ph-tools">
-          <button type="button" class="btn" id="btn-say"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg><span>Écouter</span></button>
-          <button type="button" class="btn" id="btn-practice" aria-pressed="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.8"/></svg><span>M’exercer (cacher)</span></button>
+        <div class="ph-foot">
+          <div>
+            <h3 class="sub mono">Ce qui change</h3>
+            <div id="ph-chg"></div>
+          </div>
+          <p class="relance" id="ph-relance"></p>
         </div>
-        <h3 class="sub mono">Ce qui change</h3>
-        <div id="ph-chg"></div>
-        <p class="relance" id="ph-relance"></p>
       </section>
 
       <section class="panel" id="s-viz" aria-labelledby="h-viz">
@@ -124,17 +146,6 @@
         <div id="rule"></div>
       </section>
 
-      <section class="panel map" id="map" aria-labelledby="h-map">
-        <h2 class="sh" id="h-map"><span class="sh-n mono">08</span>Les ponts se répondent · <span class="sh-s">liens entre les fonctions</span></h2>
-        <div class="map-grid">
-          <div class="map-svg" id="map-svg"></div>
-          <div>
-            <ul class="map-list" id="map-list"></ul>
-            <h3 class="sub mono">Enchaîne plusieurs ponts</h3>
-            <ul class="chains" id="chains"></ul>
-          </div>
-        </div>
-      </section>
 
     </div>
   </div>

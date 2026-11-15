@@ -113,6 +113,7 @@
       if (!buf) return;
       const cls = [f.neutral ? 'seg-n' : f.cadre ? 'seg-c' : 'seg-m'];
       if (f.conn) cls.push('w-conn');
+      if (f.conn && /'$/.test(buf)) cls.push('w-el');
       if (f.chg) cls.push('w-chg');
       out += `<span class="${cls.join(' ')}">${esc(typo(buf))}</span>`;
       buf = '';
@@ -178,12 +179,12 @@
         break;
       case 'but': {
         const g = v.goal, act = other(g);
-        mk.push({ k: 'box', x1: 0, x2: 40, c: col(act), text: typo(lab(act)) }, { k: 'arrow', x1: 42, x2: 53, c: 'cadre' },
-          { k: 'box', x1: 55, x2: 90, c: col(g), text: typo(lab(g)), dashed: true },
+        mk.push({ k: 'box', x1: 0, x2: 37, c: col(act), text: typo(lab(act)) }, { k: 'arrow', x1: 39, x2: 48, c: 'cadre' },
+          { k: 'box', x1: 50, x2: 90, c: col(g), text: typo(lab(g)), dashed: true },
           v.neg ? { k: 'flag', x: 95, c: 'neg', cross: true } : { k: 'flag', x: 95, c: col(g) });
-        if (v.who) txt(72.5, v.who, -11, 'muted');
-        txt(20, 'action', 14, 'muted');
-        txt(72.5, v.neg ? 'à éviter' : 'but visé', 14, 'muted');
+        if (v.who) txt(70, v.who, -11, 'muted');
+        txt(18.5, 'action', 14, 'muted');
+        txt(70, v.neg ? 'à éviter' : 'but visé', 14, 'muted');
         break;
       }
       case 'wall': {
@@ -194,15 +195,15 @@
         break;
       }
       case 'rel':
-        mk.push({ k: 'box', x1: 0, x2: 30, c: col(other(cId)), text: typo(v.n) }, { k: 'line', x1: 30, x2: 33, c: 'muted' },
-          { k: 'box', x1: 33, x2: 100, c: 'cadre', text: typo(v.r) });
-        txt(15, 'le nom', 14, 'muted');
-        txt(66.5, 'ce qu’on en dit', 14, 'muted');
+        mk.push({ k: 'box', x1: 0, x2: 33, c: col(other(cId)), text: typo(v.n) }, { k: 'line', x1: 33, x2: 36, c: 'muted' },
+          { k: 'box', x1: 36, x2: 100, c: 'cadre', text: typo(v.r) });
+        txt(16.5, 'le nom', 14, 'muted');
+        txt(68, 'ce qu’on en dit', 14, 'muted');
         break;
       case 'two':
-        mk.push({ k: 'box', x1: 0, x2: 45, c: col(L), text: typo(lab(L)) }, { k: 'box', x1: 55, x2: 100, c: col(R), text: typo(lab(R)) });
-        txt(50, '·  ·', 3, 'muted');
-        txt(50, 'pas de pont', 14, 'muted');
+        mk.push({ k: 'box', x1: 0, x2: 45, c: col(L), text: typo(lab(L)) }, { k: 'box', x1: 49, x2: 100, c: col(R), text: typo(lab(R)) });
+        txt(47, '.', 3, 'muted');
+        txt(47, 'deux phrases, pas de pont', 14, 'muted');
         break;
 
       /* --- Temps : deux couloirs sur l'axe passé / aujourd'hui / futur --- */
@@ -215,7 +216,7 @@
         const lm = (x, t, anchor) => mk.push({ k: 'text', x, text: typo(t), dy: 12, c: 'main', anchor, lane: 1 });
         if (k === 'depuis') {
           mk.push({ k: 'point', x: 22, c: 'cadre', lane: 0 }, { k: 'arrow', x1: 22, x2: 84, lane: 1 });
-          lc(22, lab(cId)); lm(56, lab(mId));
+          lc(22, lab(cId)); lm(53, lab(mId), 'start');
         } else if (k === 'avant') {
           mk.push({ k: 'bar', x1: lo, x2: at(.44), lane: 1 }, { k: 'bar', x1: at(.58), x2: hi, c: 'cadre', lane: 0 });
           lm(at(.22), lab(mId)); lc(at(.79), lab(cId));
@@ -316,7 +317,7 @@
 
     /* eau et culées */
     let wave = `M0 ${H - 9}`;
-    for (let x = 0; x < W; x += 24) wave += ` q6 -5 12 0 t12 0`;
+    for (let x = 0; x + 24 <= W; x += 24) wave += ` q6 -5 12 0 t12 0`;
     g += `<path class="br-water" d="${wave}"/>`;
     g += `<rect class="br-abut" x="0" y="${dY}" width="${ab}" height="${H - dY}"/><rect class="br-abut" x="${R}" y="${dY}" width="${ab}" height="${H - dY}"/>`;
 
@@ -342,12 +343,12 @@
       return s;
     };
     const condK = ['si-reel', 'si-imag', 'si-pqp', 'cas', 'condition'];
-    const raise = condK.includes(k) ? (k === 'si-reel' || k === 'condition' ? -11 : k === 'cas' ? -7 : -22) : 0;
+    const raise = condK.includes(k) ? (k === 'si-reel' || k === 'condition' ? -9 : k === 'cas' ? -6 : -15) : 0;
     const raisedSide = roleA === 'main' ? 'a' : 'b';            // pont-levis : la moitié « principale » se lève
     ['a', 'b'].forEach(side => {
       const role = side === 'a' ? roleA : roleB;
-      const piv = side === 'a' ? `${mid} ${dY + dH}` : `${mid} ${dY + dH}`;
-      const ang = raise && side === raisedSide ? (side === 'a' ? -raise : raise) : 0;
+      const piv = side === 'a' ? `${L} ${dY + dH}` : `${R} ${dY + dH}`;
+      const ang = raise && side === raisedSide ? (side === 'a' ? raise : -raise) : 0;
       g += ang ? `<g class="br-leaf${k !== 'si-reel' && k !== 'condition' ? ' br-dashg' : ''}" transform="rotate(${ang} ${piv})">${half(side, role)}</g>` : half(side, role);
     });
     if (raise) g += `<circle class="br-q" cx="${mid}" cy="${dY + dH + 12}" r="9"/><text class="br-qt" x="${mid}" y="${dY + dH + 16}" text-anchor="middle">?</text>`;
@@ -379,9 +380,9 @@
         g += `<text class="br-lab" x="${x2}" y="${ly}" text-anchor="${tailLeft ? 'end' : 'start'}">${esc(lg.t2)}</text>`;
       }
       if (k === 'but') {
-        const fx = tailLeft ? R - 16 : L + 16, d = tailLeft ? 1 : -1;
-        g += `<line class="br-pole" x1="${fx}" x2="${fx}" y1="${railY}" y2="${railY - 46}"/><path class="br-flag${(cur.v || {}).neg ? ' f-neg' : ''}" d="M${fx} ${railY - 46} l${16 * d} 6 l${-16 * d} 6 Z"/>`;
-        if ((cur.v || {}).neg) g += `<path class="br-x" d="M${fx - 9} ${railY - 48} l18 18 M${fx + 9} ${railY - 48} l-18 18"/>`;
+        const fx = tailLeft ? W - ab / 2 : ab / 2, d = tailLeft ? -1 : 1;
+        g += `<line class="br-pole" x1="${fx}" x2="${fx}" y1="${dY}" y2="${dY - 50}"/><path class="br-flag${(cur.v || {}).neg ? ' f-neg' : ''}" d="M${fx} ${dY - 50} l${15 * d} 6 l${-15 * d} 6 Z"/>`;
+        if ((cur.v || {}).neg) g += `<path class="br-x" d="M${fx + 7 * d - 9} ${dY - 52} l18 18 M${fx + 7 * d + 9} ${dY - 52} l-18 18"/>`;
       }
       if (k === 'rel') {
         const nx = tailLeft ? R - 22 : L + 22;
@@ -408,7 +409,7 @@
   /* ---------- Rendu des zones ---------- */
   function renderPairs() {
     $('#pairs').innerHTML = P.pairs.map(p => `<button type="button" class="pair" data-pair="${p.id}" aria-pressed="${p.id === st.pair}">
-      ${icon(p.icon)}<span class="pair-t">${esc(p.theme)}</span><span class="pair-s">${esc(typo(p.a.t.replace(/\.$/, '')))}…</span>${p.demo ? '<span class="pair-d">exemple du site</span>' : ''}</button>`).join('');
+      ${icon(p.icon)}<span class="pair-t">${esc(p.theme)}</span><span class="pair-s">${esc(typo(p.a.t.replace(/\.$/, '')))}…</span>${p.demo ? '<span class="pair-d" title="L’exemple « J’ai déménagé » du site complet"><span class="pd-l">exemple du </span>site</span>' : ''}</button>`).join('');
   }
 
   function cardHTML(cur, side) {
@@ -420,7 +421,7 @@
     return `<article class="card r-${role}" aria-label="Idée ${side.toUpperCase()}">
       <header class="card-h"><span class="card-k">${side.toUpperCase()}${variant ? '′' : ''}</span><span class="card-r">${role === 'cadre' ? `cadre · introduite par « ${esc(typo(cur.e))} »` : 'phrase principale'}</span></header>
       <p class="card-t">${esc(typo(idea.t))}</p>
-      <p class="card-f"><span>${ord}</span>${variant ? `<span class="card-v">variante pour ce lien (idée de départ : ${esc(typo(p[side].t))})</span>` : ''}</p>
+      <p class="card-f"><span>${ord}</span>${variant ? `<span class="card-v" title="Idée de départ : ${esc(typo(p[side].t))}">${side.toUpperCase()}′ = variante pour ce lien</span>` : ''}</p>
     </article>`;
   }
 
@@ -445,7 +446,7 @@
       const n = p.links.filter(c => c.rel === r.id).length;
       const on = r.id === cur.rel || (cur.parent && cur.parent.rel === r.id && r.id === cur.rel);
       return `<button type="button" class="rel" data-rel="${r.id}" aria-pressed="${r.id === (cur.parent ? cur.parent.rel : cur.rel)}"${n ? '' : ' disabled'}>
-        ${icon(r.id)}<span class="rel-t">${esc(r.label)}</span><span class="rel-q">« ${esc(typo(r.q))} »</span><span class="rel-n" aria-label="${n} ponts">${n}</span></button>`;
+        ${icon(r.id)}<span class="rel-t">${esc(r.label)}</span><span class="rel-q">${esc(typo('« ' + r.q + ' »'))} <span class="rel-n">· ${n}&nbsp;pont${n > 1 ? 's' : ''}</span></span></button>`;
     }).join('');
     const relId = cur.parent ? cur.parent.rel : cur.rel;
     const e = ESS[REL[relId].tab];
@@ -460,7 +461,7 @@
     $('#chips').innerHTML = chips.map(c => {
       const on = c.id === st.chip;
       return `<button type="button" class="chip m-${c.m}" data-chip="${c.id}" aria-pressed="${on}">
-        <span class="chip-e">${esc(typo(c.e))}</span><span class="chip-m">${esc(typo(c.tag || P.modes[c.m].label))}</span>${c.reg ? `<span class="chip-r" title="${c.reg === 'F-QC' ? 'Familier québécois' : 'Surtout à l’oral'}">${c.reg === 'F-QC' ? 'QC' : 'oral'}</span>` : ''}${c.demo ? '<span class="chip-d" title="Exemple du site">site</span>' : ''}</button>`;
+        <span class="chip-e">${esc(typo(c.e))}</span><span class="chip-m">${esc(typo(c.tag || P.modes[c.m].label))}</span>${c.reg ? `<span class="chip-r" title="${c.reg === 'F-QC' ? 'Familier québécois' : 'Surtout à l’oral'}">${c.reg === 'F-QC' ? 'QC' : 'oral'}</span>` : ''}${c.demo ? '<span class="chip-d" title="Phrase de l’exemple « J’ai déménagé » du site">ex. du site</span>' : ''}</button>`;
     }).join('');
   }
 
@@ -479,10 +480,10 @@
     const box = $('#phrase');
     box.className = 'panel phrase m-' + m + (st.practice ? ' is-practice' : '');
     $('#ph-meta').innerHTML = `<span class="tag t-rel">${icon(cur.rel)}${esc(rel.label)}</span><span class="tag m-${m}">${esc(typo(tagOf(cur)))}</span>${cur.reg ? `<span class="tag t-reg">${cur.reg === 'F-QC' ? 'familier québécois' : 'oral'}</span>` : ''}${cur.parent ? '<span class="tag t-flip">pont retourné</span>' : ''}`;
-    $('#ph-ask').innerHTML = `<span class="bubble">${esc(typo(rel.q))}</span><span class="ask-l">On te demande « ${esc(typo(rel.q))} » — tu réponds avec <b>${esc(typo(cur.e))}</b> :</span>`;
+    $('#ph-ask').innerHTML = `<span class="ask-k mono">On te demande</span><span class="bubble">${esc(typo(rel.q))}</span><span class="ask-l">Tu réponds avec <b>${esc(typo(cur.e))}</b> :</span>`;
     $('#ph-text').innerHTML = sentenceHTML(cur.s);
     $('#ph-text').setAttribute('aria-label', plain(cur.s));
-    $('#ph-hide').innerHTML = `Dis la phrase à voix haute avec « <b>${esc(typo(cur.e))}</b> », puis vérifie.`;
+    $('#ph-hide').innerHTML = `<span>Dis la phrase à voix haute avec «\u202F<b>${esc(typo(cur.e))}</b>\u202F», puis touche ici pour vérifier.</span>`;
     $('#ph-chg').innerHTML = changesHTML(cur);
     $('#ph-relance').innerHTML = e ? `<span class="rl-k">Pour continuer la conversation</span> <q>${esc(typo(e.relance))}</q>` : '';
     $('#btn-practice').setAttribute('aria-pressed', String(!!st.practice));
@@ -643,9 +644,9 @@
     }
     if (t.id === 'btn-flip') { doFlip(); return; }
     if (t.id === 'btn-practice') { st.practice = !st.practice; renderPhrase(current()); if (!st.practice) $('#ph-text').focus(); return; }
-    if (t.id === 'ph-hide') { st.practice = false; renderPhrase(current()); return; }
+    if (t.closest('#ph-hide')) { st.practice = false; renderPhrase(current()); return; }
     if (t.id === 'btn-say') { speak(plain(current().s).replace(/^—\s*/, '')); return; }
-    if (t.id === 'dock-go') { $('#phrase').scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'center' }); return; }
+    if (t.id === 'dock-go') { $('#phrase').scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' }); return; }
     if (t.id === 'theme') { cycleTheme(); return; }
   });
 
@@ -694,10 +695,9 @@
   function setupDock() {
     const dock = $('#dock');
     if (!('IntersectionObserver' in window)) return;
-    let phraseVisible = false, benchVisible = true;
-    const upd = () => { dock.hidden = phraseVisible || benchVisible; document.body.classList.toggle('has-dock', !dock.hidden); };
-    new IntersectionObserver(es => { es.forEach(x => { phraseVisible = x.isIntersecting; }); upd(); }, { threshold: 0.25 }).observe($('#phrase'));
-    new IntersectionObserver(es => { es.forEach(x => { benchVisible = x.isIntersecting; }); upd(); }, { threshold: 0.4 }).observe($('#bench'));
+    let phraseVisible = false;
+    const upd = () => { dock.hidden = phraseVisible; document.body.classList.toggle('has-dock', !dock.hidden); };
+    new IntersectionObserver(es => { es.forEach(x => { phraseVisible = x.isIntersecting; }); upd(); }, { threshold: 0.5 }).observe($('#ph-text'));
   }
 
   /* Redessiner le pont si la largeur change. */

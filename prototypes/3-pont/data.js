@@ -25,7 +25,7 @@ window.PONT = {
     { id: 'consequence', label: 'Conséquence', q: 'Et alors ?', tab: 5 },
     { id: 'but', label: 'But', q: 'Pour quoi faire ?', tab: 6 },
     { id: 'condition', label: 'Condition', q: 'Et si… ?', tab: 7 },
-    { id: 'concession', label: 'Opposition / Concession', short: 'Concession', q: 'Mais quand même ?', tab: 8 },
+    { id: 'concession', label: 'Opposition / Concession', short: 'Concession', q: 'Malgré ça ?', tab: 8 },
     { id: 'precision', label: 'Précision', q: 'Lequel ?', tab: 2 }
   ],
 
@@ -299,7 +299,7 @@ window.PONT = {
         but: { a: { t: 'Je pars plus tôt.', s: 'je pars plus tôt' }, b: { t: "Je n'arrive pas en retard.", s: 'pas de retard' } },
         condition: { a: { t: 'Le métro est arrêté.', s: 'métro arrêté' }, b: { t: "Je prends l'autobus.", s: "je prends l'autobus" } },
         concession: { b: { t: "Je suis arrivée à l'heure.", s: "arrivée à l'heure" } },
-        precision: { a: { t: 'La ligne orange était arrêtée.', s: 'la ligne orange' }, b: { t: 'La ligne orange passe près de chez moi.', s: 'qui passe près de chez moi' } }
+        precision: { a: { t: 'La ligne orange était arrêtée.', s: 'la ligne orange' }, b: { t: 'La ligne orange passe près de chez moi.', s: 'passe près de chez moi' } }
       },
       links: [
         { id: 'vu-que', e: 'vu que', reg: 'O', rel: 'cause', m: 'ind',
@@ -446,7 +446,7 @@ window.PONT = {
           ch: [['je réussis', 'réussir', 'infinitif : même sujet (je)']],
           flip: 'pour-que', fn: 'Avec deux sujets différents (mon mari… je) : « pour que » + subjonctif.' },
         { id: 'pour-que', e: 'pour que', rel: 'but', m: 'subj',
-          a: { t: 'Je peux étudier.', s: 'je peux étudier' }, b: { t: 'Mon mari garde les enfants.', s: 'il garde les enfants' },
+          a: { t: 'Je peux étudier.', s: 'je peux étudier' }, b: { t: 'Mon mari garde les enfants.', s: 'garde les enfants' },
           s: 'Mon mari garde les enfants <{pour que} je [puisse] étudier>.',
           cadre: 'a', first: 'b', v: { k: 'but', goal: 'a', who: 'autre sujet' }, gen: ['but', 'pour que'], rule: 'subj',
           note: 'autre sujet → subjonctif',
