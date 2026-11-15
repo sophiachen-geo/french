@@ -13,7 +13,9 @@
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  const md = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\*(.+?)\*/g, '<i>$1</i>');
+  /* Typographie française : espace insécable avant ? ! : ; » et après « (pas de « ? » seul en début de ligne). */
+  const nb = s => String(s == null ? '' : s).replace(/« /g, '«\u00a0').replace(/ ([»?!:;])/g, '\u00a0$1');
+  const md = s => esc(nb(s)).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\*(.+?)\*/g, '<i>$1</i>');
   const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const reduce = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const wait = ms => new Promise(r => setTimeout(r, reduce() ? Math.min(ms, 60) : ms));
@@ -30,12 +32,12 @@
   const SERIE = 10;
 
   /* ---------- Codes ---------- */
-  const COURT = {
+  const COURT0 = {
     temps: ['Temps', 'Quand ?'], cause: ['Cause', 'Pourquoi ?'], but: ['But', 'Pour quoi faire ?'],
     condition: ['Condition', 'Et si… ?'], opposition: ['Opposition', 'Quelle différence ?'], concession: ['Concession', 'Malgré quoi ?'],
     comparaison: ['Comparaison', 'Plus ou moins ?'], ajout: ['Ajout', 'Quoi d’autre ?'], relatif: ['Description', 'Lequel ?']
   };
-  const INDICE = {
+  const INDICE0 = {
     temps: 'Une action se place avant, après ou pendant l’autre.',
     cause: 'Une phrase est la raison de l’autre.',
     but: 'Une action sert à obtenir (ou à éviter) l’autre.',
@@ -46,6 +48,8 @@
     ajout: 'Une phrase ajoute une idée ou un exemple à l’autre.',
     relatif: 'Une phrase décrit un nom de l’autre phrase.'
   };
+  const COURT = {}, INDICE = {};
+  Object.keys(COURT0).forEach(k => { COURT[k] = COURT0[k].map(nb); INDICE[k] = nb(INDICE0[k]); });
   /* Ce qui suit le pont : code court (étiquette) + sens (légende). */
   const MODE = {
     ind: ['+IND', 'indicatif'], subj: ['+SUBJ', 'subjonctif'], cond: ['+COND', 'conditionnel'], inf: ['+INF', 'infinitif'],
@@ -294,8 +298,7 @@
   }
 
   function chantier() {
-    const it = st.item, lien = s => s !== 'lien';
-    const on = lien(st.stage);
+    const it = st.item, on = st.stage !== 'lien';
     return `<div class="chantier${on ? ' has-lien l-' + it.rel : ''}" id="ch">
       <div class="bank" data-bank="a"><span class="tag" aria-hidden="true">A</span><p class="txt">${rive(it.a, 'a')}</p></div>
       <div class="river" aria-hidden="true">
@@ -311,13 +314,13 @@
   function panel() {
     if (st.stage === 'lien') {
       return `<section class="panel" id="panel" aria-labelledby="qh">
-        <h2 class="qh" id="qh" tabindex="-1"><span class="n" aria-hidden="true">1</span>Quelle sorte de lien ?</h2>
+        <h2 class="qh" id="qh" tabindex="-1"><span class="n" aria-hidden="true">1</span>Quelle sorte de lien&nbsp;?</h2>
         <div class="tiles">${st.liensOpts.map(id => `<button type="button" class="tile l-${id}" data-lien="${id}"><span class="t-ico">${svg(id, 24)}</span><span class="t-txt"><b>${esc(COURT[id][0])}</b><span>${esc(COURT[id][1])}</span></span></button>`).join('')}</div>
         <div class="fb" id="fb"></div>
       </section>`;
     }
     return `<section class="panel" id="panel" aria-labelledby="qh">
-      <h2 class="qh" id="qh" tabindex="-1"><span class="n" aria-hidden="true">2</span>Quel pont ?</h2>
+      <h2 class="qh" id="qh" tabindex="-1"><span class="n" aria-hidden="true">2</span>Quel pont&nbsp;?</h2>
       <div class="pieces">${st.pontsOpts.map(o => { const p = P[o.p]; return `<button type="button" class="piece" data-pont="${o.p}" aria-label="Poser « ${esc(p.e)} » : ${esc(MODE[p.m] ? MODE[p.m][1] : '')}"><b>${esc(p.e)}</b>${code(p.m)}</button>`; }).join('')}</div>
       <p class="geste">${svg('main', 18)}<span class="g-fin">Glisse une pièce dans le trou, ou clique dessus.</span><span class="g-doigt">Touche une pièce pour la poser.</span></p>
     </section>`;
@@ -341,8 +344,8 @@
     const it = st.item, o = st.choix, sh = st.shown, rel = it.rel;
     const autres = it.ok.filter(k => k !== sh);
     const verdict = o.ok
-      ? `<p class="verdict ok">${mk('ok', 14)}<span>Oui !</span></p>`
-      : `<p class="verdict ko">${mk('ko', 14)}<span>Pas « ${esc(P[o.p].e)} »</span></p>`;
+      ? `<p class="verdict ok">${mk('ok', 14)}<span>Oui&nbsp;!</span></p>`
+      : `<p class="verdict ko">${mk('ko', 14)}<span>Pas «&nbsp;${esc(P[o.p].e)}&nbsp;»</span></p>`;
     const rang = x => x.ok ? (x.o === sh ? 0 : 1) : (x.p === o.p ? 2 : 3);
     const ordre = st.pontsOpts.slice().sort((x, y) => rang(x) - rang(y));
     return `<div class="explic l-${rel}">
@@ -383,7 +386,7 @@
       <div class="r-more">
         <div class="p1-act">${ecoute(plain(b.s))}</div>
         <div class="card ok back"><p class="card-h"><b class="pt">${esc(p.e)}</b>${code(p.m)}${regs(p.reg)}</p>${diag(b.p, it, b.c)}</div>
-        <p class="change">${svg('change', 18)}<span><b>Ce qui change :</b> ${md(b.fn)}</span></p>
+        <p class="change">${svg('change', 18)}<span><b>Ce qui change&nbsp;:</b> ${md(b.fn)}</span></p>
       </div>
     </section>`;
   }
@@ -394,7 +397,7 @@
     return `<section class="bilan" aria-labelledby="h-bilan">
       <h2 id="h-bilan" tabindex="-1">Série terminée</h2>
       <p class="score"><b>${n}</b><span>/ ${SERIE}</span></p>
-      <p class="bilan-k">${n === SERIE ? 'Tous tes ponts tiennent.' : n >= 7 ? 'Solide !' : 'Ça se construit.'}</p>
+      <p class="bilan-k">${n === SERIE ? 'Tous tes ponts tiennent.' : n >= 7 ? 'Solide&nbsp;!' : 'Ça se construit.'}</p>
       ${revoir.length ? `<p class="bilan-k">${mk('ko', 12)} À revoir</p><p class="chips">${revoir.map(id => `<span class="pt">${esc(P[id].e)}</span>`).join('')}</p>` : ''}
       <div class="act act-1"><button type="button" class="btn btn-main" data-serie>Nouvelle série${svg('fleche', 20)}</button></div>
       <p class="bilan-lien"><a href="../0-atlas/index.html">Ma feuille de progression</a></p>
@@ -539,7 +542,7 @@
       marque(btn, 'ok');
       $$('.tile').forEach(b => { b.disabled = true; });
       colore();
-      fb.innerHTML = `<p class="fb-l good">${mk('ok', 12)}<span>Oui : <b>${esc(COURT[id][0])}</b>.</span></p>`;
+      fb.innerHTML = `<p class="fb-l good">${mk('ok', 12)}<span>Oui&nbsp;: <b>${esc(COURT[id][0])}</b>.</span></p>`;
       annonce(`Oui : ${COURT[id][0]}. Question 2 : quel pont ?`);
       setBusy(true);
       setTimeout(() => { if (tok === st.tok) { setBusy(false); versPont(); } }, reduce() ? 250 : 850);
@@ -552,8 +555,8 @@
       if (bon) marque(bon, 'ok');
       $$('.tile').forEach(b => { b.disabled = true; });
       colore();
-      fb.innerHTML = `<p class="fb-l">${svg('ampoule', 20)}<span>C’est <b class="lien-chip l-${it.rel}">${svg(it.rel, 16)}${esc(COURT[it.rel][0])}</b> ${esc(INDICE[it.rel])}</span></p>
-        <button type="button" class="btn btn-main" data-lien-go>Quel pont ?${svg('fleche', 20)}</button>`;
+      fb.innerHTML = `<p class="fb-l">${svg('ampoule', 20)}<span>C’est <b class="lien-chip l-${it.rel}">${svg(it.rel, 16)}${esc(COURT[it.rel][0])}</b>&nbsp;: ${esc(INDICE[it.rel].charAt(0).toLowerCase() + INDICE[it.rel].slice(1))}</span></p>
+        <button type="button" class="btn btn-main" data-lien-go>Quel pont&nbsp;?${svg('fleche', 20)}</button>`;
       annonce(`C’est : ${COURT[it.rel][0]}. ${INDICE[it.rel]}`);
       focusSans($('[data-lien-go]'));
     } else {

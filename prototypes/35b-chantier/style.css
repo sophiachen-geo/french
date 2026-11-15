@@ -66,7 +66,7 @@ button:disabled { cursor: default; }
 .nav-theme { display: none; }
 .ib { display: inline-grid; place-items: center; width: 44px; height: 44px; flex: none; border-radius: 50%; border: 0; background: transparent; color: inherit; }
 .ib:hover { background: color-mix(in srgb, currentColor 14%, transparent); }
-.top .ib-aide { border: 1.5px solid color-mix(in srgb, currentColor 40%, transparent); width: 40px; height: 40px; margin: 2px; }
+.top .ib-aide { border: 1.5px solid color-mix(in srgb, currentColor 40%, transparent); }
 .ib-menu { display: none; }
 @media (max-width: 879px) {
   .ib-menu { display: inline-grid; }
@@ -132,14 +132,14 @@ button:disabled { cursor: default; }
 .slot > .mk { position: absolute; right: -14px; top: 50%; margin-top: -13px; width: 26px; height: 26px; box-shadow: 0 0 0 3px var(--card); }
 @media (min-width: 880px) {
   .chantier { grid-template-columns: minmax(0, 1fr) 250px minmax(0, 1fr); align-items: stretch; }
-  .bank { display: flex; align-items: center; padding: 18px 18px 18px 50px; min-height: 132px; }
+  .bank { display: flex; align-items: center; padding: 18px 18px 18px 50px; min-height: 150px; }
   .bank .txt { font-size: 1.22rem; }
   .river { margin: 10px -14px; padding: 0 22px; min-height: 0; }
-  .river-tag { left: 50%; top: auto; bottom: 8px; transform: translateX(-50%); }
+  .river-tag { left: 50%; top: 6px; transform: translateX(-50%); }
   .slot { max-width: 100%; min-width: 170px; }
   .slot.placed { border-inline: 0; border-block: 7px solid var(--river); }
   .built .slot.placed { min-height: 54px; margin: 0 -36px; min-width: calc(100% + 72px); }
-  .slot > .mk { right: 50%; top: -13px; margin: 0 -13px 0 0; }
+  .slot > .mk { right: 46px; top: -15px; margin: 0; }
 }
 
 /* ---------- Questions ---------- */
@@ -179,7 +179,7 @@ button:disabled { cursor: default; }
 .piece:focus-visible { outline-offset: 4px; }
 .piece.used, .piece.lifted { opacity: .28; }
 .piece:disabled:not(.used) { opacity: .5; }
-.piece .code, .slot .code { border-color: color-mix(in srgb, currentColor 55%, transparent); }
+.piece .code, .slot .code { color: inherit; border-color: color-mix(in srgb, currentColor 55%, transparent); }
 @media (hover: hover) and (pointer: fine) { .piece:not(:disabled) { cursor: grab; } }
 .ghost { position: fixed !important; z-index: 60; margin: 0; pointer-events: none; opacity: 1 !important; box-shadow: 0 16px 34px rgba(0, 0, 0, .28) !important; }
 body.dragging, body.dragging * { cursor: grabbing !important; user-select: none; }
