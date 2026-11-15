@@ -190,9 +190,196 @@ window.P14C = {
   },
 
 
-  alias2: {},
-  noDiag: {},
-  written: {},
+  /* Ajout C — correspondances « même image que… » pour les marches 2 et 3 (clé de la forme → libellé de schéma).
+     '#clé' = schéma construit (custom) ; '@mot' = ligne d'un schéma « A → B » où ce mot est en gras.
+     Seulement quand la relation dessinée est vraiment la même. */
+  alias2: {
+    1: {
+      'au sujet de': 'Pour ce qui est de…', 'concernant': 'Pour ce qui est de…', 'en ce qui concerne': 'Pour ce qui est de…',
+      'en ce qui a trait à': 'Pour ce qui est de…', 'en matière de': 'Pour ce qui est de…', 'dans le domaine de': 'Pour ce qui est de…',
+      'quant à moi': 'Quant à…', 'pour ma part': 'Quant à…',
+      'à ce sujet': '#à cet égard', 'à propos de ça': '#à cet égard', 'là-dessus': '#à cet égard', 'sur ce point': '#à cet égard',
+      'justement': '#en parlant de ça', 'pis, en parlant de ça': '#en parlant de ça',
+      "ce qui me dérange, c'est": 'Ce qui…, c’est…', "ce que je trouve intéressant, c'est": 'Ce qui…, c’est…',
+      "ce dont on parle, c'est": 'Ce qui…, c’est…', "ce à quoi je fais référence, c'est": 'Ce qui…, c’est…',
+      "ce que j'essaie d'expliquer, c'est": 'Ce qui…, c’est…', "ce qui est important, c'est que": 'Ce qui…, c’est…',
+      "ce que je veux surtout souligner, c'est": 'Ce qui…, c’est…', "la question, c'est de savoir si": 'Ce qui…, c’est…',
+      "dans le fond, ce que je veux dire, c'est": 'Ce qui…, c’est…', "moi, ce que je trouve important, c'est": 'Ce qui…, c’est…'
+    },
+    2: {
+      'le moment où': 'où', 'le jour où': 'où', "l'époque où": 'où', "l'endroit où": 'où',
+      'la façon dont': 'dont', 'la manière dont': 'dont', 'celle dont': 'dont', 'ce dont': 'dont',
+      'celui qui': 'qui', 'celle qui': 'qui', 'ceux qui': 'qui', 'celles qui': 'qui', 'ce qui': 'qui',
+      'celui que': 'que', 'ce que': 'que',
+      'le sujet auquel': 'auquel / sur lequel…', 'celui auquel': 'auquel / sur lequel…', 'celle à laquelle': 'auquel / sur lequel…',
+      'sur lequel, sur laquelle, sur lesquels, sur lesquelles': 'auquel / sur lequel…',
+      'dans lequel, dans laquelle, dans lesquels, dans lesquelles': '#dans lequel',
+      'les circonstances dans lesquelles': '#dans laquelle',
+      'les raisons pour lesquelles': '#la raison pour laquelle',
+      'mon frère, il travaille à québec': '#mon frère, il', 'cette émission-là, je la connais': '#mon frère, il',
+      'il est vraiment bon, ce restaurant-là': '#ce restaurant-là', 'je la connais bien, cette personne-là': '#ce restaurant-là',
+      "c'est compliqué, cette situation-là": '#ce restaurant-là'
+    },
+    3: {
+      'lorsque': '#quand', 'tandis que': 'pendant que', 'en même temps que': 'pendant que', 'pendant ce temps': 'pendant que',
+      'aussi longtemps que': 'tant que', 'aussitôt que': 'dès que', 'à mesure que': 'au fur et à mesure que',
+      'au fil de': 'au fur et à mesure que', 'petit à petit': 'au fur et à mesure que', 'progressivement': 'au fur et à mesure que',
+      'toutes les fois que': 'chaque fois que', 'dès nom': 'à partir de', "d'ici à": 'd’ici', "en l'espace de": 'en',
+      'durant': 'pendant', 'voilà': 'ça fait… que', 'ça fait': 'ça fait… que', "jusqu'au moment où": 'jusqu’à ce que',
+      'en attendant que': 'jusqu’à ce que', 'après avoir/être': 'après que / après + inf. passé', 'après nom': 'après que / après + inf. passé',
+      'avant nom': 'avant de / avant que', 'une fois': 'une fois que', 'depuis lors': 'depuis', 'au terme de': 'au bout de',
+      'tout à l\'heure': '#tantôt', 'bientôt': '#sous peu', "d'ici peu": '#sous peu',
+      'maintenant': "#à l'heure actuelle", 'actuellement': "#à l'heure actuelle", 'en ce moment': "#à l'heure actuelle",
+      'présentement': "#à l'heure actuelle", 'astheure': "#à l'heure actuelle", 'ces temps-ci': "#à l'heure actuelle",
+      'pour le moment': "#à l'heure actuelle", "pour l'instant": "#à l'heure actuelle",
+      'en fin de semaine': '#la fin de semaine'
+    },
+    4: {
+      'étant donné que': 'puisque', 'dès lors que': 'puisque', 'dans la mesure où': 'puisque',
+      'parce que là': 'parce que', "c'est que": 'parce que', "la raison, c'est que": 'parce que', "cela s'explique par": 'parce que',
+      'en effet': 'parce que', "ce qui explique cette situation, c'est": 'parce que',
+      'en raison de': 'comme', 'du fait de': 'comme', 'compte tenu de': 'comme', 'étant donné': 'comme', 'vu nom': 'comme',
+      'à la suite de': 'comme', 'ce qui explique que': 'comme', "ce qui m'a poussée à": 'comme', "ce qui m'a amenée à": 'comme',
+      'par manque de': 'faute de + nom', 'en raison du manque de': 'faute de + nom',
+      'surtout que': 'd’autant plus que', "d'autant que": 'd’autant plus que', 'notamment parce que': 'd’autant plus que',
+      'en particulier parce que': 'd’autant plus que', "d'autant plus": 'd’autant plus que'
+    },
+    5: {
+      'en conséquence': 'donc / alors', 'il en résulte que': 'donc / alors', 'ce qui fait que': 'donc / alors', 'de ce fait': 'donc / alors',
+      'voilà pourquoi': 'donc / alors', 'dès lors': 'donc / alors', 'résultat': 'donc / alors', 'pour cette raison': 'donc / alors',
+      'ce qui signifie que': 'donc / alors', 'cela implique que': 'donc / alors', 'de là': 'donc / alors', 'en conséquence de': 'donc / alors',
+      'ça veut dire que': 'donc / alors', 'cela a pour conséquence de': 'donc / alors', 'ce qui entraîne': 'donc / alors', 'ce qui provoque': 'donc / alors',
+      'fait que là': 'fait que [F-QC]', 'faque là': 'fait que [F-QC]',
+      'de sorte que': 'si bien que + ind.', 'de manière que': 'si bien que + ind.', 'de façon que': 'si bien que + ind.',
+      'au point que': 'tellement… que', 'à tel point que': 'tellement… que', 'au point de': 'tellement… que',
+      'si adj./adv': 'tellement… que', 'tellement': 'tellement… que', 'tant de': 'tellement… que', 'tellement de': 'tellement… que',
+      'verbe tellement que': 'tellement… que', 'verbe tant que': 'tellement… que',
+      'trop adj./adv': 'trop… pour', 'assez adj./adv': 'assez… pour', 'suffisamment': 'assez… pour'
+    },
+    6: {
+      'de sorte que': 'pour que + subj.', 'de manière que': 'pour que + subj.', 'de façon que': 'pour que + subj.',
+      "dans l'intention de": 'pour + inf.', 'de façon à': 'pour + inf.', 'pour pouvoir': 'pour + inf.',
+      'mon objectif est de': "#le but, c'est de", 'mon but est de': "#le but, c'est de", "l'objectif consiste à": "#le but, c'est de",
+      "l'idée, c'est de": "#le but, c'est de", "ce que je vise, c'est": "#le but, c'est de", "ce que je veux, c'est": "#le but, c'est de",
+      "ce que je cherche à faire, c'est": "#le but, c'est de", "ce à quoi j'aspire, c'est": "#le but, c'est de",
+      "ce vers quoi je tends, c'est": "#le but, c'est de", "ce pour quoi je travaille, c'est": "#le but, c'est de",
+      "ce que j'essaie de faire, c'est": "#le but, c'est de", 'à long terme, je voudrais': "#le but, c'est de",
+      'dans le fond, je veux surtout': "#le but, c'est de",
+      'pour que ne pas': 'pour ne pas / pour éviter de', "afin d'éviter de": 'pour ne pas / pour éviter de',
+      'par précaution': 'pour ne pas / pour éviter de', 'dans le but de prévenir': 'pour ne pas / pour éviter de',
+      'de crainte de': 'de peur de / de peur que', 'de crainte que': 'de peur de / de peur que'
+    },
+    7: {
+      'si plus-que-parfait → conditionnel passé': 'si + plus-que-parfait → cond. passé',
+      'imaginons que': 'si + imparfait → conditionnel', 'supposons que': 'si + imparfait → conditionnel',
+      'à supposer que': 'si + imparfait → conditionnel', 'en supposant que': 'si + imparfait → conditionnel',
+      'en admettant que': 'si + imparfait → conditionnel', 'admettons que': 'si + imparfait → conditionnel',
+      'imagine que': 'si + imparfait → conditionnel', 'mettons, là, que': 'si + imparfait → conditionnel',
+      'dans le cas où': 'au cas où + cond.', "dans l'éventualité où": 'au cas où + cond.', 'en cas de': 'au cas où + cond.',
+      'dans ce cas': 'au cas où + cond.', "si c'est le cas": 'au cas où + cond.', 'si tel est le cas': 'au cas où + cond.',
+      "s'il y a lieu": 'au cas où + cond.', 'au besoin': 'au cas où + cond.', 'si nécessaire': 'au cas où + cond.',
+      'à condition de': 'à condition que + subj.', 'pourvu que': 'à condition que + subj.', 'du moment que': 'à condition que + subj.',
+      'pour autant que': 'à condition que + subj.', 'sous réserve de': 'à condition que + subj.', 'sous réserve que': 'à condition que + subj.',
+      'à moins de': 'sauf si / à moins que', 'excepté si': 'sauf si / à moins que', 'sauf nom': 'sauf si / à moins que',
+      "à l'exception de": 'sauf si / à moins que', 'hormis': 'sauf si / à moins que',
+      'sinon': 'sauf si / à moins que', 'autrement': 'sauf si / à moins que', 'sans quoi': 'sauf si / à moins que'
+    },
+    8: {
+      'mais': 'par contre / en revanche', 'cependant': 'par contre / en revanche', 'toutefois': 'par contre / en revanche',
+      'néanmoins': 'par contre / en revanche', 'ben oui, mais': 'par contre / en revanche', 'en même temps': 'par contre / en revanche',
+      'certes mais': 'par contre / en revanche', "c'est vrai, mais": 'par contre / en revanche', 'je comprends, sauf que': 'par contre / en revanche',
+      'pourtant': 'même si + ind.', 'quoique': 'bien que + subj.',
+      'quand même': 'malgré + nom', 'tout de même': 'malgré + nom', 'malgré tout': 'malgré + nom', 'malgré cela': 'malgré + nom',
+      'même là': 'malgré + nom', 'ça reste que': 'malgré + nom', 'il reste que': 'malgré + nom', "n'empêche que": 'malgré + nom',
+      "quoi qu'il en soit": 'malgré + nom',
+      'au contraire': 'contrairement à', "à l'inverse": 'contrairement à', 'inversement': 'contrairement à', 'à la différence de': 'contrairement à',
+      'aussi adj': 'aussi… que / autant que', 'autant de': 'aussi… que / autant que', 'de même que': 'aussi… que / autant que',
+      'ainsi que': 'aussi… que / autant que', 'comme nom/proposition': 'aussi… que / autant que', 'davantage que': 'plus… que',
+      "d'un côté de l'autre": 'alors que / tandis que', "d'une part d'autre part": 'alors que / tandis que',
+      "d'un autre côté": 'alors que / tandis que', 'en contrepartie': 'alors que / tandis que',
+      'à la place de': 'au lieu de / plutôt que'
+    },
+    9: {
+      'je crois que': 'je pense que / je trouve que', 'je considère que': 'je pense que / je trouve que', 'selon moi': 'je pense que / je trouve que',
+      'pour ma part': 'je pense que / je trouve que', 'personnellement': 'je pense que / je trouve que',
+      'en ce qui me concerne': 'je pense que / je trouve que', "j'ai l'impression que": 'je pense que / je trouve que',
+      'je dirais que': 'je pense que / je trouve que', "j'aurais tendance à penser que": 'je pense que / je trouve que',
+      'moi, je pense que': 'je pense que / je trouve que', 'dans le fond, moi, je pense que': 'je pense que / je trouve que',
+      'il me semble que': '#me semble que', "j'ai comme l'impression que": '#me semble que',
+      'je suis certain que': 'je suis certaine que', 'je suis convaincu que': 'je suis certaine que', 'il est certain que': 'je suis certaine que',
+      'clairement': 'il est évident que', 'évidemment': 'il est évident que', 'sans aucun doute': 'il est évident que', 'assurément': 'il est évident que',
+      'peut-être': 'peut-être que', 'possiblement': 'peut-être que', 'peut-être bien': 'peut-être que',
+      'je ne suis pas sûr que': 'je ne pense pas que',
+      'selon ce que': '@selon', "d'après ce que": '@d’après', 'aux yeux de': '@selon', 'à en croire': '@selon'
+    },
+    10: {
+      'et': 'en plus / de plus', 'aussi': 'en plus / de plus', 'également': 'en plus / de plus', 'de même': 'en plus / de plus',
+      'de même que': 'en plus / de plus', 'ainsi que': 'en plus / de plus', 'par ailleurs': 'en plus / de plus',
+      'de surcroît': 'en plus / de plus', 'sans compter': 'en plus / de plus', 'sans compter que': 'en plus / de plus',
+      'outre': 'en plus / de plus', 'pis': 'en plus / de plus',
+      'non seulement mais encore': 'non seulement… mais aussi', 'voire': 'non seulement… mais aussi', 'voire même': 'non seulement… mais aussi',
+      'en particulier': 'notamment', 'particulièrement': 'notamment', 'tel que': '#comme', 'tels que': '#comme',
+      "prenons l'exemple de": 'par exemple', 'mettons': '#genre', 'disons': '#genre',
+      'soit': 'c’est-à-dire', 'plus précisément': 'c’est-à-dire', 'plus spécifiquement': 'c’est-à-dire', 'en ce sens que': 'c’est-à-dire',
+      "à l'aide de": 'grâce à / avec / en + participe', 'au moyen de': 'grâce à / avec / en + participe',
+      'par nom': 'grâce à / avec / en + participe', "par l'intermédiaire de": 'grâce à / avec / en + participe',
+      'par le biais de': 'grâce à / avec / en + participe', 'en passant par': 'grâce à / avec / en + participe',
+      'en utilisant': 'grâce à / avec / en + participe', 'au moyen duquel': 'grâce à / avec / en + participe',
+      'de cette manière': 'grâce à / avec / en + participe', 'de cette façon': 'grâce à / avec / en + participe'
+    },
+    11: {
+      "d'abord… ensuite": 'd’abord… ensuite… enfin',
+      "d'abord": 'd’abord… ensuite… enfin', "tout d'abord": 'd’abord… ensuite… enfin', 'pour commencer': 'd’abord… ensuite… enfin',
+      'premièrement': 'd’abord… ensuite… enfin', 'dans un premier temps': 'd’abord… ensuite… enfin', 'ensuite': 'd’abord… ensuite… enfin',
+      'puis': 'd’abord… ensuite… enfin', 'après': 'd’abord… ensuite… enfin', 'dans un deuxième temps': 'd’abord… ensuite… enfin',
+      'par la suite': 'd’abord… ensuite… enfin', 'en deuxième lieu': 'd’abord… ensuite… enfin', 'bon, ensuite': 'd’abord… ensuite… enfin',
+      'pis après': 'd’abord… ensuite… enfin', 'fait que là': 'd’abord… ensuite… enfin', 'pis là': 'd’abord… ensuite… enfin',
+      "en d'autres mots": 'autrement dit / c’est-à-dire', 'ce qui revient à dire que': 'autrement dit / c’est-à-dire',
+      'cela signifie que': 'autrement dit / c’est-à-dire', 'pour le dire autrement': 'autrement dit / c’est-à-dire',
+      "ce que je veux dire, c'est": 'autrement dit / c’est-à-dire', "ce que j'essaie d'expliquer, c'est": 'autrement dit / c’est-à-dire',
+      'je veux dire': 'autrement dit / c’est-à-dire', 'enfin, je veux dire': 'autrement dit / c’est-à-dire',
+      "ce que je veux dire, là, c'est que": 'autrement dit / c’est-à-dire',
+      'au fond': 'dans le fond', 'essentiellement': 'dans le fond',
+      'en réalité': 'en fait', 'à vrai dire': 'en fait', 'ou plutôt': 'en fait', 'plus précisément': 'en fait', 'je me reprends': 'en fait',
+      'ben, en fait': 'en fait', "c'est pas exactement ça": 'en fait', 'attends, je recommence': 'en fait', "maintenant que j'y pense": 'en fait',
+      'réflexion faite': 'finalement', 'tout bien considéré': 'finalement', 'au bout du compte': 'finalement', 'tout compte fait': 'finalement',
+      'en bref': 'bref / en somme', 'en gros': 'bref / en somme', 'pour résumer': 'bref / en somme', 'en résumé': 'bref / en somme',
+      'pour conclure': 'bref / en somme', 'en conclusion': 'bref / en somme', 'bon ben': 'bref / en somme', 'en tout cas': 'bref / en somme'
+    },
+    12: {
+      'oui': 'Ah oui ? / Je vois', 'ouais': 'Ah oui ? / Je vois', 'ok': 'Ah oui ? / Je vois', "d'accord": 'Ah oui ? / Je vois',
+      "c'est ça": 'Ah oui ? / Je vois', 'effectivement': 'Ah oui ? / Je vois', 'tout à fait': 'Ah oui ? / Je vois',
+      "t'sais": 'Ah oui ? / Je vois', 'sérieux': 'Ah oui ? / Je vois', "c'est pas vrai": 'Ah oui ? / Je vois',
+      'voyons donc': 'Ah oui ? / Je vois', 'ben voyons': 'Ah oui ? / Je vois', 'coudon': 'Ah oui ? / Je vois',
+      'exactement': '#mets-en', 'absolument': '#mets-en', "je suis d'accord": '#mets-en', "c'est vrai": '#mets-en',
+      "tout à fait d'accord": '#mets-en', 'ben oui': '#mets-en', "c'est clair": '#mets-en',
+      'je comprends, mais': 'C’est vrai, mais…', 'oui, sauf que': 'C’est vrai, mais…', 'ben oui, mais': 'C’est vrai, mais…', 'en même temps': 'C’est vrai, mais…',
+      "qu'est-ce que tu veux dire par": 'Qu’est-ce que tu veux dire ?', 'tu veux dire que': 'Qu’est-ce que tu veux dire ?',
+      'est-ce que tu peux préciser': 'Qu’est-ce que tu veux dire ?', 'tu peux donner un exemple': 'Qu’est-ce que tu veux dire ?',
+      'comment ça': 'Qu’est-ce que tu veux dire ?', 'pourquoi': 'Qu’est-ce que tu veux dire ?', 'de quelle manière': 'Qu’est-ce que tu veux dire ?',
+      'dans quel sens': 'Qu’est-ce que tu veux dire ?', 'en quoi': 'Qu’est-ce que tu veux dire ?', 'à quel point': 'Qu’est-ce que tu veux dire ?',
+      'et ensuite': 'Et après ? / Pis ? [F-QC]', "qu'est-ce qui s'est passé": 'Et après ? / Pis ? [F-QC]',
+      "et qu'est-ce que tu as fait": 'Et après ? / Pis ? [F-QC]', 'puis': 'Et après ? / Pis ? [F-QC]', 'et là': 'Et après ? / Pis ? [F-QC]',
+      'juste une seconde': 'Attends… / Justement…', 'excuse-moi': 'Attends… / Justement…', 'je voudrais ajouter quelque chose': 'Attends… / Justement…',
+      'pour revenir à ce que tu disais': 'Attends… / Justement…', 'à ce propos': 'Attends… / Justement…',
+      "ce que je voulais dire, c'est": 'Attends… / Justement…', 'mais là': 'Attends… / Justement…', 'ben justement': 'Attends… / Justement…'
+    }
+  },
+
+  /* Formes à ne pas rapprocher d'un schéma au libellé voisin (même mot, autre sens). */
+  noDiag: {
+    3: ['en mois/année', 'en participe présent', 'à heure', 'le date', 'avant', 'après'],
+    10: ['sans nom'],
+    12: ['ok']
+  },
+
+  /* Formes courantes surtout écrites (marche 3) pour les intentions sans forme marquée [S]. */
+  written: {
+    5: ['par conséquent', 'en conséquence', "c'est pourquoi", 'si bien que', "d'où", 'il en résulte que', 'de ce fait', 'dès lors',
+        'cela implique que', 'en conséquence de', 'cela a pour conséquence de'],
+    6: ['afin que', 'dans le but de', "dans l'intention de", 'en vue de', 'de manière à', 'de façon à', 'de manière que', 'de façon que',
+        'de crainte de', 'de crainte que', "afin d'éviter de", 'dans le but de prévenir', "l'objectif consiste à"]
+  },
 
   /* Ce qui suit l'expression, en mots simples. */
   slots: {

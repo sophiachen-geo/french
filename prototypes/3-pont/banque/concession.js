@@ -9,7 +9,7 @@ ATELIER.ajouter([
       { p: 'meme-si', c: 'a', s: '<{Même s’}il [fait] −30 °C demain>, j’irai au travail à pied.' }
     ],
     non: [
-      { p: 'bien-que', why: '« Bien que » (+ subjonctif) présente l’obstacle comme un fait sûr ; ici, le froid de demain n’est qu’une possibilité (peut-être). Pour une hypothèse : « même si » + indicatif.' },
+      { p: 'parce-que', why: '« Parce que » ferait du froid la raison de marcher ; c’est un obstacle, pas une cause.' },
       { p: 'si-present', why: '« Si » seul poserait une condition : j’irai à pied seulement s’il fait −30 °C ! C’est « même » qui dit que le froid ne m’arrêtera pas.' }
     ],
     back: { p: 'quand-meme', c: 'b', s: 'Il va peut-être faire −30 °C demain. <J’irai {quand même} au travail à pied>.', fn: 'Avec « quand même », l’obstacle garde sa phrase (il va peut-être faire…) et le pont se place juste après le verbe de l’action : j’irai quand même.' }
@@ -22,7 +22,7 @@ ATELIER.ajouter([
       { p: 'quand-meme', c: 'b', s: 'Mon fils va peut-être pleurer le premier jour. <Je vais {quand même} le laisser à la garderie>.' }
     ],
     non: [
-      { p: 'quoique', why: '« Quoique » (+ subjonctif) présente l’obstacle comme un fait réel ; ici, on ne sait pas encore s’il va pleurer.' },
+      { p: 'parce-que', why: '« Parce que » ferait des pleurs la raison de le laisser à la garderie ; c’est un obstacle, pas une cause.' },
       { p: 'au-cas-ou', why: '« Au cas où » annonce une précaution (on apporte sa doudou au cas où il pleurerait) ; ici, les pleurs sont un obstacle, pas une raison d’agir.' }
     ],
     back: { p: 'meme-si', c: 'a', s: '<{Même si} mon fils [pleure] le premier jour>, je vais le laisser à la garderie.', fn: 'Avec « même si », l’obstacle passe devant et devient une hypothèse au présent : « va peut-être pleurer » devient « pleure ».' }
@@ -35,7 +35,6 @@ ATELIER.ajouter([
       { p: 'bien-que', c: 'a', s: '<{Bien que} le propriétaire [soit] au courant du problème de chauffage>, il n’a toujours pas appelé de réparateur.' }
     ],
     non: [
-      { p: 'malgre', why: '« Malgré » doit être suivi d’un nom ; « être au courant » est un verbe, et « malgré que le propriétaire est au courant » est une faute.' },
       { p: 'parce-que', why: '« Parce que » ferait de l’information la raison de l’inaction : c’est l’inverse d’un obstacle.' },
       { p: 'par-contre', why: '« Par contre » oppose deux faits indépendants (un défaut, une qualité) ; ici, le premier fait devrait entraîner une réparation, et il ne le fait pas.' }
     ],
@@ -50,7 +49,7 @@ ATELIER.ajouter([
       { p: 'meme-si', c: 'a', s: '<{Même si} je ne comprends pas tous les mots>, j’aime beaucoup mon cours de francisation.' }
     ],
     non: [
-      { p: 'malgre', why: '« Malgré » + nom seulement : l’obstacle a ici un verbe et une négation (je ne comprends pas), et aucun nom simple ne le remplace.' },
+      { p: 'au-lieu-de', why: '« Au lieu de » remplace une action par une autre ; ici, rien n’est remplacé : les mots incompris sont un obstacle.' },
       { p: 'a-cause-de', why: '« À cause de » ferait des mots incompris la raison de mon plaisir ; c’est un obstacle, pas une cause.' }
     ],
     back: { p: 'cependant', c: 'b', s: 'Je ne comprends pas tous les mots. <{Cependant}, j’aime beaucoup mon cours de francisation>.', fn: 'Avec « cependant », plus soigné, l’obstacle reste à l’indicatif dans sa propre phrase ; le pont annonce ce qui résiste.' }
@@ -76,7 +75,7 @@ ATELIER.ajouter([
       { p: 'avoir-beau', c: 'a', s: '<{J’ai beau} [épeler] mon nom trois fois>, la réceptionniste l’écrit encore mal.' }
     ],
     non: [
-      { p: 'malgre', why: '« Malgré » demande un nom, et « malgré mes trois épellations » ne se dit pas. L’obstacle est une action répétée, donc un verbe.' },
+      { p: 'pour-que', why: '« Pour que » annonce un but ; je n’épelle pas mon nom pour qu’il soit mal écrit.' },
       { p: 'parce-que', why: '« Parce que » ferait de mon épellation la cause de l’erreur ; c’est un effort qui aurait dû l’empêcher.' }
     ],
     back: { p: 'meme-si', c: 'a', s: '<{Même si} j’épelle mon nom trois fois>, la réceptionniste l’écrit encore mal.', fn: 'Avec « même si », le verbe reste conjugué (j’épelle). « Avoir beau » insistait davantage sur l’effort inutile.' }
@@ -90,7 +89,7 @@ ATELIER.ajouter([
       { p: 'avoir-beau', c: 'a', s: '<{J’ai beau} me [coucher] à 21 h tous les soirs>, je me réveille fatiguée.' }
     ],
     non: [
-      { p: 'malgre', why: '« Malgré » + nom : « me coucher à 21 h » est une action avec un verbe, et « malgré que je me couche… » est une faute.' },
+      { p: 'grace-a', why: '« Grâce à » présente une cause positive ; la fatigue n’est pas un bon résultat du coucher tôt, c’est une surprise.' },
       { p: 'donc', why: '« Donc » ferait de la fatigue une suite normale du coucher tôt ; c’est justement le contraire de ce qu’on attend.' }
     ],
     back: { p: 'meme-si', c: 'a', s: '<{Même si} je me couche à 21 h tous les soirs>, je me réveille fatiguée.', fn: '« Même si » fait passer l’obstacle devant, à l’indicatif ; « pourtant » le laissait dans sa phrase et annonçait la surprise.' }
@@ -100,10 +99,11 @@ ATELIER.ajouter([
     a: 'Je ne suis pas encore à l’aise en français.', b: 'J’ai obtenu un poste de préposée aux bénéficiaires.',
     as: 'pas à l’aise', bs: 'poste obtenu',
     ok: [
-      { p: 'cependant', c: 'b', s: 'Je ne suis pas encore à l’aise en français. <{Cependant}, j’ai obtenu un poste de préposée aux bénéficiaires>.' }
+      { p: 'cependant', c: 'b', s: 'Je ne suis pas encore à l’aise en français. <{Cependant}, j’ai obtenu un poste de préposée aux bénéficiaires>.' },
+      { p: 'malgre', c: 'a', s: '<{Malgré} [mon français encore hésitant]>, j’ai obtenu un poste de préposée aux bénéficiaires.' }
     ],
     non: [
-      { p: 'malgre', why: '« Malgré » a besoin d’un nom ; ici, l’obstacle est une phrase négative (je ne suis pas à l’aise), sans nom simple pour la remplacer.' },
+      { p: 'avoir-beau', why: '« Avoir beau » sert pour un effort répété qui ne donne rien (j’ai beau réviser, j’oublie) ; ici, il n’y a pas d’effort, et le résultat est une réussite.' },
       { p: 'donc', why: '« Donc » présenterait le poste comme une conséquence de mon français hésitant ; c’est un obstacle surmonté, pas une cause.' }
     ],
     back: { p: 'bien-que', c: 'a', s: '<{Bien que} je ne [sois] pas encore à l’aise en français>, j’ai obtenu un poste de préposée aux bénéficiaires.', fn: '« Bien que » fait passer l’obstacle devant, au subjonctif (je sois) ; avec « cependant », il restait à l’indicatif dans sa propre phrase.' }
@@ -117,7 +117,7 @@ ATELIER.ajouter([
       { p: 'pourtant', c: 'b', s: 'Je parle ukrainien à mes enfants. <{Pourtant}, ils me répondent en français>.' }
     ],
     non: [
-      { p: 'malgre', why: '« Malgré » doit être suivi d’un nom ; « malgré que je parle ukrainien » est une faute. Avec un verbe conjugué, il faut « même si » ou « bien que ».' },
+      { p: 'donc', why: '« Donc » ferait du français la suite logique de l’ukrainien ; c’est le contraire de ce qu’on attend.' },
       { p: 'comme', why: '« Comme » en tête de phrase donne une cause : l’ukrainien serait la raison du français. Ici, c’est un obstacle qui ne marche pas.' }
     ],
     back: { p: 'quand-meme', c: 'b', s: 'Je parle ukrainien à mes enfants. <Ils me répondent {quand même} en français>.', fn: '« Quand même » se place juste après le verbe (répondent) ; l’obstacle garde sa phrase, sans « si ».' }
@@ -130,7 +130,7 @@ ATELIER.ajouter([
       { p: 'bien-que', c: 'a', s: '<{Bien que} je ne [connaisse] personne dans le quartier>, je suis allée à la fête des voisins.' }
     ],
     non: [
-      { p: 'malgre', why: '« Malgré » + nom seulement ; « malgré que je ne connais personne » est une faute fréquente. Avec une phrase, on prend « bien que » ou « même si ».' },
+      { p: 'avoir-beau', why: '« Avoir beau » sert pour un effort répété qui ne donne rien ; ne connaître personne n’est pas un effort.' },
       { p: 'au-lieu-de', why: '« Au lieu de » remplace une action par une autre ; ici, rien n’est remplacé : ne connaître personne est un obstacle.' }
     ],
     back: { p: 'meme-si', c: 'a', s: '<{Même si} je ne connais personne dans le quartier>, je suis allée à la fête des voisins.', fn: 'Avec « même si », le verbe revient à l’indicatif : « je connaisse » redevient « je connais ». Le sens ne change pas.' }
@@ -171,7 +171,7 @@ ATELIER.ajouter([
       { p: 'quoique', c: 'a', s: '<{Quoique} mon mari ne [sache] pas cuisiner>, il prépare le souper tous les dimanches.' }
     ],
     non: [
-      { p: 'malgre', why: '« Malgré » + nom ; « ne pas savoir cuisiner » est une phrase avec un verbe et une négation, et « malgré qu’il ne sait pas » est une faute.' },
+      { p: 'parce-que', why: '« Parce que » ferait de son manque de talent la raison du souper ; c’est un obstacle, pas une cause.' },
       { p: 'grace-a', why: '« Grâce à » + nom présente une cause positive ; ne pas savoir cuisiner n’aide pas à préparer le souper.' }
     ],
     back: { p: 'pourtant', c: 'b', s: 'Mon mari ne sait pas cuisiner. <{Pourtant}, il prépare le souper tous les dimanches>.', fn: '« Pourtant » garde l’obstacle à l’indicatif (sait) dans sa phrase, et annonce le fait qui surprend.' }
@@ -181,10 +181,11 @@ ATELIER.ajouter([
     a: 'Le loyer va peut-être augmenter en juillet.', b: 'Nous allons renouveler notre bail.',
     as: 'loyer en hausse ?', bs: 'on renouvelle',
     ok: [
-      { p: 'meme-si', c: 'a', s: '<{Même si} le loyer [augmente] en juillet>, nous allons renouveler notre bail.' }
+      { p: 'meme-si', c: 'a', s: '<{Même si} le loyer [augmente] en juillet>, nous allons renouveler notre bail.' },
+      { p: 'malgre', c: 'a', s: '<{Malgré} [une hausse possible du loyer] en juillet>, nous allons renouveler notre bail.' }
     ],
     non: [
-      { p: 'malgre', why: '« Malgré » + nom présente un obstacle réel ; ici, la hausse n’est qu’une possibilité (peut-être). Pour une hypothèse : « même si » + indicatif.' },
+      { p: 'parce-que', why: '« Parce que » ferait de la hausse la raison de renouveler le bail ; c’est un obstacle, pas une cause.' },
       { p: 'a-condition-que', why: '« À condition que » poserait une condition nécessaire : nous renouvellerons notre bail seulement si le loyer augmente !' }
     ],
     back: { p: 'quand-meme', c: 'b', s: 'Le loyer va peut-être augmenter en juillet. <Nous allons {quand même} renouveler notre bail>.', fn: '« Quand même » se place après le verbe conjugué (allons) ; l’obstacle reste une phrase à part, au futur proche.' }

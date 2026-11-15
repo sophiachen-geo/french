@@ -423,7 +423,9 @@
   /* =====================================================================
      Découvrir une nouvelle forme
      ===================================================================== */
-  const isSentence = s => { const t = String(s).trim(); return /[.!?]$/.test(t) && !/…/.test(t) && t.split(/\s+/).length >= 4; };
+  /* Une phrase complète du site (« Mon frère, il travaille à Québec. ») : elle sert d'exemple à sa propre structure.
+     Les questions et exclamations courtes (« Ah oui ? ») restent des formules à apprendre telles quelles. */
+  const isSentence = s => { const t = String(s).trim(); return /\.$/.test(t) && !/…|\s\+\s|\s:\s|\s→\s/.test(t) && t.split(/\s+/).length >= 4; };
 
   /* Les formes d'un onglet : expressions des sections numérotées, regroupées par clé PROGRES. */
   const POOL = {};
@@ -625,6 +627,7 @@
     const otherSecs = Array.from(new Set(en.items.filter(x => x.section.id !== en.sec.id).map(x => `${x.section.num} ${x.section.title}`)));
     const siblings = Array.from(new Set(en.items.slice(1).map(x => x.plain).filter(p => p !== it.plain)));
     const say = exs.length ? exs[0].ex : head;
+    const formula = sentence ? '' : discFormula(en);
     const shown = rec.connu ? 'maitrise' : DISC.fresh.has(en.k) ? 'nouveau' : st;
     const statusTxt = { nouveau: 'Nouvelle forme', vu: 'Déjà vue', 'en-cours': 'En cours', maitrise: 'Connue' }[shown];
     const itLink = C.siteLink(C.itemHref(it));
@@ -637,13 +640,13 @@
       <p class="dc-where"><span class="dc-sn">${esc(en.sec.num || '')}</span><span>${esc(en.sec.title || '')}${where ? ` <span class="dc-sub">› ${esc(where)}</span>` : ''}</span></p>
       ${sentence
         ? `<h3 class="dc-h is-sent" id="dc-h" tabindex="-1">${esc(where || en.sec.title)}</h3>`
-        : `<h3 class="dc-h" id="dc-h" tabindex="-1"><span class="sr">${esc(statusTxt)} : </span>${discFormula(en)}</h3>`}
+        : `<h3 class="dc-h" id="dc-h" tabindex="-1"><span class="sr">${esc(statusTxt)} : </span>${formula}</h3>`}
       <p class="dc-regs">${regBadges(codes)}</p>
       ${consLine(en)}
       ${nu.length ? `<div class="dc-nu"><p class="dc-k">En bref</p>${nu.map(n => `<p>${md(nbsp(n))}</p>`).join('')}</div>` : ''}
       ${exs.length
         ? `<div class="dc-exs">${exs.map((x, i) => `<div class="dc-ex"><p class="dc-k">${esc(x.src)}</p><p class="ex">${sentenceHTML(x.ex, head)}</p></div>`).join('')}</div>`
-        : `<div class="dc-noex"><p class="dc-k">Pas encore d’exemple dans le site</p><p>Retiens la forme et ce qui la suit&nbsp;: c’est la case pointillée.</p></div>`}
+        : `<div class="dc-noex"><p class="dc-k">Pas encore d’exemple dans le site</p><p>${/class="slot/.test(formula) ? 'Retiens la forme et ce qui la suit&nbsp;: c’est la case pointillée.' : 'Retiens la forme telle quelle&nbsp;: écoute-la, puis redis-la à voix haute.'}</p></div>`}
       ${speakBtn(say, true)}
       ${fd ? `<div class="dc-viz"><p class="dc-k">En image</p>${miniViz(fd, head)}</div>` : ''}
       ${siblings.length ? `<p class="dc-also"><span class="dc-k">Même forme, autres constructions</span>${siblings.slice(0, 4).map(s => `<span class="sib">${esc(s)}</span>`).join('')}</p>` : ''}
