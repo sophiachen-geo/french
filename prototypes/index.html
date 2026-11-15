@@ -72,7 +72,7 @@ td a { font-weight:700; text-decoration:none; }
   <a href="../index.html">Site complet</a>
 </nav>
 <main class="wrap">
-  <h1>Six façons de rendre le site simple pour converser</h1>
+  <h1>Quatre façons de rendre le site simple pour converser</h1>
   <p class="lede">Le site complet est un catalogue : 12 onglets, des centaines d’expressions. En conversation, on se demande plutôt « qu’est-ce que je veux faire, là, maintenant ? », et on a besoin de trois ou quatre formules, avec un dessin qui montre comment elles marchent. Chaque prototype répond à cette question d’une autre manière, avec ton vrai contenu.</p>
 
   <div class="diag">
@@ -91,7 +91,7 @@ td a { font-weight:700; text-decoration:none; }
 
   <div class="combo">
     <h3>Ils peuvent se combiner</h3>
-    <p>Ce ne sont pas des choix exclusifs : un même site peut avoir une entrée « Je veux… », une antisèche pour la conversation, et un coach pour s’entraîner. Dis-moi ce que tu gardes de chacun, et je fusionne.</p>
+    <p>Ce ne sont pas des choix exclusifs : un même site peut avoir une entrée « Je veux… », une antisèche pour la conversation, un atelier de ponts pour s’exercer et une carte pour voir les liens. Dis-moi ce que tu gardes de chacun, et je fusionne.</p>
   </div>
 </main>
 <script>
@@ -102,11 +102,6 @@ td a { font-weight:700; text-decoration:none; }
       pour: 'Trouver vite quoi dire, au téléphone, pendant ou juste avant une conversation.',
       simplifie: 'Plus de grammaire en façade : on part du verbe d’intention (expliquer pourquoi, nuancer, réagir).',
       notes: [3, 2, 2, 2, 1] },
-    { n: 2, dir: '2-conversation', nom: 'Fil de conversation',
-      concept: 'Un faux fil de messages : Sam te dit quelque chose, tu choisis ce que tu veux faire (réagir, expliquer, donner ton avis), puis une formule pour commencer ta réponse.',
-      pour: 'S’entraîner au réflexe de la conversation, tour par tour.',
-      simplifie: 'On apprend les fonctions dans l’ordre où elles arrivent vraiment dans un échange.',
-      notes: [2, 3, 3, 2, 2] },
     { n: 3, dir: '3-pont', nom: 'Pont d’idées',
       concept: 'Deux idées, un pont entre elles. Choisis la relation (cause, but, concession…) et le connecteur : la phrase se construit et le schéma se dessine avec tes propres mots.',
       pour: 'Comprendre comment relier deux propositions et quel mode suit le connecteur.',
@@ -121,12 +116,7 @@ td a { font-weight:700; text-decoration:none; }
       concept: 'Un plan de métro : les 4 modules sont des lignes, les 12 fonctions des stations, et les correspondances montrent quelles fonctions s’enchaînent.',
       pour: 'Voir les liens entre les fonctions et préparer un discours plus long (itinéraire).',
       simplifie: 'Les enchaînements (opinion → justification → concession) deviennent un trajet.',
-      notes: [2, 2, 3, 2, 1] },
-    { n: 6, dir: '6-coach', nom: 'Coach 5 minutes',
-      concept: 'Une séance par jour : une situation, deux ou trois fonctions à préparer avec leurs schémas, une minute pour parler, puis un bilan qui programme les révisions.',
-      pour: 'Automatiser les formules par la répétition, un peu chaque jour.',
-      simplifie: 'Le parcours est guidé : on ne choisit rien, on suit la séance.',
-      notes: [3, 3, 1, 2, 3] }
+      notes: [2, 2, 3, 2, 1] }
   ];
   const CRIT = ['Simplicité', 'Conversation réelle', 'Liens entre fonctions', 'Vue d’ensemble', 'Pratique régulière'];
   const dots = v => `<span class="dots" role="img" aria-label="${v} sur 3">${[1, 2, 3].map(i => `<i class="${i <= v ? 'on' : ''}"></i>`).join('')}</span>`;
