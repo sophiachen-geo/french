@@ -502,6 +502,8 @@
 
   function renderItin() {
     const r = state.route, out = $('#itin-out');
+    if (!r || !state.showItin) { out.hidden = true; out.innerHTML = ''; $('#status').textContent = r ? `Trajet sur la carte : ${r.title}.` : ''; return; }
+    out.hidden = false;
     if (!r) {
       $('#status').textContent = 'Aucun trajet sur la carte.';
       out.innerHTML = `<div class="empty"><p><b>Pas de trajet pour l’instant.</b></p><p>Choisis un départ et une arrivée, un modèle ou une question. Tu peux aussi toucher une station pour voir ses correspondances.</p></div>`;
@@ -527,6 +529,7 @@
     $('#status').textContent = `Trajet : ${r.title}. ${meta}.`;
     out.innerHTML = `
       <div class="it-head">
+        <button type="button" class="btn-txt it-close" data-itinclose>Fermer</button>
         <p class="kicker">${esc(r.kicker)}</p>
         <h3 class="it-title">${esc(r.title)}</h3>
         <p class="it-meta">${lines.map(id => lineBadge(id, true)).join('')}<span>${meta}</span></p>
@@ -547,8 +550,11 @@
     const key = r ? r.kind + ':' + (r.idx != null ? r.idx : r.a + '-' + r.b) : '';
     const changed = key !== state.routeKey;
     state.routeKey = key;
+    if (opts.itin) state.showItin = true;
+    if (!r) state.showItin = false;
     renderItin();
     syncControls();
+    const rs = $('#reset-map'); if (rs) rs.hidden = !r;
     if (state.sel == null) applyMapState(changed && !opts.silent);
     if (opts.scroll) {
       const target = window.matchMedia('(min-width: 1000px)').matches ? $('#itin') : $('#map-card');
@@ -619,10 +625,6 @@
       <div class="pn-body">
         <p class="pn-quand">${esc(e.quand)}</p>
         <div class="moments" role="img" aria-label="Moment de la conversation : ${esc(mom.label)}">${MOMENTS.map(m => `<span class="${m.id === mom.id ? 'cur' : ''}">${esc(m.label)}</span>`).join('')}</div>
-        <div class="pn-acts">
-          <button type="button" class="btn" data-from="${t}"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="7" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M11 12h9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>Partir d’ici</button>
-          <button type="button" class="btn" data-to="${t}"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 12h9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="17" cy="12" r="4" fill="currentColor"/></svg>Arriver ici</button>
-        </div>
         <section class="pn-sec"><h3>Ce que tu peux dire</h3>
           <ul class="fl">${e.cles.map(k => `<li><p class="fl-e"><b>${esc(k.e)}</b> ${consChip(k.c)}${regChips(k.r)}</p><p class="fl-x">${hl(k.ex, k.e)} ${speakBtn(k.ex, 'Écouter l’exemple')}</p></li>`).join('')}</ul>
         </section>
@@ -678,6 +680,7 @@
 
   /* ---------- Commandes de l'itinéraire ---------- */
   function syncControls() {
+    if (!$('#from')) return;
     const r = state.route;
     $('#from').value = String(state.from);
     $('#to').value = String(state.to);
@@ -743,25 +746,18 @@
     }).join('');
   }
 
+  const levelOf = l => { const sc = l ? l.score : 0; return sc === 0 ? 0 : sc <= 1 ? 1 : sc <= 2 ? 2 : sc <= 4 ? 3 : sc <= 6 ? 4 : 5; };
+  const seqDir = (l, a, b) => l ? l.seq.filter(s => s.from[1] === a && s.to[1] === b) : [];
   function matrixHTML() {
-    const head = `<div class="mx-c mx-h"></div>${TABS.map(t => `<div class="mx-c mx-h">${stDot(t, 'xs')}</div>`).join('')}`;
-    const rows = TABS.map(a => `<div class="mx-c mx-h">${stDot(a, 'xs')}</div>${TABS.map(b => {
+    const head = `<div class="mx-corner" aria-hidden="true"><span>après…</span><span>ensuite →</span></div>${TABS.map(t => `<div class="mx-h mx-col" data-col="${t}" title="${esc(je(t))}">${stDot(t, 'xs')}</div>`).join('')}`;
+    const rows = TABS.map(a => `<div class="mx-h mx-row" data-row="${a}" title="${esc(je(a))}">${stDot(a, 'xs')}<span class="mx-name">${esc(je(a))}</span></div>${TABS.map(b => {
       if (a === b) return `<div class="mx-c mx-d ln-${LINE_OF[a]}" aria-hidden="true"></div>`;
       const l = getLink(a, b);
-      const sc = l ? l.score : 0;
-      const lvl = sc === 0 ? 0 : sc <= 1 ? 1 : sc <= 2 ? 2 : sc <= 4 ? 3 : sc <= 6 ? 4 : 5;
-      const desc = l ? `${l.nSeq ? l.nSeq + ' enchaînement' + (l.nSeq > 1 ? 's' : '') : ''}${l.nSeq && l.shared.length ? ', ' : ''}${l.shared.length ? l.shared.length + ' expression' + (l.shared.length > 1 ? 's' : '') + ' en commun' : ''}` : 'aucun lien direct';
-      return `<button type="button" class="mx-c mx-v v${lvl}" data-trip="${a}-${b}" title="${a} ↔ ${b} : ${esc(desc)}" aria-label="De ${esc(je(a))} à ${esc(je(b))} : ${esc(desc)}">${l && l.nSeq ? '<i></i>' : ''}</button>`;
+      const desc = l ? `${l.nSeq ? l.nSeq + ' enchaînement' + (l.nSeq > 1 ? 's' : '') : ''}${l.nSeq && l.shared.length ? ', ' : ''}${l.shared.length ? l.shared.length + ' expression' + (l.shared.length > 1 ? 's' : '') + ' en commun' : ''}` : 'pas de lien direct';
+      return `<button type="button" class="mx-c mx-v v${levelOf(l)}" data-cell="${a}-${b}" aria-haspopup="dialog" aria-expanded="false" aria-label="Après « ${esc(je(a))} », « ${esc(je(b))} » : ${esc(desc)}">${seqDir(l, a, b).length ? '<i></i>' : ''}</button>`;
     }).join('')}`).join('');
-    const top = ALL_LINKS.slice(0, 8).map(l => `<li><button type="button" class="tl" data-trip="${l.a}-${l.b}" aria-label="Tracer le trajet ${l.a} → ${l.b}">
-        <span class="tl-st">${stDot(l.a, 'xs')}<i class="tl-j"></i>${stDot(l.b, 'xs')}</span>
-        <span class="tl-b"><span class="tl-n">${esc(je(l.a))} ↔ ${esc(je(l.b))}</span>
-          <span class="tl-bar" aria-hidden="true"><i class="m-seq" style="width:${(2 * l.nSeq / MAXS * 100).toFixed(1)}%"></i><i class="m-sh" style="width:${(l.shared.length / MAXS * 100).toFixed(1)}%"></i></span>
-          <span class="tl-x">${l.nSeq ? `${l.nSeq} enchaînement${l.nSeq > 1 ? 's' : ''} · ` : ''}${l.shared.slice(0, 3).map(x => '« ' + esc(x.head) + ' »').join(', ')}${l.shared.length > 3 ? '…' : ''}</span></span>
-      </button></li>`).join('');
-    return `<div class="mx-wrap"><div><p class="mx-hint">Fais glisser le tableau pour voir toutes les colonnes.</p><div class="mx-scroll"><div class="mx" role="group" aria-label="Tableau des correspondances">${head}${rows}</div></div>
-      <div class="mx-key"><span>Lien plus fort →</span>${[1, 2, 3, 4, 5].map(v => `<i class="mx-sw v${v}"></i>`).join('')}<span class="mx-dotk"><i></i> enchaînement attesté</span></div></div>
-      <div class="tl-box"><h3>Les 8 liens les plus forts</h3><p class="pn-help">Barre pleine : enchaînements des modèles ; hachures : expressions en commun.</p><ol class="mx-top">${top}</ol></div></div>`;
+    return `<div class="mx" role="group" aria-label="Tableau des correspondances : une ligne par intention de départ, une colonne par intention suivante">${head}${rows}</div>
+      <p class="mx-key"><span>lien faible</span><i class="mx-sw v1"></i><i class="mx-sw v3"></i><i class="mx-sw v5"></i><span>fort</span><span class="mx-dotk"><i></i>enchaînement dans ce sens</span></p>`;
   }
 
   function linesHTML() {
@@ -770,17 +766,154 @@
   }
 
   function legendHTML() {
-    return `
-      <ul class="lg">
-        ${M.modules.map(m => `<li>${lineBadge(m.id, true)}<span><b>Ligne ${m.id}</b> · ${esc(m.title)}</span></li>`).join('')}
+    return `<ul class="lg">
+        ${M.modules.map(m => `<li>${lineBadge(m.id, true)}<span>${esc(m.title)}</span></li>`).join('')}
       </ul>
       <ul class="lg lg-sym">
-        <li><svg viewBox="0 0 40 24" width="40" height="24" aria-hidden="true"><line x1="0" y1="12" x2="40" y2="12" class="k-line"/><circle cx="20" cy="12" r="8.5" class="k-st"/><text x="20" y="15.5" text-anchor="middle" class="k-n">4</text></svg><span><b>Station</b> = une intention (n° de l’onglet)</span></li>
-        <li><svg viewBox="0 0 40 24" width="40" height="24" aria-hidden="true"><path d="M2 18 Q20 2 38 18" class="k-seq"/></svg><span><b>Trait plein</b> = enchaînement fréquent (modèles du site)</span></li>
-        <li><svg viewBox="0 0 40 24" width="40" height="24" aria-hidden="true"><path d="M2 18 Q20 2 38 18" class="k-sh"/></svg><span><b>Pointillé</b> = mêmes expressions dans les deux</span></li>
-        <li><svg viewBox="0 0 40 24" width="40" height="24" aria-hidden="true"><path d="M2 8 H38" class="k-thin"/><path d="M2 18 H38" class="k-thick"/></svg><span><b>Plus épais</b> = lien plus fort</span></li>
-        <li><svg viewBox="0 0 40 24" width="40" height="24" aria-hidden="true"><rect x="1" y="2" width="18" height="20" rx="4" class="k-z1"/><rect x="21" y="2" width="18" height="20" rx="4" class="k-z2"/></svg><span><b>Bandes</b> = moments de la conversation</span></li>
+        <li><svg viewBox="0 0 40 24" width="40" height="24" aria-hidden="true"><path d="M2 18 Q20 2 38 18" class="k-seq"/></svg><span>enchaînement fréquent</span></li>
+        <li><svg viewBox="0 0 40 24" width="40" height="24" aria-hidden="true"><path d="M2 18 Q20 2 38 18" class="k-sh"/></svg><span>mêmes expressions</span></li>
       </ul>`;
+  }
+
+  /* ---------- Bulles : juste à côté de la case ou de la station touchée ---------- */
+  let popAnchor = null, popKind = null, popKey = null;
+  const XSVG = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
+  const meter = lvl => `<span class="pop-m" role="img" aria-label="Force du lien : ${lvl} sur 5">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</span>`;
+
+  function cellHTML(a, b) {
+    const l = getLink(a, b), lvl = levelOf(l);
+    const head = `<div class="pop-h"><h3 id="pop-t" tabindex="-1" class="pop-route">
+        <span class="pr">${stDot(a)}<span>${esc(je(a))}</span></span><span class="pop-arr" aria-hidden="true">↓</span><span class="pr">${stDot(b)}<span>${esc(je(b))}</span></span></h3>
+        <button type="button" class="pop-x" data-popclose aria-label="Fermer">${XSVG}</button></div>`;
+    const acts = `<div class="pop-acts"><button type="button" class="btn sm" data-itin="${a}-${b}">Trajet détaillé</button><button type="button" class="btn sm ghost map-go" data-mapgo>Voir sur la carte</button></div>`;
+    if (!l) {
+      const path = shortest(a, b);
+      return head + `<p class="pop-none">Pas d’enchaînement direct entre ces deux intentions.</p>` +
+        (path.length > 2 ? `<p class="pop-l">Passe plutôt par</p><p class="pop-via">${path.map(t => `<span>${stDot(t, 'xs')} ${esc(je(t))}</span>`).join('<span class="pop-arr" aria-hidden="true">→</span>')}</p>` : '') + acts;
+    }
+    const ab = seqDir(l, a, b), ba = seqDir(l, b, a);
+    const s = ab[0] || ba[0];
+    let how = '';
+    if (s) {
+      const [x, y] = ab.length ? [a, b] : [b, a];
+      const fx = stepFormula(s, 'from'), fy = stepFormula(s, 'to');
+      let ex, src;
+      if (s.src === 'model') {
+        const m = S.models[s.idx];
+        ex = mdBold(m.segments.filter(g => g[0] === s.fi || g[0] === s.ti).map(g => g[1].replace(/\n/g, ' ')).join('').trim());
+        src = `Modèle ${m.n} du site · ${m.title}`;
+      } else {
+        const st = stopsFromTabs([x, y], [s.from[0], s.to[0]], THEME_DEFAULT);
+        ex = st.map(z => z.html).join(' ');
+        src = 'Exemples du site, mis bout à bout';
+      }
+      how = `<p class="pop-l">${ab.length ? 'Comment enchaîner' : 'Plus courant dans l’autre sens'}</p>
+        <p class="pop-say"><b class="ln-${LINE_OF[x]}">${esc(dots(fx))}</b><span class="pop-arr" aria-hidden="true">→</span><b class="ln-${LINE_OF[y]}">${esc(dots(fy))}</b></p>
+        <p class="pop-ex">${ex} ${speakBtn(plain(ex.replace(/<[^>]+>/g, '')), 'Écouter l’exemple')}</p>
+        <p class="pop-src">${esc(src)}</p>`;
+    }
+    const shared = l.shared.length ? `<p class="pop-l">${s ? 'Et des mots en commun' : 'Des mots en commun'}</p><ul class="pop-sh">${l.shared.slice(0, 4).map(sh => {
+      const fn = sh.fiche ? sh.fiche.fonctions : null, fa = fn && fn.find(z => z.tab === a), fb = fn && fn.find(z => z.tab === b);
+      return `<li><b>« ${esc(sh.head)} »</b>${fa && fb ? `<span>${esc(fa.fonction.toLowerCase())} ↔ ${esc(fb.fonction.toLowerCase())}</span>` : ''}</li>`;
+    }).join('')}</ul>` : '';
+    return head + `<p class="pop-force">${meter(lvl)}<span>${lvl >= 4 ? 'Lien très fréquent' : lvl >= 3 ? 'Lien fréquent' : 'Lien possible'}</span></p>` + how + shared + acts;
+  }
+
+  function stationHTML(t) {
+    const e = ESS[t], line = LINE_OF[t];
+    const best = linksOf(t).slice(0, 4).map(l => {
+      const o = l.a === t ? l.b : l.a;
+      return `<li><button type="button" class="pop-link" data-cell="${t}-${o}">${stDot(o, 'xs')}<span>${esc(je(o))}</span>${meter(levelOf(l))}</button></li>`;
+    }).join('');
+    const sp = VIZ.forTab(t)[0];
+    const viz = sp ? VIZ.render(Object.assign({}, sp, { rows: sp.rows.slice(0, 3) }), { examples: false, title: false, link: vizLink(t) }) : '';
+    return `<div class="pop-h ln-${line}"><h3 id="pop-t" tabindex="-1" class="pop-st">${stDot(t, 'big')}<span>${esc(e.je)}<small>${esc(e.quand)}</small></span></h3>
+        <button type="button" class="pop-x" data-popclose aria-label="Fermer">${XSVG}</button></div>
+      <ul class="pop-fl">${e.cles.slice(0, 3).map(k => `<li><p class="pf-e"><b>${esc(k.e)}</b>${consChip(k.c)}</p><span>${hl(k.ex, k.e)}</span></li>`).join('')}
+        ${e.qc[0] ? `<li class="qc"><p class="pf-e"><b>${esc(e.qc[0].e)}</b>${regChips(e.qc[0].r || 'QC')}</p><span>${hl(e.qc[0].ex, e.qc[0].e)}</span></li>` : ''}</ul>
+      ${viz ? `<div class="pop-viz">${viz}</div>` : ''}
+      <p class="pop-l">Ensuite, tu peux…</p><ul class="pop-links">${best}</ul>
+      <div class="pop-acts"><button type="button" class="btn sm" data-open="${t}">Tout sur cette station</button><a class="btn sm ghost" href="${esc(C.siteLink('#onglet-' + t))}">Onglet ${t} du site</a></div>`;
+  }
+
+  function positionPop() {
+    const p = $('#pop'), a = popAnchor;
+    if (!a || p.hidden) return;
+    const vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    const pw = Math.min(380, vw - 24);
+    p.style.width = pw + 'px';
+    const r = a.getBoundingClientRect(), ph = p.offsetHeight;
+    const topMin = Math.max(8, $('.topbar').getBoundingClientRect().bottom + 8);
+    const cy = r.top + r.height / 2;
+    let side, left, top;
+    if (r.right + 14 + pw <= vw - 8) { side = 'right'; left = r.right + 14; }
+    else if (r.left - 14 - pw >= 8) { side = 'left'; left = r.left - 14 - pw; }
+    else side = 'below';
+    if (side === 'below') {
+      left = Math.min(Math.max(r.left + r.width / 2 - pw / 2, 12), vw - pw - 12);
+      top = r.bottom + 12;
+    } else {
+      top = Math.min(Math.max(cy - 44, topMin), Math.max(topMin, vh - ph - 10));
+    }
+    p.dataset.side = side;
+    p.style.left = (left + window.scrollX) + 'px';
+    p.style.top = (top + window.scrollY) + 'px';
+    const ar = p.querySelector('.pop-arrow');
+    if (side === 'below') { ar.style.left = Math.min(Math.max(r.left + r.width / 2 - left - 9, 14), pw - 32) + 'px'; ar.style.top = ''; }
+    else { ar.style.top = Math.min(Math.max(cy - top - 9, 14), ph - 32) + 'px'; ar.style.left = ''; }
+  }
+
+  function openPop(anchor, html, kind, key) {
+    if (state.sel != null && !$('#panel').hidden) closePanel();
+    if (popAnchor) closePop(false);
+    const p = $('#pop');
+    $('#pop-in').innerHTML = html;
+    $('#pop-in').scrollTop = 0;
+    p.hidden = false;
+    popAnchor = anchor; popKind = kind; popKey = key;
+    anchor.setAttribute('aria-expanded', 'true');
+    anchor.classList.add('is-sel');
+    positionPop();
+    requestAnimationFrame(() => p.classList.add('in'));
+    $('#pop-t').focus({ preventScroll: true });
+    const r = p.getBoundingClientRect();
+    if (r.bottom > window.innerHeight - 6) window.scrollBy({ top: Math.min(r.bottom - window.innerHeight + 16, r.top - 72), behavior: reduce() ? 'auto' : 'smooth' });
+  }
+
+  function closePop(focusBack) {
+    const p = $('#pop');
+    if (p.hidden) return;
+    p.hidden = true; p.classList.remove('in');
+    $$('.mx .hl').forEach(n => n.classList.remove('hl'));
+    const a = popAnchor, kind = popKind;
+    popAnchor = null; popKind = null; popKey = null;
+    if (a) { a.setAttribute('aria-expanded', 'false'); a.classList.remove('is-sel'); }
+    if (kind === 'station') { state.sel = null; applyMapState(false); }
+    if (focusBack && a && document.contains(a)) a.focus({ preventScroll: true });
+  }
+
+  function openCell(a, b) {
+    const cell = $(`.mx-v[data-cell="${a}-${b}"]`);
+    if (!cell) return;
+    if (popKind === 'cell' && popKey === a + '-' + b) { closePop(true); return; }
+    const r = cell.getBoundingClientRect();
+    if (r.top < 70 || r.bottom > window.innerHeight - 40) cell.scrollIntoView({ block: 'center' });
+    state.sel = null;
+    state.from = a; state.to = b;
+    openPop(cell, cellHTML(a, b), 'cell', a + '-' + b);
+    const rh = $(`.mx-row[data-row="${a}"]`), ch = $(`.mx-col[data-col="${b}"]`);
+    if (rh) rh.classList.add('hl');
+    if (ch) ch.classList.add('hl');
+    setRoute(pairRoute(a, b));
+  }
+
+  function openStationPop(t, anchor) {
+    if (popKind === 'station' && popKey === String(t)) { closePop(true); return; }
+    openPop(anchor, stationHTML(t), 'station', String(t));
+    state.sel = t;
+    applyMapState(false);
+    const rh = $(`.mx-row[data-row="${t}"]`);
+    if (rh) rh.classList.add('hl');
   }
 
   /* ---------- Thème ---------- */
@@ -798,54 +931,40 @@
   /* ---------- Démarrage ---------- */
   function init() {
     initTheme();
-    $('#itin-ctrl').innerHTML = controlsHTML();
     $('#legend').innerHTML = legendHTML();
-    $('#lines').innerHTML = linesHTML();
-    $('#passerelles').innerHTML = passerellesHTML();
     $('#matrix').innerHTML = matrixHTML();
-    $('#n-links').textContent = String(ALL_LINKS.length);
-    $('#n-links2').textContent = String(ALL_LINKS.length);
     renderMap();
-    setMode('trajet');
-    state.from = 9; state.to = 11;
-    setRoute(pairRoute(9, 11), { silent: false });
 
     document.addEventListener('click', e => {
+      const pop = $('#pop');
+      if (!pop.hidden && !e.target.closest('#pop') && !(popAnchor && popAnchor.contains(e.target))) closePop(false);
       const t = e.target.closest('button, a');
       if (!t) return;
-      if (t.classList.contains('hit')) { const n = +t.dataset.st; if (state.sel === n) closePanel(); else { openStation(n); revealOnMap(t); } return; }
+      if (t.classList.contains('hit')) { openStationPop(+t.dataset.st, t); return; }
+      if (t.dataset.cell) { const [x, y] = t.dataset.cell.split('-').map(Number); openCell(x, y); return; }
       if (t.dataset.say != null) { speak(t.dataset.say); return; }
-      if (t.dataset.open != null) { openStation(+t.dataset.open); return; }
+      if (t.hasAttribute('data-popclose')) { closePop(true); return; }
+      if (t.hasAttribute('data-mapgo')) { closePop(false); $('#map-card').scrollIntoView({ behavior: reduce() ? 'auto' : 'smooth', block: 'start' }); return; }
+      if (t.dataset.itin) {
+        const [x, y] = t.dataset.itin.split('-').map(Number);
+        closePop(false); setRoute(pairRoute(x, y), { itin: true, silent: true });
+        $('#itin-out').scrollIntoView({ behavior: reduce() ? 'auto' : 'smooth', block: 'start' }); return;
+      }
+      if (t.hasAttribute('data-itinclose')) { state.showItin = false; renderItin(); return; }
+      if (t.dataset.open != null) { closePop(false); openStation(+t.dataset.open); return; }
       if (t.hasAttribute('data-close')) { closePanel(); return; }
       if (t.hasAttribute('data-more')) { $$('#panel .board .more').forEach(li => { li.hidden = false; }); t.remove(); return; }
-      if (t.dataset.from != null || t.dataset.to != null) {
-        if (t.dataset.from != null) state.from = +t.dataset.from; else state.to = +t.dataset.to;
-        closePanel(); setMode('trajet'); fromPair(true); return;
-      }
-      if (t.dataset.trip) {
-        const [a, b] = t.dataset.trip.split('-').map(Number);
-        state.from = a; state.to = b;
-        closePanel(); setMode('trajet'); fromPair(true); return;
-      }
-      if (t.dataset.model != null) { setRoute(modelRoute(+t.dataset.model)); return; }
-      if (t.dataset.chain != null) { setRoute(chainRoute(+t.dataset.chain)); return; }
-      if (t.dataset.scen != null) { setRoute(scenarioRoute(+t.dataset.scen)); return; }
-      if (t.dataset.fiche != null) { closePanel(); setRoute(ficheRoute(+t.dataset.fiche), { scroll: true }); return; }
-      if (t.dataset.mode) { setMode(t.dataset.mode); return; }
-      if (t.id === 'swap') { [state.from, state.to] = [state.to, state.from]; fromPair(false); return; }
-      if (t.id === 'reset-map') { closePanel(); setRoute(null); return; }
+      if (t.dataset.trip) { const [x, y] = t.dataset.trip.split('-').map(Number); closePanel(); openCell(x, y); return; }
+      if (t.id === 'reset-map') { closePop(false); setRoute(null); return; }
     });
-    $('#from').addEventListener('change', e => { state.from = +e.target.value; fromPair(false); });
-    $('#to').addEventListener('change', e => { state.to = +e.target.value; fromPair(false); });
-    $('#all-links').addEventListener('change', e => { state.allLinks = e.target.checked; applyMapState(false); });
-    $('.modes').addEventListener('keydown', e => {
-      const ms = $$('.mode'), i = ms.findIndex(b => b.dataset.mode === state.mode);
-      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); const j = (i + (e.key === 'ArrowRight' ? 1 : ms.length - 1)) % ms.length; setMode(ms[j].dataset.mode, true); }
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Escape') return;
+      if (!$('#pop').hidden) { e.preventDefault(); closePop(true); }
+      else if (state.sel != null) { e.preventDefault(); closePanel(); }
     });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.sel != null) { e.preventDefault(); closePanel(); } });
 
     let rt = null;
-    const onResize = () => { clearTimeout(rt); rt = setTimeout(() => { const before = LNAME; renderMap(); if (before === LNAME) placeHits(); }, 120); };
+    const onResize = () => { clearTimeout(rt); rt = setTimeout(() => { const before = LNAME; renderMap(); if (before === LNAME) placeHits(); positionPop(); }, 120); };
     window.addEventListener('resize', onResize);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { placeHits(); });
     if (canSpeak) { try { speechSynthesis.getVoices(); } catch (e) { /* rien */ } }
