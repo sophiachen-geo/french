@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Atlas des schémas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap">
+<style>
+/* Atlas — une colonne de planches, une par fonction ; navigation en pastilles collantes. */
+:root { --bg:#f3f5f9; --card:#fff; --ink:#151d31; --sub:#5f6880; --line:#dce1ea; --acc:#5b4bd6; --or:#e0603a; color-scheme:light;
+  --f-d:'Bricolage Grotesque','Avenir Next','Segoe UI',system-ui,sans-serif; --f-b:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#0e1220; --card:#161c2b; --ink:#e8ebf3; --sub:#97a0b5; --line:#283147; --acc:#a79cff; --or:#ff8a65; color-scheme:dark; } }
+:root[data-theme="dark"] { --bg:#0e1220; --card:#161c2b; --ink:#e8ebf3; --sub:#97a0b5; --line:#283147; --acc:#a79cff; --or:#ff8a65; color-scheme:dark; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:1.0625rem/1.55 var(--f-b);
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
+a { color:var(--acc); }
+.bar { display:flex; flex-wrap:wrap; gap:6px 16px; align-items:center; padding-block:12px; font-size:.88rem; border-bottom:1px solid var(--line); }
+.bar strong { margin-right:auto; }
+.wrap { max-width:56rem; margin:0 auto; padding-block:24px 80px; }
+h1 { font:800 clamp(2rem,1.3rem + 3vw,3rem)/1.05 var(--f-d); letter-spacing:-.02em; margin:12px 0 10px; text-wrap:balance; }
+.lede { color:var(--sub); max-width:40rem; }
+.key { display:flex; flex-wrap:wrap; gap:8px 22px; margin:14px 0 6px; font-size:.92rem; }
+.key span { display:inline-flex; align-items:center; gap:8px; }
+.key i { width:26px; height:11px; border-radius:6px; border:2px solid; }
+.k-or i { border-color:var(--or); background:color-mix(in srgb, var(--or) 18%, transparent); }
+.k-vi i { border-color:var(--acc); background:color-mix(in srgb, var(--acc) 18%, transparent); }
+.nav { position:sticky; top:0; z-index:5; background:var(--bg); display:flex; gap:6px; overflow-x:auto; padding-block:10px; margin-top:14px; scrollbar-width:none; }
+.nav::-webkit-scrollbar { display:none; }
+.nav a { flex:none; text-decoration:none; color:var(--ink); border:1px solid var(--line); background:var(--card); border-radius:999px; padding:5px 12px; font-size:.85rem; }
+.nav a:hover { border-color:var(--acc); }
+.tools { display:flex; align-items:center; gap:10px; font-size:.9rem; margin:6px 0 0; }
+.tools button { border:1.5px solid var(--line); background:var(--card); color:var(--ink); border-radius:8px; padding:6px 12px; font:inherit; font-weight:700; cursor:pointer; }
+.tools button[aria-pressed="true"] { border-color:var(--acc); color:var(--acc); }
+section { margin-top:34px; scroll-margin-top:60px; }
+section > h2 { display:flex; gap:12px; align-items:baseline; font:700 1.5rem/1.15 var(--f-d); margin:0 0 4px; }
+section > h2 span { font:600 .9rem/1 ui-monospace, Menlo, monospace; color:var(--acc); }
+section > p { color:var(--sub); margin:0 0 12px; }
+.plate { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px clamp(14px,2.4vw,22px) 4px; margin-bottom:12px; }
+.plate .vz-t { font:700 1.1rem/1.2 var(--f-d); }
+:focus-visible { outline:2.5px solid var(--acc); outline-offset:2px; border-radius:4px; }
+</style>
+</head>
+<body>
+<nav class="bar" aria-label="Navigation">
+  <strong>Atlas des schémas</strong>
+  <a href="../index.html">← Tous les prototypes</a>
+  <a href="../../index.html">Site complet</a>
+</nav>
+<main class="wrap">
+  <h1>Atlas des schémas</h1>
+  <p class="lede">Tous les schémas du site sur une seule page. Chaque ligne montre ce que fait une expression ; touche son nom pour la retrouver dans le site complet.</p>
+  <p class="key"><span class="k-or"><i></i>action introduite par l’expression (le cadre)</span><span class="k-vi"><i></i>phrase principale</span></p>
+  <div class="tools"><button type="button" id="ex" aria-pressed="true">Exemples affichés</button></div>
+  <nav class="nav" id="nav" aria-label="Fonctions"></nav>
+  <div id="atlas"></div>
+</main>
+<script>window.CADRES_BASE = '../../';</script>
+<script src="../../assets/registry.js"></script>
+<script src="../../content/meta.js"></script>
+<script src="../../content/onglet-01.js"></script>
+<script src="../../content/onglet-02.js"></script>
+<script src="../../content/onglet-03.js"></script>
+<script src="../../content/onglet-04.js"></script>
+<script src="../../content/onglet-05.js"></script>
+<script src="../../content/onglet-06.js"></script>
+<script src="../../content/onglet-07.js"></script>
+<script src="../../content/onglet-08.js"></script>
+<script src="../../content/onglet-09.js"></script>
+<script src="../../content/onglet-10.js"></script>
+<script src="../../content/onglet-11.js"></script>
+<script src="../../content/onglet-12.js"></script>
+<script src="../../content/guide.js"></script>
+<script src="../../content/relier.js"></script>
+<script src="../../content/fiches.js"></script>
+<script src="../../content/methode.js"></script>
+<script src="../../content/regles.js"></script>
+<script src="../../content/essentiels.js"></script>
+<script src="../../content/visuels.js"></script>
+<script src="../../assets/core.js"></script>
+<script src="../../assets/viz.js"></script>
+<script>
+(function () {
+  const S = window.SITE, C = window.CADRES, V = window.VIZ;
+  const link = tab => row => {
+    if (!row.label) return null;
+    const raw = row.label.replace(/\[[^\]]*\]/g, '').replace(/\*/g, '');
+    const k = C.norm(raw.split(' + ')[0].split(' / ')[0].split('…')[0]).replace(/[\s.;:,!?]+$/, '');
+    const it = C.findItem(k, tab) || C.findItem(k);
+    return it ? C.siteLink(C.itemHref(it)) : C.siteLink('#onglet-' + tab);
+  };
+  let examples = true;
+  try { examples = localStorage.getItem('atlas:ex') !== '0'; } catch (e) {}
+  const ess = {}; (S.meta.essentiels || []).forEach(e => { ess[e.tab] = e; });
+  function draw() {
+    const tabs = Object.keys(S.tabs).map(Number).sort((a, b) => a - b).filter(t => V.forTab(t).length);
+    document.getElementById('nav').innerHTML = tabs.map(t => `<a href="#f${t}">${t}. ${ess[t] ? ess[t].je : S.tabs[t].title}</a>`).join('') + '<a href="#transversal">Modes et registres</a>';
+    document.getElementById('atlas').innerHTML = tabs.map(t => `
+      <section id="f${t}">
+        <h2><span>${t}</span>${ess[t] ? ess[t].je : S.tabs[t].title}</h2>
+        <p>${S.tabs[t].title} — <a href="${C.siteLink('#onglet-' + t)}">ouvrir l’onglet</a></p>
+        ${V.forTab(t).map(sp => `<div class="plate">${V.render(sp, { examples, link: link(t) })}</div>`).join('')}
+      </section>`).join('') + `
+      <section id="transversal">
+        <h2><span>+</span>Modes, structures, registres</h2>
+        <p>Les repères qui servent dans tous les onglets.</p>
+        ${['modes', 'structures', 'registres'].map(id => `<div class="plate">${V.render(V.byId(id))}</div>`).join('')}
+      </section>`;
+    const b = document.getElementById('ex');
+    b.setAttribute('aria-pressed', String(examples));
+    b.textContent = examples ? 'Exemples affichés' : 'Exemples masqués';
+  }
+  document.getElementById('ex').addEventListener('click', () => {
+    examples = !examples;
+    try { localStorage.setItem('atlas:ex', examples ? '1' : '0'); } catch (e) {}
+    draw();
+  });
+  draw();
+})();
+</script>
+</body>
+</html>

@@ -537,6 +537,11 @@
         ${link('fiches', "Fiches d'expression")}
         ${link('regles', 'Règles transversales')}
         ${link('methode', 'Méthode et progression')}
+      </div>
+      <div class="nav-mod">
+        <p class="nav-h">Essais</p>
+        <a href="prototypes/index.html">Prototypes de design</a>
+        <a href="prototypes/0-atlas/index.html">Atlas des schémas</a>
       </div>`;
   }
   function setNavCurrent(view) {

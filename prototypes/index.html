@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prototypes de design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600..800&display=swap">
+<style>
+/* Banc d'essai — six vitrines côte à côte, chacune avec sa capture téléphone, puis une grille de comparaison. */
+:root {
+  --bg:#f2f4f8; --card:#ffffff; --ink:#141b2e; --sub:#5c6680; --line:#d9dee8; --acc:#0a4aa8; --acc-soft:#e3ebfa;
+  --dot-on:#0a4aa8; --dot-off:#d3d9e4; --phone:#141b2e;
+  --f-d:'Bricolage Grotesque','Avenir Next','Segoe UI',system-ui,sans-serif;
+  --f-b:'Atkinson Hyperlegible','Segoe UI',system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg:#0d1220; --card:#151b2a; --ink:#e8ebf3; --sub:#98a1b6; --line:#273047; --acc:#86abff; --acc-soft:#1a2849; --dot-on:#86abff; --dot-off:#2c3549; --phone:#05070d; color-scheme:dark; } }
+:root[data-theme="dark"] { --bg:#0d1220; --card:#151b2a; --ink:#e8ebf3; --sub:#98a1b6; --line:#273047; --acc:#86abff; --acc-soft:#1a2849; --dot-on:#86abff; --dot-off:#2c3549; --phone:#05070d; color-scheme:dark; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:1.0625rem/1.55 var(--f-b);
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
+a { color:var(--acc); }
+.bar { display:flex; flex-wrap:wrap; gap:6px 18px; align-items:center; padding-block:12px; font-size:.9rem; border-bottom:1px solid var(--line); max-width:72rem; margin:0 auto; }
+.bar strong { margin-right:auto; font-family:var(--f-d); font-size:1rem; }
+.wrap { max-width:72rem; margin:0 auto; padding-block:28px 80px; }
+h1 { font:800 clamp(2.1rem,1.2rem + 3.6vw,3.4rem)/1.04 var(--f-d); letter-spacing:-.025em; margin:0 0 14px; max-width:48rem; text-wrap:balance; }
+.lede { font-size:1.15rem; color:var(--sub); max-width:46rem; }
+.diag { display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%,18rem),1fr)); gap:12px; margin:22px 0 8px; }
+.diag div { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+.diag b { display:block; font-family:var(--f-d); font-size:1.05rem; margin-bottom:2px; }
+.diag span { color:var(--sub); font-size:.92rem; }
+h2 { font:750 1.7rem/1.15 var(--f-d); margin:44px 0 6px; }
+.h-sub { color:var(--sub); margin:0 0 16px; }
+.protos { display:grid; gap:16px; }
+.proto { display:grid; grid-template-columns:minmax(0,1fr); gap:18px; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:18px; }
+@media (min-width: 760px) { .proto { grid-template-columns:13.5rem minmax(0,1fr); padding:22px; } }
+.shot { display:block; border-radius:22px; background:var(--phone); padding:7px; max-width:15rem; justify-self:center; align-self:start; }
+.shot img { display:block; width:100%; height:auto; border-radius:16px; aspect-ratio:390/844; object-fit:cover; object-position:top; background:var(--line); }
+.p-n { font:600 .8rem/1 ui-monospace, Menlo, monospace; color:var(--acc); letter-spacing:.04em; }
+.proto h3 { font:750 1.55rem/1.1 var(--f-d); margin:6px 0 8px; }
+.concept { font-size:1.08rem; margin:0 0 10px; }
+.facts { display:grid; gap:8px; margin:0 0 14px; }
+.facts div { display:grid; gap:1px; }
+.facts dt { font-size:.74rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--sub); }
+.facts dd { margin:0; }
+.actions { display:flex; flex-wrap:wrap; gap:8px; }
+.btn { display:inline-flex; align-items:center; gap:6px; text-decoration:none; font-weight:700; border-radius:10px; padding:9px 16px; background:var(--acc); color:var(--card); }
+.btn-g { background:transparent; color:var(--acc); border:1.5px solid var(--line); }
+.btn:hover { filter:brightness(1.08); }
+.cmp-wrap { overflow-x:auto; background:var(--card); border:1px solid var(--line); border-radius:14px; }
+table { border-collapse:collapse; width:100%; min-width:40rem; font-size:.95rem; }
+th, td { padding:10px 14px; text-align:left; border-bottom:1px solid var(--line); vertical-align:middle; }
+thead th { font-size:.74rem; text-transform:uppercase; letter-spacing:.05em; color:var(--sub); }
+tbody tr:last-child > * { border-bottom:0; }
+td a { font-weight:700; text-decoration:none; }
+.dots { display:inline-flex; gap:4px; }
+.dots i { width:10px; height:10px; border-radius:50%; background:var(--dot-off); }
+.dots i.on { background:var(--dot-on); }
+.combo { background:var(--acc-soft); border-radius:14px; padding:18px 20px; margin-top:16px; }
+.combo h3 { font:750 1.2rem/1.2 var(--f-d); margin:0 0 6px; }
+.combo p { margin:0 0 6px; }
+:focus-visible { outline:2.5px solid var(--acc); outline-offset:2px; border-radius:6px; }
+</style>
+</head>
+<body>
+<nav class="bar" aria-label="Navigation">
+  <strong>Prototypes de design</strong>
+  <a href="0-atlas/index.html">Atlas des schémas</a>
+  <a href="../index.html">Site complet</a>
+</nav>
+<main class="wrap">
+  <h1>Six façons de rendre le site simple pour converser</h1>
+  <p class="lede">Le site complet est un catalogue : 12 onglets, des centaines d’expressions. En conversation, on se demande plutôt « qu’est-ce que je veux faire, là, maintenant ? », et on a besoin de trois ou quatre formules, avec un dessin qui montre comment elles marchent. Chaque prototype répond à cette question d’une autre manière, avec ton vrai contenu.</p>
+
+  <div class="diag">
+    <div><b>Moins de choix à l’écran</b><span>4 ou 5 formules clés par intention ; tout le reste est accessible dans le site complet.</span></div>
+    <div><b>Des schémas partout</b><span>Frises du temps, cadre (orange) contre phrase principale (violet), cause → effet, jauges de certitude.</span></div>
+    <div><b>Des liens visibles</b><span>Après « donner mon avis », on propose « justifier » puis « nuancer » : les enchaînements de ton document.</span></div>
+  </div>
+
+  <h2>Les prototypes</h2>
+  <p class="h-sub">Ouvre-les sur ton téléphone : ils sont pensés d’abord pour le mobile.</p>
+  <div class="protos" id="protos"></div>
+
+  <h2>Comparer</h2>
+  <p class="h-sub">Ce sur quoi chaque prototype met l’accent (évaluation de conception, pas un classement).</p>
+  <div class="cmp-wrap"><table id="cmp"></table></div>
+
+  <div class="combo">
+    <h3>Ils peuvent se combiner</h3>
+    <p>Ce ne sont pas des choix exclusifs : un même site peut avoir une entrée « Je veux… », une antisèche pour la conversation, et un coach pour s’entraîner. Dis-moi ce que tu gardes de chacun, et je fusionne.</p>
+  </div>
+</main>
+<script>
+(function () {
+  const P = [
+    { n: 1, dir: '1-je-veux', nom: 'Je veux…',
+      concept: 'Une seule question : « Qu’est-ce que tu veux faire ? ». Un bouton par intention, puis 4 ou 5 formules en très gros, avec leur exemple et leur schéma.',
+      pour: 'Trouver vite quoi dire, au téléphone, pendant ou juste avant une conversation.',
+      simplifie: 'Plus de grammaire en façade : on part du verbe d’intention (expliquer pourquoi, nuancer, réagir).',
+      notes: [3, 2, 2, 2, 1] },
+    { n: 2, dir: '2-conversation', nom: 'Fil de conversation',
+      concept: 'Un faux fil de messages : Sam te dit quelque chose, tu choisis ce que tu veux faire (réagir, expliquer, donner ton avis), puis une formule pour commencer ta réponse.',
+      pour: 'S’entraîner au réflexe de la conversation, tour par tour.',
+      simplifie: 'On apprend les fonctions dans l’ordre où elles arrivent vraiment dans un échange.',
+      notes: [2, 3, 3, 2, 2] },
+    { n: 3, dir: '3-pont', nom: 'Pont d’idées',
+      concept: 'Deux idées, un pont entre elles. Choisis la relation (cause, but, concession…) et le connecteur : la phrase se construit et le schéma se dessine avec tes propres mots.',
+      pour: 'Comprendre comment relier deux propositions et quel mode suit le connecteur.',
+      simplifie: 'Le subjonctif et l’ordre des propositions deviennent visibles au lieu d’être des règles abstraites.',
+      notes: [2, 2, 3, 3, 1] },
+    { n: 4, dir: '4-antiseche', nom: 'Antisèche',
+      concept: 'Toute la méthode sur un écran : 12 tuiles, chacune avec trois formules, une variante québécoise et un mini-schéma. Une tuile s’ouvre en fiche complète.',
+      pour: 'Un coup d’œil en pleine conversation ; une vue d’ensemble à imprimer mentalement.',
+      simplifie: 'Tout est visible d’un coup, sans navigation : la hiérarchie fait le tri.',
+      notes: [3, 2, 1, 3, 1] },
+    { n: 5, dir: '5-carte', nom: 'Carte des liens',
+      concept: 'Un plan de métro : les 4 modules sont des lignes, les 12 fonctions des stations, et les correspondances montrent quelles fonctions s’enchaînent.',
+      pour: 'Voir les liens entre les fonctions et préparer un discours plus long (itinéraire).',
+      simplifie: 'Les enchaînements (opinion → justification → concession) deviennent un trajet.',
+      notes: [2, 2, 3, 2, 1] },
+    { n: 6, dir: '6-coach', nom: 'Coach 5 minutes',
+      concept: 'Une séance par jour : une situation, deux ou trois fonctions à préparer avec leurs schémas, une minute pour parler, puis un bilan qui programme les révisions.',
+      pour: 'Automatiser les formules par la répétition, un peu chaque jour.',
+      simplifie: 'Le parcours est guidé : on ne choisit rien, on suit la séance.',
+      notes: [3, 3, 1, 2, 3] }
+  ];
+  const CRIT = ['Simplicité', 'Conversation réelle', 'Liens entre fonctions', 'Vue d’ensemble', 'Pratique régulière'];
+  const dots = v => `<span class="dots" role="img" aria-label="${v} sur 3">${[1, 2, 3].map(i => `<i class="${i <= v ? 'on' : ''}"></i>`).join('')}</span>`;
+  document.getElementById('protos').innerHTML = P.map(p => `
+    <article class="proto" id="p${p.n}">
+      <a class="shot" href="${p.dir}/index.html" aria-label="Ouvrir le prototype ${p.n}">
+        <img src="shots/${p.n}-mobile.jpg" alt="Capture du prototype ${p.n} sur téléphone" loading="lazy" width="390" height="844" onerror="this.style.visibility='hidden'">
+      </a>
+      <div>
+        <span class="p-n">PROTOTYPE ${p.n}</span>
+        <h3>${p.nom}</h3>
+        <p class="concept">${p.concept}</p>
+        <dl class="facts">
+          <div><dt>Idéal pour</dt><dd>${p.pour}</dd></div>
+          <div><dt>Ce qui devient simple</dt><dd>${p.simplifie}</dd></div>
+        </dl>
+        <div class="actions">
+          <a class="btn" href="${p.dir}/index.html">Ouvrir le prototype</a>
+          <a class="btn btn-g" href="shots/${p.n}-desktop.jpg">Capture ordinateur</a>
+        </div>
+      </div>
+    </article>`).join('') + `
+    <article class="proto" id="atlas">
+      <a class="shot" href="0-atlas/index.html" aria-label="Ouvrir l’atlas des schémas">
+        <img src="shots/0-mobile.jpg" alt="Capture de l’atlas des schémas" loading="lazy" width="390" height="844" onerror="this.style.visibility='hidden'">
+      </a>
+      <div>
+        <span class="p-n">EN PLUS</span>
+        <h3>Atlas des schémas</h3>
+        <p class="concept">Tous les schémas réunis sur une page : le temps, la cause, la conséquence, le but, l’hypothèse, la concession, la certitude, les relatifs, le discours, la conversation, les modes et les registres.</p>
+        <div class="actions"><a class="btn" href="0-atlas/index.html">Ouvrir l’atlas</a></div>
+      </div>
+    </article>`;
+  document.getElementById('cmp').innerHTML = `<thead><tr><th scope="col">Prototype</th>${CRIT.map(c => `<th scope="col">${c}</th>`).join('')}</tr></thead>
+    <tbody>${P.map(p => `<tr><th scope="row"><a href="#p${p.n}">${p.n}. ${p.nom}</a></th>${p.notes.map(dots).map(d => `<td>${d}</td>`).join('')}</tr>`).join('')}</tbody>`;
+})();
+</script>
+</body>
+</html>
