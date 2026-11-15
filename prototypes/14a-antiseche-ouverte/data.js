@@ -246,6 +246,11 @@ window.P14A = {
     }
   },
 
+  /* Formes pour lesquelles les phrases du site trouvées automatiquement ne conviennent pas
+     (même mots, autre construction) : pas d'exemple, pas de schéma plutôt qu'un exemple trompeur. */
+  noex: { 3: ['en + participe présent', 'en + mois/année'], 8: ['loin de + inf.'], 11: ['de plus'], 12: ['je comprends'] },
+  nodiag: { 3: ['en + participe présent'] },
+
   /* Sous-titres de l'onglet 7 → ligne du schéma « si » qui les dessine. */
   subviz: {
     7: { 'Possibilité réelle ou future': ['si', 0], 'Situation hypothétique': ['si', 2], 'Situation passée non réalisée': ['si', 3] }

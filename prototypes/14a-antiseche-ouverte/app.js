@@ -166,8 +166,16 @@
     return [];
   }
   /* Toutes les parties de l'expression, mot pour mot (pour chercher un exemple dans le site). */
+  function altsOf(e) {
+    const alts = String(e).split(/\s+\/\s+/);
+    const w0 = alts[0].split(/\s+/);
+    return alts.map((a, i) => {
+      const w = a.split(/\s+/);
+      return i && w.length < w0.length ? w0.slice(0, w0.length - w.length).concat(w).join(' ') : a;
+    });
+  }
   function exactRanges(e, ex) {
-    for (const alt of String(e).split(/\s+\/\s+/)) {
+    for (const alt of altsOf(e)) {
       const parts = alt.split('…').map(trimP).filter(Boolean);
       if (!parts.length) continue;
       const out = [];
@@ -372,7 +380,7 @@
       const tabs = C.uniq(m.steps.map(s => s[1]));
       txt.split('\n').forEach(line => line.split(/(?<=[.!?])\s+(?=[A-ZÀ-ÖØ-Þ«—])/).forEach(sen => add(sen, tabs)));
     });
-    if (S.pages.methode) C.parseBlocks(S.pages.methode.md).filter(b => b.t === 'quote').forEach(b => b.paras.forEach(p => add(p.replace(/\*/g, ''), [])));
+    if (S.pages.methode) C.parseBlocks(S.pages.methode.md).filter(b => b.t === 'quote').forEach(b => b.paras.forEach(p => p.replace(/\*/g, '').split(/(?<=[.!?])\s+(?=[A-ZÀ-ÖØ-Þ«—])/).forEach(sen => add(sen, []))));
     return (CORPUS = out);
   }
   const letters = k => k.replace(/[^a-z]/g, '').length;
@@ -381,42 +389,83 @@
     const left = main.split(/\s→\s/)[0];
     return left.split(/\s\+\s/).map(s => s.trim()).filter((t, i) => i === 0 || !D.slots[t]).join('…').replace(/…{2,}/g, '…');
   }
+  /* La phrase contient-elle vraiment cette forme (et pas une expression plus longue du site) ? */
+  let KEYLIST = null;
+  const keyList = () => KEYLIST || (KEYLIST = Array.from(C.BY_KEY.keys()));
+  function fits(f, pat, text, strict) {
+    const rg = exactRanges(pat, text);
+    if (!rg) return false;
+    if (!strict) return true;
+    const a = rg[0][0], b = rg[rg.length - 1][1];
+    if (a > 0 && /[-'’]/.test(text[a - 1])) return false;
+    if (/[?!]\s*$/.test(f.head) && !/^\s*[?!]/.test(text.slice(b))) return false;
+    const m = text.slice(a, b), before = text.slice(0, a);
+    const after = text.slice(b).replace(/(^|\s)qu['’]\S*/gi, '$1que').replace(/(^|\s)d['’]\S*/gi, '$1de').replace(/(^|\s)s['’]il/gi, '$1si');
+    for (let k = 1; k <= 3; k++) {
+      const pm = before.match(new RegExp(`(?:\\S+\\s+){${k}}$`));
+      if (!pm) break;
+      const cand = key(pm[0] + m);
+      if (keyList().some(x => x === cand || x.startsWith(cand + ' ') || x.startsWith(cand + ','))) return false;
+    }
+    for (let k = 1; k <= 2; k++) {
+      const nm = after.match(new RegExp(`^(?:\\s*[^\\s,.;:!?]+){${k}}`));
+      if (!nm) break;
+      const cand = key(m + nm[0]);
+      if (cand !== f.k && C.BY_KEY.has(cand)) return false;
+    }
+    return true;
+  }
+  /* Une ligne de schéma « porte » la forme si la tête et la construction correspondent. */
+  function rowCarries(f, label) {
+    const itemCons = consNorm(f.main.split(/\s\+\s/).slice(1).join(' + '));
+    const head = key(f.head);
+    return String(label).replace(/\[[^\]]+\]/g, '').split(/\s+\/\s+/).some(alt => {
+      const parts = alt.split(/\s\+\s/);
+      return key(parts[0]) === head && consMatch(consNorm(parts.slice(1).join(' + ')), itemCons);
+    });
+  }
   function exampleFor(f) {
     if (f.exDone) return f.ex;
     f.exDone = true;
-    const head = key(f.main.split(/\s\+\s/)[0].split(/\s→\s/)[0]);
+    if ((D.noex[f.tab] || []).includes(f.main)) return (f.ex = null);
     const pat = matchPattern(f.main);
     for (const s of rowSpecs(f.tab)) for (const r of s.rows) {
-      if (r.ex && labelAlts(r.label).includes(head)) return (f.ex = { text: r.ex });
+      if (r.ex && rowCarries(f, r.label) && fits(f, pat, r.ex)) return (f.ex = { text: r.ex });
     }
     for (const fi of S.fiches) {
       const keys = [fi.key].concat(fi.aliases || []).map(x => P.cle(x));
       if (!keys.includes(f.k)) continue;
-      const fn = fi.fonctions.find(x => x.tab === f.tab);
+      const fn = fi.fonctions.find(x => x.tab === f.tab && fits(f, pat, x.oral));
       if (fn) return (f.ex = { text: fn.oral, sens: fn.sens });
     }
-    const fo = (D.formal[f.tab] || []).find(x => P.cle(x.key) === f.k);
+    const fo = (D.formal[f.tab] || []).find(x => P.cle(x.key) === f.k && fits(f, pat, x.ex));
     if (fo) return (f.ex = { text: fo.ex });
     const lt = letters(f.k), words = f.k.split(/\s+/).length;
-    if (lt >= 4) {
-      const same = corpus().filter(c => c.tabs.includes(f.tab));
-      for (const c of same) if (exactRanges(pat, c.text)) return (f.ex = { text: c.text });
+    if (words >= 2 ? lt >= 4 : lt >= 6) {
+      for (const c of corpus()) if (c.tabs.includes(f.tab) && fits(f, pat, c.text, true)) return (f.ex = { text: c.text });
     }
-    if (words >= 2 && lt >= 6 || lt >= 8) {
-      for (const c of corpus()) if (!c.tabs.includes(f.tab) && exactRanges(pat, c.text)) return (f.ex = { text: c.text, other: true });
+    if (words >= 2 ? lt >= 8 : lt >= 9) {
+      for (const c of corpus()) if (!c.tabs.includes(f.tab) && fits(f, pat, c.text, true)) return (f.ex = { text: c.text, other: true });
     }
     return (f.ex = null);
   }
 
   /* ---------- Formes à découvrir : le reste de l'onglet ---------- */
   const DISC = {}, DSENS = {}, FORM = {};
-  const consNorm = c => C.norm(String(c || '').replace(/^\+\s*/, '')).trim();
+  const consNorm = c => C.norm(String(c || '').replace(/^\+\s*/, '')).replace(/\bcond\.(?=\s|$)/g, 'conditionnel').replace(/\bind\.(?=\s|$)/g, 'indicatif').trim();
   const consMatch = (a, b) => {
     if (!a || !b || a === b) return true;
     const [lo, sh] = a.length > b.length ? [a, b] : [b, a];
     return lo.startsWith(sh) && !/\+/.test(lo.slice(sh.length));
   };
   const isQCsub = f => /qu[ée]bec/i.test(f.sub || '');
+  /* Expression suivie dans PROGRES : les mots jusqu'à la première notation (« pour + lequel » → « pour lequel »). */
+  function trackOf(main) {
+    const toks = main.split(/\s→\s/)[0].split(/\s\+\s/).map(x => x.trim());
+    let n = 1;
+    while (n < toks.length && !D.slots[toks[n]]) n++;
+    return toks.slice(0, n).join(' ');
+  }
   function discover(tab) {
     if (DISC[tab]) return DISC[tab];
     const E = ESS[tab];
@@ -439,12 +488,12 @@
       else if (it.rest && /^,/.test(it.rest)) { main = plain.slice(0, plain.length - it.rest.length).trim(); note = it.rest.replace(/^,\s*/, ''); }
       main = main.replace(/[\s;]+$/, '');
       if (/\s→\s/.test(main) && !/\s\+\s/.test(main.split(/\s→\s/)[0])) return;
-      const k = P.cle(main);
+      const track = trackOf(main);
+      const k = P.cle(track);
       if (!k) return;
       if (it.section.kind !== 'section') { if (note) addSens(k, note); return; }
       if (note) addSens(k, note);
-      if (it.row) addSens(k, it.row);
-      raw.push({ it, main, k, defOnly: !!note && !/\s\+\s/.test(main) });
+      raw.push({ it, main, track, k, defOnly: !!note && !/\s\+\s/.test(main) });
     });
     S.fiches.forEach(fi => fi.fonctions.forEach(fn => {
       if (fn.tab !== tab) return;
@@ -461,15 +510,16 @@
       const it = r.it;
       const head = r.main.split(/\s\+\s/)[0].split(/\s→\s/)[0].trim();
       const after = r.main.slice(head.length).trim();
-      const f = { id: 'd-' + it.id, tab, it, main: r.main, head, after, k: r.k, regs: it.regs, sec: it.section, sub: it.sub, row: it.row };
+      const f = { id: 'd-' + it.id, tab, it, main: r.main, track: r.track, head, after, k: r.k, regs: it.regs, sec: it.section, sub: it.sub, row: it.row };
       FORM[f.id] = f;
       list.push(f);
     });
-    list.forEach(f => { f.sens = sens.get(f.k) || []; });
+    list.forEach(f => { f.sens = (f.row ? [f.row] : []).concat(sens.get(f.k) || []).filter((x, i, a) => a.indexOf(x) === i).slice(0, 2); });
     DSENS[tab] = sens;
     return (DISC[tab] = list);
   }
   function diagFor(f) {
+    if ((D.nodiag[f.tab] || []).includes(f.main)) return null;
     const rv = D.rowviz[f.tab] && f.row && D.rowviz[f.tab][f.row];
     if (rv) { const base = V.byId('durees'); if (base) return { spec: base, row: { label: f.main, marks: rv }, own: true, cap: f.row }; }
     const sv = D.subviz[f.tab] && f.sub && D.subviz[f.tab][f.sub];
@@ -482,7 +532,7 @@
   function tabExprs(tab) {
     if (EXPRS[tab]) return EXPRS[tab];
     const E = ESS[tab];
-    return (EXPRS[tab] = E.cles.concat(E.qc).map(x => exprOf(x.e)).concat(discover(tab).map(f => f.main)));
+    return (EXPRS[tab] = E.cles.concat(E.qc).map(x => exprOf(x.e)).concat(discover(tab).map(f => f.track)));
   }
   let ALL = null;
   const allExprs = () => ALL || (ALL = ORDER.reduce((a, t) => a.concat(tabExprs(t)), []));
@@ -678,7 +728,7 @@
       ${sens.length ? `<p class="sens"><b>Sens</b> ${sens.map(s => md(nbsp(s))).join(' · ')}</p>` : ''}
       ${ex ? `<p class="ex">${sentenceHTML(ex.text, pat)}</p>${ex.other ? '<p class="d-src">Exemple pris ailleurs dans le site.</p>' : ''}` : `<p class="d-try">${tryHTML(f)}</p>`}
       ${found ? miniViz(found, f.main) : ''}
-      <div class="d-acts">${speakBtn(ex ? ex.text : f.head, true)}${pgHTML(f.main)}<a class="more" href="${esc(C.siteLink(C.itemHref(f.it)))}">Dans le site<span aria-hidden="true"> →</span></a></div>
+      <div class="d-acts">${speakBtn(ex ? ex.text : f.head, true)}${pgHTML(f.track)}<a class="more" href="${esc(C.siteLink(C.itemHref(f.it)))}">Dans le site<span aria-hidden="true"> →</span></a></div>
     </div>`;
   }
   const I_CHEV = '<svg class="d-chev" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M5 7.5 10 12.5 15 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -876,7 +926,7 @@
         ${segHTML()}
         <div class="tools-x">
           <button type="button" class="tog" id="tog-ex" aria-pressed="false"><span class="tog-box" aria-hidden="true">${I_CHECK}</span>Exemples</button>
-          <button type="button" class="side-b" id="side-b" data-side="verso"><span class="side-t">Verso : les repères</span>
+          <button type="button" class="side-b" id="side-b" data-side="verso"><span class="side-t">Verso : repères</span>
             <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 7h13l-3-3M20 17H7l3 3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         </div>
       </div>
@@ -1073,8 +1123,8 @@
       v.hidden = side !== 'verso';
       const b = $('#side-b');
       b.dataset.side = side === 'verso' ? 'recto' : 'verso';
-      $('.side-t', b).textContent = side === 'verso' ? 'Recto : les intentions' : 'Verso : les repères';
-      document.documentElement.dataset.side = side;
+      $('.side-t', b).textContent = side === 'verso' ? 'Recto : intentions' : 'Verso : repères';
+      document.documentElement.dataset.face = side;
       if (side === 'recto') layoutStrips();
     };
     const body = $('#sides');
@@ -1180,7 +1230,7 @@
       if (!body.innerHTML.trim()) body.innerHTML = formBodyHTML(f);
       body.hidden = false;
       DOPEN.add(f.id);
-      P.marquer(f.main, 'vu', TOOL);
+      P.marquer(f.track, 'vu', TOOL);
       doRefresh();
     } else {
       body.hidden = true;

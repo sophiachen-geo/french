@@ -14,6 +14,7 @@
   const TOOL = 'decouvrir';
   const NEED = [3, 5];               // « Je connais » nécessaires pour éclairer la marche 2, puis la marche 3
   const STEP_NAMES = ['Pour commencer', 'Pour varier', 'Pour aller plus loin'];
+  const STEP_SHORT = ['Commencer', 'Varier', 'Plus loin'];
   const STEP_SUBS = [
     'Les formules essentielles, et ce qu’on entend entre amis au Québec.',
     'D’autres formes courantes. Chaque groupe montre une nuance.',
@@ -464,7 +465,7 @@
       if (f.sentence) { ex = f.e; exSrc = 'self'; }
       f.ex = ex; f.exSrc = exSrc;
       const sub = f.diag && f.diag.own && !f.diag.custom && !f.diag.map ? f.diag.row.sub || '' : '';
-      f.nuance = nu || sens || f.restNu || (/^\+/.test(sub) ? '' : sub);
+      f.nuance = nu || sens || f.restNu || (/^\+|:/.test(sub) ? '' : sub);
     });
 
     const m = { tab, forms, confondre: uniq(confondre), qcNotes: uniq(qcNotes) };
@@ -527,47 +528,44 @@
     o = o || {};
     const mini = !!o.mini;
     const G = mini
-      ? { W: 70, H: 46, base: 44, unit: 12, bw: 20, gap: 3, x0: 2, tread: 3.2, r: 2 }
-      : { W: 320, H: 150, base: 144, unit: 36, bw: 92, gap: 12, x0: 10, tread: 8, r: 6 };
-    let g = '';
+      ? { W: 68, H: 46, base: 45, unit: 13, bw: 22, x0: 1, tread: 3.4 }
+      : { W: 320, H: 160, base: 156, unit: 42, bw: 100, x0: 10, tread: 9 };
+    const cols = [], outlines = [];
+    let selRect = '';
     const tops = [];
     S3.st.forEach((s, i) => {
-      const x = G.x0 + i * (G.bw + G.gap);
+      const x = G.x0 + i * G.bw;
       const h = G.unit * (i + 1);
       const top = G.base - h;
       tops.push([x + G.bw / 2, top]);
       const frac = v => s.total ? v / s.total : 0;
       const hk = +(h * frac(s.known)).toFixed(2), hs = +(h * frac(s.seen)).toFixed(2);
       const sel = o.sel === i + 1;
-      const clip = `clip-${o.uid || 's'}-${i}`;
-      let b = `<clipPath id="${clip}"><rect x="${x}" y="${top}" width="${G.bw}" height="${h}" rx="${G.r}"/></clipPath>`;
-      b += `<g clip-path="url(#${clip})">`;
-      b += `<rect class="blk-bg" x="${x}" y="${top}" width="${G.bw}" height="${h}"/>`;
+      let b = `<rect class="blk-bg${s.lit ? '' : ' is-dim'}" x="${x}" y="${top}" width="${G.bw}" height="${h}"/>`;
       if (hs) b += `<rect class="blk-seen" x="${x}" y="${G.base - hs}" width="${G.bw}" height="${hs}"/>`;
       if (hk) b += `<rect class="blk-known" x="${x}" y="${G.base - hk}" width="${G.bw}" height="${hk}"/>`;
       b += treadSegs(x, top, G.bw, G.tread, s.mix);
-      b += '</g>';
-      b += `<rect class="blk${s.lit ? ' is-lit' : ' is-dim'}${sel ? ' is-sel' : ''}" x="${x}" y="${top}" width="${G.bw}" height="${h}" rx="${G.r}"/>`;
       if (!mini) {
-        b += `<text class="blk-n" x="${x + 12}" y="${top + G.tread + 17}">${i + 1}</text>`;
-        b += `<text class="blk-c" x="${x + G.bw / 2}" y="${G.base - 9}" text-anchor="middle">${s.known}<tspan class="blk-c2">/${s.total}</tspan></text>`;
+        b += `<text class="blk-n" x="${x + 10}" y="${i === 0 ? G.base - 10 : top + G.tread + 18}">${i + 1}</text>`;
+        b += `<text class="blk-c" x="${x + G.bw / 2}" y="${G.base - 10}" text-anchor="middle">${s.known}<tspan class="blk-c2">/${s.total}</tspan></text>`;
       }
+      const edge = `<rect class="blk${s.lit ? ' is-lit' : ' is-dim'}" x="${x}" y="${top}" width="${G.bw}" height="${h}"/>`;
+      if (sel) selRect = `<rect class="blk is-sel" pointer-events="none" x="${x}" y="${top}" width="${G.bw}" height="${h}"/>`;
       if (!mini && o.tab && !o.static) {
         const label = `Marche ${i + 1}, ${STEP_NAMES[i]} : ${s.known} forme${s.known > 1 ? 's' : ''} connue${s.known > 1 ? 's' : ''} sur ${s.total}${s.lit ? '' : ' (pas encore éclairée)'}`;
-        g += `<a class="blk-a" href="#t${o.tab}-${i + 1}" aria-label="${esc(label)}"${sel ? ' aria-current="true"' : ''}>${b}</a>`;
-      } else g += b;
+        cols.push(`<a class="blk-a" href="#t${o.tab}-${i + 1}" aria-label="${esc(label)}"${sel ? ' aria-current="true"' : ''}>${b}${edge}</a>`);
+      } else { cols.push(b); outlines.push({ edge, lit: s.lit, sel }); }
     });
-    /* Le chemin qui monte */
-    if (!mini) {
-      const pts = tops.map(([x, y]) => `${x},${y - 4}`).join(' ');
-      g = `<polyline class="path" points="${pts}"/>` + g;
-    }
+    /* Contours : marches pas encore éclairées d'abord (pointillés), puis éclairées, puis sélectionnée. */
+    const order = outlines.slice().sort((a, b) => (a.sel - b.sel) || (a.lit - b.lit)).map(x => x.edge).join('');
+    let g = cols.join('') + order + selRect;
+    g += `<line class="ground" x1="0" x2="${G.W}" y1="${G.base}" y2="${G.base}"/>`;
     /* « Toi » sur la marche où tu es */
     if (o.current != null) {
       const [cx, top] = tops[o.current];
       g += mini
-        ? `<circle class="me" cx="${cx}" cy="${top - 4.6}" r="3.4"/>`
-        : `<g class="me"><circle cx="${cx}" cy="${top - 23}" r="6.5"/><path d="M${cx - 9} ${top - 1} Q${cx} ${top - 22} ${cx + 9} ${top - 1} Z"/></g><text class="me-t" x="${cx + 14}" y="${top - 13}">toi</text>`;
+        ? `<circle class="me" cx="${cx}" cy="${top - 4.4}" r="3.4"/>`
+        : `<g class="me"><circle cx="${cx}" cy="${top - 23}" r="6.5"/><path d="M${cx - 9} ${top - 1} Q${cx} ${top - 22} ${cx + 9} ${top - 1} Z"/></g><text class="me-t" x="${cx + 14}" y="${top - 12}">toi</text>`;
     }
     const title = o.title ? `<title>${esc(o.title)}</title>` : '';
     return `<svg class="stair${mini ? ' stair-mini' : ''}" viewBox="0 0 ${G.W} ${G.H}" ${o.tab && !mini && !o.static ? 'role="group"' : 'role="img"'} aria-label="${esc(o.label || 'Escalier des formes')}">${title}${g}</svg>`;
@@ -599,7 +597,7 @@
   function progHTML(f) {
     const s = statusOf(f);
     return `<div class="prog" data-pf="${f.id}">
-      <span class="pst" data-st="${s.st}" data-rv="${s.revoir}"><span class="sd" aria-hidden="true"></span><span class="pst-t">${ST_TXT[s.st]}${s.revoir ? ' · à revoir' : ''}</span></span>
+      <span class="pst"><span class="sd" data-st="${s.st}" data-rv="${s.revoir}" aria-hidden="true"></span><span class="pst-t">${ST_TXT[s.st]}${s.revoir ? ' · à revoir' : ''}</span></span>
       <span class="pbs">
         <button type="button" class="pb pb-ok" data-act="connu" data-f="${f.id}" aria-pressed="${s.connu}">${ICON.check}Je connais</button>
         <button type="button" class="pb pb-rv" data-act="revoir" data-f="${f.id}" aria-pressed="${s.revoir}">${ICON.flag}À revoir</button>
@@ -681,7 +679,7 @@
       const c = secCount(all);
       const open = (step === 3 || i === 0 || secs.length <= 2) ? ' open' : '';
       return `<details class="sec" data-sec="${esc(s.key)}"${open}>
-        <summary><span class="sec-n">${esc(s.num || '·')}</span><span class="sec-t">${esc(s.title || '')}</span>
+        <summary><span class="sec-n">${s.num ? esc(s.num) : '<b class="mx-d mx-3" aria-hidden="true"></b>'}</span><span class="sec-t">${esc(s.title || '')}</span>
           <span class="sec-c" data-sc="${esc(s.key)}">${c.known ? `<b>${c.known}</b> / ` : ''}${plur(c.total, 'forme', 'formes')}</span>${secBar(c)}${ICON.chev}</summary>
         <div class="sec-b">${s.groups.map((g, j) => {
           const gid = `${tab}-${step}-${i}-${j}`;
@@ -730,6 +728,7 @@
     return `<p class="lg">${items.map(([c, t]) => `<span class="lg-${c === 'main' ? 'm' : c === 'cadre' ? 'c' : 'x'}"><i></i>${esc(t)}</span>`).join('')}</p>`;
   }
   const STAIR_KEY = `<p class="skey"><span><i class="k-known"></i>connues</span><span><i class="k-seen"></i>déjà vues</span><span><i class="k-reg"></i>couleur du haut = registre</span></p>`;
+  const ST_KEY = `<p class="stkey" aria-hidden="true"><span><span class="sd" data-st="nouveau"></span>nouvelle</span><span><span class="sd" data-st="vu"></span>déjà vue</span><span><span class="sd" data-st="maitrise"></span>je la connais</span><span><span class="sd" data-st="nouveau" data-rv="true"></span>à revoir</span></p>`;
   const REG_KEY = `<p class="rkey">${LEVELS.map((l, i) => `<span><b class="mx-d mx-${i}" aria-hidden="true"></b>${esc(l.label)}</span>`).join('')}</p>`;
 
   /* ---------- Écrans ---------- */
@@ -752,7 +751,7 @@
   }
   function homeHTML() {
     const H = homeStats();
-    const knownAll = H.st.reduce((a, s) => a + s.known, 0);
+    const knownAll = uniq(ORDER.reduce((a, t) => a.concat(model(t).forms.map(f => f.pk)), [])).filter(k => P.statut(k) === 'maitrise').length;
     const rev = P.aRevoir().length;
     const tiles = ORDER.map((t, i) => {
       const E = ESS[t];
@@ -760,7 +759,7 @@
       return `<li><a class="tile" href="#t${t}" id="tile-${t}">
         <span class="tl-top"><span class="tl-n" aria-hidden="true">${pad(t)}</span><span class="tl-je">${esc(E.je)}</span></span>
         <span class="tl-mid">${glyph(t)}<span class="tl-st" data-tile="${t}">${tileStairHTML(t, s)}</span></span>
-        <span class="tl-f">${E.cles.slice(0, 3).map(c => `<span>${T(c.e)}</span>`).join('<span class="dot" aria-hidden="true">·</span>')}</span>
+        <span class="tl-f">${uniq(E.cles.map(c => c.e)).slice(0, 3).map(e => `<span>${T(e)}</span>`).join('<span class="dot" aria-hidden="true">·</span>')}</span>
       </a></li>`;
     }).join('');
     return `<div class="home wrap">
@@ -796,6 +795,12 @@
     </div>`;
   }
 
+  /* Trois formes de chaque marche : ce qui t'attend plus haut. */
+  function samples(tab, step) {
+    const fs = model(tab).forms.filter(f => f.step === step);
+    const pick = fs.filter(f => f.diag && !f.sentence).concat(fs.filter(f => !f.sentence));
+    return uniq(pick.map(f => f.e)).slice(0, 3);
+  }
   function stairBlockHTML(tab, step) {
     const s = stats(tab);
     const svg = stairSVG(s, { tab, sel: step, current: s.current, uid: 'i' + tab, label: `L’escalier de « ${ESS[tab].je} »` });
@@ -803,7 +808,8 @@
       const cur = step === i + 1;
       return `<li><a class="sb${cur ? ' is-sel' : ''}${x.lit ? ' is-lit' : ' is-dim'}" href="#t${tab}-${i + 1}" data-step="${i + 1}"${cur ? ' aria-current="true"' : ''}>
         <span class="sb-n" aria-hidden="true">${i + 1}</span>
-        <span class="sb-t"><span class="sb-l">${STEP_NAMES[i]}</span><span class="sb-c">${x.known}/${x.total}<span class="sr"> connues</span>${s.current === i ? '<span class="sb-me"> · toi</span>' : ''}</span></span>
+        <span class="sb-t"><span class="sb-l"><span class="sb-long">${STEP_NAMES[i]}</span><span class="sb-short" aria-hidden="true">${STEP_SHORT[i]}</span></span><span class="sb-c">${x.known}/${x.total}<span class="sr"> connues</span>${s.current === i ? '<span class="sb-me"> · toi</span>' : ''}</span></span>
+        <span class="sb-ex" aria-hidden="true">${samples(tab, i + 1).map(e => T(e)).join(' · ')}</span>
         <span class="sb-p" aria-hidden="true"><i style="width:${x.total ? (100 * x.known / x.total).toFixed(1) : 0}%"></i></span>
       </a></li>`;
     }).join('');
@@ -841,7 +847,7 @@
     } else if (step === 2) {
       const str = gridFor('structures', tab);
       body = `${str ? `<div class="panel panel-x"><p class="px-h">Varier la structure</p>${V.render(str, { title: false })}</div>` : ''}
-        <p class="how">Touche une forme pour voir ce qui suit, une image et un exemple quand il existe.</p>
+        <p class="how">Touche une forme pour voir ce qui suit, une image et un exemple quand il existe.</p>${ST_KEY}
         ${sectionsHTML(tab, forms, 2)}
         ${m.confondre.length ? `<div class="note note-d"><p class="note-h">À ne pas confondre</p><ul>${m.confondre.map(x => `<li>${x}</li>`).join('')}</ul></div>` : ''}`;
     } else {
@@ -850,7 +856,7 @@
       body = `<div class="note note-w"><p>${meter(2)}<span><b>Soutenu, écrit</b> : pour un courriel, une lettre, un formulaire, une entrevue.</span></p>
           ${hasRec ? `<p>${meter(3)}<span><b>À reconnaître</b> : utile à comprendre quand tu l’entends ; pas besoin de le dire tout de suite.</span></p>` : ''}</div>
         ${reg ? `<div class="panel panel-x"><p class="px-h">Une même idée, trois registres</p>${V.render(reg, { title: false })}</div>` : ''}
-        ${forms.length ? sectionsHTML(tab, forms, 3) : '<p class="how">Cette intention n’a pas de forme soutenue dans le site : les formes courantes passent bien à l’écrit.</p>'}
+        ${forms.length ? ST_KEY + sectionsHTML(tab, forms, 3) : '<p class="how">Cette intention n’a pas de forme soutenue dans le site : les formes courantes passent bien à l’écrit.</p>'}
         ${m.qcNotes.length ? `<div class="note note-q"><p class="note-h"><span class="qcf">QC</span>Bon à savoir au Québec</p><ul>${m.qcNotes.map(x => `<li>${x}</li>`).join('')}</ul></div>` : ''}`;
     }
     return `<header class="m-head lvlh-${step}">
@@ -986,6 +992,9 @@
   function enter(root) {
     if (reduce()) return;
     root.classList.remove('enter'); void root.offsetWidth; root.classList.add('enter');
+    const done = () => { root.classList.remove('enter'); root.removeEventListener('animationend', done); };
+    root.addEventListener('animationend', done);
+    setTimeout(done, 600);
   }
 
   function render() {
@@ -1067,7 +1076,7 @@
     const d = chip.closest('details');
     if (d) d.open = true;
     toggleChip(chip, true);
-    chip.scrollIntoView({ block: 'center' });
+    chip.scrollIntoView({ block: 'start' });
     chip.focus({ preventScroll: true });
   }
 
@@ -1124,8 +1133,8 @@
       const f = FORMS[el.dataset.pf];
       if (!f) return;
       const s = statusOf(f);
-      const pst = $('.pst', el);
-      pst.dataset.st = s.st; pst.dataset.rv = s.revoir;
+      const pd = $('.pst .sd', el);
+      pd.dataset.st = s.st; pd.dataset.rv = s.revoir;
       $('.pst-t', el).textContent = ST_TXT[s.st] + (s.revoir ? ' · à revoir' : '');
       $('.pb-ok', el).setAttribute('aria-pressed', String(s.connu));
       $('.pb-rv', el).setAttribute('aria-pressed', String(s.revoir));
@@ -1138,14 +1147,12 @@
       $('.chip-st', b).textContent = `, ${ST_TXT[s.st].toLowerCase()}${s.revoir ? ', à revoir' : ''}`;
     });
     $$('details.sec').forEach(d => {
-      const key = d.dataset.sec;
       const forms = $$('[data-chip]', d).map(b => FORMS[b.dataset.chip]);
       const c = secCount(forms);
       const sc = $('.sec-c', d);
       if (sc) sc.innerHTML = `${c.known ? `<b>${c.known}</b> / ` : ''}${plur(c.total, 'forme', 'formes')}`;
       const bar = $('.sec-bar', d);
       if (bar) bar.outerHTML = secBar(c);
-      void key;
     });
   }
   function refresh() {
