@@ -5,7 +5,9 @@
   'use strict';
 
   const C = window.CADRES, S = window.SITE, V = window.VIZ, D = window.P2;
-  const { esc, norm } = C;
+  const { norm } = C;
+  /* Échappement + espaces insécables de la typographie française (? ! : ; « ») */
+  const esc = s => C.esc(s).replace(/ ([?!:;»%])/g, '\u00a0$1').replace(/« /g, '«\u00a0');
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
   const MAX = D.MAX_TURNS;
@@ -44,7 +46,7 @@
       else s += ' …';
       say = s;
     }
-    return { tab, e: k.e, say, c: k.c || '', r: k.r || '', ex: k.ex, key, qc };
+    return { tab, e: k.e, say: say.replace(/'/g, '’'), c: k.c || '', r: k.r || '', ex: k.ex, key, qc };
   }
   const STARTERS = {};
   Object.keys(ESS).forEach(t => {
@@ -115,7 +117,7 @@
     const cut = s.slice(0, n), sp = cut.lastIndexOf(' ');
     return (sp > n * 0.5 ? cut.slice(0, sp) : cut).replace(/[\s,;:']+$/, '') + '…';
   };
-  const tw = t => Math.max(14, String(t).length * 1.85 + 7);
+  const tw = t => Math.max(14, String(t).length * 2 + 7);
   function splitAt(w, re) {
     const m = w.match(re);
     if (!m) return [w, ''];
@@ -261,7 +263,8 @@
     const parts = say.split('…');
     const head = parts[0].trim().replace(/[,;:]$/, '');
     if (head && norm(w).startsWith(norm(head))) return cap(w);
-    const s = parts.length === 2 ? parts[0] + w + parts[1] : parts[0] + w;
+    const w2 = /[?!.]\s*$/.test(parts[0]) ? cap(w) : w;
+    const s = parts.length === 2 ? parts[0] + w2 + parts[1] : parts[0] + w2;
     return s.replace(/\s+/g, ' ').replace(/\s+([,.])/g, '$1').trim();
   }
   function sentenceHTML(t) {
@@ -271,7 +274,7 @@
       const head = parts[0].trim().replace(/[,;:]$/, '');
       if (head && norm(w).startsWith(norm(head))) return `<span class="xp">${esc(cap(w).slice(0, head.length))}</span>${esc(cap(w).slice(head.length))}`;
       const tail = parts.length === 2 ? parts[1] : '';
-      return `<span class="xp">${esc(parts[0].trimEnd())}</span> ${esc(w)}${esc(tail)}`.replace(/ ([,.])/g, '$1');
+      return `<span class="xp">${esc(parts[0].trimEnd())}</span> ${esc(/[?!.]\s*$/.test(parts[0]) ? cap(w) : w)}${esc(tail)}`.replace(/ ([,.])/g, '$1');
     }
     const blank = t.done ? `<span class="blank said" title="dit à voix haute">${D.ui('wave', 16)}<span class="sr">(dit à voix haute)</span></span>` : '<span class="blank"><span class="sr">(à compléter)</span></span>';
     return parts.map((p, i) => (i === 0 ? `<span class="xp">${esc(p)}</span>` : esc(p))).join(blank);
@@ -391,7 +394,7 @@
       ${ref ? `<div class="how-ref"><p class="how-l">La formule, avec un exemple</p>${ref}</div>` : ''}
       <p class="trap"><span class="trap-k">À éviter</span> ${V.md(es.attention)}</p>
       <div class="how-f"><button type="button" class="link-btn all-btn" data-act="allviz" aria-expanded="false">${D.ui('list', 16)} Tous les schémas</button>
-        <a class="how-go" href="${esc(itemLink(t.tab, s.e))}">« ${esc(s.e.split(' / ')[0])} » dans le site complet ${D.ui('link', 16)}</a></div>
+        <a class="how-go" href="${esc(itemLink(t.tab, s.e))}">«&nbsp;${esc(s.e.split(' / ')[0])}&nbsp;» dans le site complet ${D.ui('link', 16)}</a></div>
       <div class="all-in" hidden><p class="how-l">${esc(es.je)} : tous les schémas</p>${allHTML}</div>
     </section>`;
   }
@@ -420,7 +423,7 @@
       <p class="dock-sub">${st.invited ? `Sam t’invite à <b>${esc(inv)}</b>. Mais c’est toi qui choisis.` : 'Choisis ce que tu veux faire avec ta réponse.'}</p>
       <div class="moves">${opts.map(o => {
         const es = ESS[o.tab];
-        const eg = STARTERS[o.tab].filter(s => !s.qc).slice(0, 3).map(s => esc(s.e.split(' / ')[0].replace(/…$/, ''))).join(' · ');
+        const eg = Array.from(new Set(STARTERS[o.tab].filter(s => !s.qc).map(s => s.e.split(' / ')[0].replace(/…$/, '')))).slice(0, 3).map(esc).join(' · ');
         return `<button type="button" class="move${o.why === 'invite' ? ' invite' : ''}" style="${fnStyle(o.tab)}" data-move="${o.tab}">
           <span class="tile">${D.icon(o.tab, 24)}</span>
           <span class="mv-t"><span class="mv-v">${esc(es.je)}</span><span class="mv-eg">${eg}</span><span class="mv-why">${o.why === 'invite' ? D.ui('spark', 13) : ''}${esc(whyText(o))}</span></span>
@@ -454,7 +457,7 @@
         <button type="button" class="link-btn" data-act="idea" aria-expanded="false" aria-controls="idea">${D.ui('bulb', 16)} Besoin d’une idée ?</button>
         <button type="button" class="link-btn" data-act="restarter">${D.ui('back', 16)} Autre début</button>
       </div>
-      <p class="idea" id="idea" hidden><span class="idea-k">Exemple</span> « ${esc(t.st.ex)} » ${sayBtn(t.st.ex, 'Écouter l’exemple')}</p>
+      <p class="idea" id="idea" hidden><span class="idea-k">Exemple</span> <span>${esc(t.st.ex)}</span> ${sayBtn(t.st.ex, 'Écouter l’exemple')}</p>
     </div>`;
   }
   function endHTML() {
@@ -471,6 +474,7 @@
     else if (st.phase === 'end') html = endHTML();
     dock.innerHTML = html;
     dock.hidden = !html;
+    dock.classList.toggle('is-speak', st.phase === 'speak');
     if (focus) {
       const target = focus === 'chip' ? $('.chip', dock) : $('#dock-t', dock);
       if (target) target.focus({ preventScroll: true });
@@ -520,15 +524,15 @@
     const used = new Set(doneTurns().map(t => t.tab));
     const m = closest('model');
     let h = `<p class="kick">Ton fil</p><h2 class="side-h">Les gestes que tu enchaînes</h2><ol class="pfil">
-      <li class="pf-sam"><span class="av av-s" aria-hidden="true">S</span><span>« ${esc(st.scn.dit)} »</span></li>`;
+      <li class="pf-sam"><span class="av av-s" aria-hidden="true">S</span><span>«&nbsp;${esc(st.scn.dit)}&nbsp;»</span></li>`;
     turns.forEach((t, i) => {
-      if (i > 0 && t.invite) h += `<li class="pf-link"><span>Sam : « ${esc(t.invite)} »</span></li>`;
+      if (i > 0 && t.invite) h += `<li class="pf-link"><span>Sam&nbsp;: «&nbsp;${esc(t.invite)}&nbsp;»</span></li>`;
       const line = fullText(t.st.say, t.words);
       h += `<li class="pf-step${t.done ? '' : ' now'}" style="${fnStyle(t.tab)}"><span class="tile">${D.icon(t.tab, 18)}</span><span class="pf-t"><b>${esc(ESS[t.tab].je)}</b><span>${line ? esc(line) : esc(t.st.say)}</span></span></li>`;
     });
-    if (st.phase !== 'end' && turns.length < MAX) {
+    if ((st.phase === 'moves' || st.phase === 'starters') && turns.length < MAX) {
       const nx = st.phase === 'starters' ? st.sel : st.invited;
-      if (turns.length && turns[turns.length - 1].done && st.invited) h += `<li class="pf-link"><span>Sam : « ${esc(askText(st.invited))} »</span></li>`;
+      if (turns.length && turns[turns.length - 1].done && st.invited) h += `<li class="pf-link"><span>Sam&nbsp;: «&nbsp;${esc(askText(st.invited))}&nbsp;»</span></li>`;
       h += `<li class="pf-next"${nx ? ` style="${fnStyle(nx)}"` : ''}><span class="tile">${nx ? D.icon(nx, 18) : '?'}</span><span class="pf-t"><b>${st.phase === 'starters' && st.sel ? esc(ESS[st.sel].je) : 'À toi'}</b><span>${st.phase === 'starters' ? 'choisis un début' : nx ? 'Sam t’invite à : ' + esc(ESS[nx].je.toLowerCase()) : 'choisis un geste'}</span></span></li>`;
     }
     h += '</ol>';
@@ -546,7 +550,7 @@
   let refTab = null, refKey = null;
   function renderRef() {
     const box = $('#ref-panel');
-    if (!box || getComputedStyle(box.parentElement).display === 'none') return;
+    if (!box || !box.closest('.side').getClientRects().length) return;
     const tab = focusTab();
     const cur = st.phase === 'speak' ? st.turns[st.turns.length - 1] : null;
     const key = tab + '|' + (cur ? cur.st.e + cur.st.c : '');
@@ -564,7 +568,7 @@
   function scnListHTML() {
     const group = (type, title) => `<p class="sl-g">${title}</p><ul class="sl">${SCENARIOS.filter(s => s.type === type).map(s => `
       <li><button type="button" class="sl-b" data-scn="${s.id}"${st.scn && st.scn.id === s.id ? ' aria-current="true"' : ''}>
-        <span class="sl-d">« ${esc(s.dit)} »</span>
+        <span class="sl-d">«&nbsp;${esc(s.dit)}&nbsp;»</span>
         <span class="sl-m"><span class="sl-th">${esc(s.theme)}</span><span class="sl-f">${s.fonctions.map(f => `<span class="sl-i" style="${fnStyle(f)}" title="${esc(ESS[f].je)}">${D.icon(f, 13)}</span>`).join('')}</span></span>
       </button></li>`).join('')}</ul>`;
     return group('question', 'Sam te pose une question') + group('nouvelle', 'Sam t’annonce une nouvelle');
@@ -620,6 +624,7 @@
     let ack;
     if (T === 12) {
       if (!st.usedSuite && st.x.suite && (st.scn.type === 'nouvelle' || st.lastSam === 'partage')) { ack = st.x.suite; st.usedSuite = true; }
+      else if (/veux dire|apres|^fait que/.test(t.st.key)) ack = 'Ben… je veux juste en savoir un peu plus !';
       else ack = st.lastSam === 'open' ? D.ACK[12] : 'Ha ha, oui !';
     } else ack = (st.scn.type === 'nouvelle' && D.ACK_N[T]) || D.ACK[T];
     const lines = [[ack, 'ack']];
@@ -678,12 +683,12 @@
     const flow = turns.map((t, i) => {
       const es = ESS[t.tab];
       const line = fullText(t.st.say, t.words);
-      const link = i > 0 && t.invite ? `<li class="fl-link"><span>Sam : « ${esc(t.invite)} »</span></li>` : '';
+      const link = i > 0 && t.invite ? `<li class="fl-link"><span>Sam&nbsp;: «&nbsp;${esc(t.invite)}&nbsp;»</span></li>` : '';
       return `${link}<li class="fl-step" style="${fnStyle(t.tab)}">
         <div class="fl-h"><span class="tile">${D.icon(t.tab, 22)}</span><div><p class="fl-n">Geste ${i + 1}</p><p class="fl-v">${esc(es.je)}</p></div></div>
         <p class="fl-s">${line ? esc(line) : `<b>${esc(t.st.say.replace(/\s*…\s*/g, ' … ').trim())}</b> <span class="fl-said">(dit à voix haute)</span>`}</p>
         <div class="fl-viz">${V.render(liveSpec(t), { title: false })}</div>
-        <p class="fl-go"><a href="${esc(itemLink(t.tab, t.st.e))}">« ${esc(t.st.e.split(' / ')[0])} »</a> · <a href="${esc(tabLink(t.tab))}">onglet ${t.tab}</a></p>
+        <p class="fl-go"><a href="${esc(itemLink(t.tab, t.st.e))}">«&nbsp;${esc(t.st.e.split(' / ')[0])}&nbsp;»</a> · <a href="${esc(tabLink(t.tab))}">onglet ${t.tab}</a></p>
       </li>`;
     }).join('');
     const redis = turns.map(t => {
@@ -694,7 +699,7 @@
     const html = `<section class="bilan" aria-labelledby="bilan-t">
       <header class="bl-h"><p class="kick">Bilan</p><h2 id="bilan-t" tabindex="-1">Ton fil de conversation</h2>
         <p>Tu as répondu à Sam en ${turns.length} gestes. Voici comment ils s’enchaînent.</p></header>
-      <ol class="flow"><li class="fl-start"><span class="av" aria-hidden="true">S</span><span>« ${esc(st.scn.dit)} »</span></li>${flow}</ol>
+      <ol class="flow"><li class="fl-start"><span class="av" aria-hidden="true">S</span><span>«&nbsp;${esc(st.scn.dit)}&nbsp;»</span></li>${flow}</ol>
       <div class="bl-grid">
         <section class="bl-card"><h3>Qui a parlé, quand ?</h3><p class="bl-sub">En haut Sam, en bas toi : chaque barre est une réplique.</p>${V.render(lanesSpec(), { title: false })}</section>
         ${model ? `<section class="bl-card bl-model"><h3>Le modèle le plus proche</h3>

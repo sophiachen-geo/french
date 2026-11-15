@@ -44,13 +44,17 @@
       for (const p0 of parts) {
         let words = p0.split(' '), hit = null;
         while (words.length && !hit) {
-          const p = words.join(' ').toLowerCase().replace(/’/g, "'");
-          let i = low.indexOf(p, from);
-          while (i >= 0) {
-            const okL = i === 0 || !isL(low[i - 1]);
-            const okR = /'$/.test(p) || !isL(low[i + p.length]);
-            if (okL && okR) { hit = [i, i + p.length]; break; }
-            i = low.indexOf(p, i + 1);
+          const p1 = words.join(' ').toLowerCase().replace(/’/g, "'");
+          const cands = C.uniq([p1, p1.replace(/\b(qu|j|c|d|l|n|m|t|s)e$/, "$1'"), p1.replace(/\bsi$/, "s'")]);
+          for (const p of cands) {
+            let i = low.indexOf(p, from);
+            while (i >= 0) {
+              const okL = i === 0 || !isL(low[i - 1]);
+              const okR = /'$/.test(p) || !isL(low[i + p.length]);
+              if (okL && okR) { hit = [i, i + p.length]; break; }
+              i = low.indexOf(p, i + 1);
+            }
+            if (hit) break;
           }
           if (!hit && words.length > 1 && words[words.length - 1].length > 0) words = words.slice(0, -1); else break;
         }
@@ -93,11 +97,12 @@
   addSeq('chain', M.chains);
   addSeq('model', S.models);
   const cleanHead = h => String(h).replace(/\s*…\s*$/, '').trim();
+  const lowerHead = h => { h = cleanHead(h); return h.charAt(0).toLowerCase() + h.slice(1); };
   for (const [key, all] of C.BY_KEY) {
     const list = all.filter(i => i.filterable);
     const tabs = C.uniq(list.map(i => i.tab)).sort((a, b) => a - b);
     for (let i = 0; i < tabs.length; i++) for (let j = i + 1; j < tabs.length; j++) {
-      lk(tabs[i], tabs[j]).shared.push({ key, head: cleanHead(list.find(it => it.tab === tabs[i]).head) });
+      lk(tabs[i], tabs[j]).shared.push({ key, head: lowerHead(list.find(it => it.tab === tabs[i]).head) });
     }
   }
   S.fiches.forEach(f => {
@@ -178,7 +183,7 @@
     return tabs.map((t, i) => {
       const label = labels ? labels[i] : stepLabel(t);
       const p = pool(t, theme);
-      const h = HINT[label];
+      const h = labels ? HINT[label] : null;
       let s = (h && p.find(x => !used.has(x.text) && norm(x.f).startsWith(norm(h)))) || p.find(x => !used.has(x.text)) || p[0];
       used.add(s.text);
       return Object.assign({ tab: t, label }, s);
@@ -248,11 +253,14 @@
     const [S0, E0] = a === x ? [A, B] : [B, A];
     return `M${S0.x} ${S0.y} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${E0.x} ${E0.y}`;
   }
-  function segPath(a, b) {
+  function segPath(a, b, used) {
     const la = LINE_OF[a];
-    if (la === LINE_OF[b] && ADJ.has(keyOf(a, b))) {
-      const pts = expandLine(la);
-      const ia = pts.findIndex(p => p.st === a), ib = pts.findIndex(p => p.st === b);
+    const pts = expandLine(la);
+    const ia = pts.findIndex(p => p.st === a), ib = pts.findIndex(p => p.st === b);
+    const lo = Math.min(ia, ib), hi = Math.max(ia, ib);
+    const clash = used && ib >= 0 && (used[la] || []).some(([x, y]) => lo < y && hi > x);
+    if (la === LINE_OF[b] && (!clash || ADJ.has(keyOf(a, b)) && !getLink(a, b))) {
+      if (used) (used[la] = used[la] || []).push([lo, hi]);
       const sub = pts.slice(Math.min(ia, ib), Math.max(ia, ib) + 1);
       if (ia > ib) sub.reverse();
       return { d: rounded(sub, 26), line: la };
@@ -304,7 +312,7 @@
       const m = MOMENTS[i];
       if (L.axis === 'x') {
         z += `<rect class="zn ${i % 2 ? 'zn-odd' : ''}" x="${a}" y="6" width="${b - a}" height="${h - 12}" rx="14"/>`;
-        z += `<text class="zn-t" x="${(a + b) / 2}" y="30" text-anchor="middle">${esc(m.label)}</text>`;
+        z += `<text class="zn-t" x="${(a + b) / 2}" y="26" text-anchor="middle">${esc(m.label)}</text>`;
       } else {
         z += `<rect class="zn ${i % 2 ? 'zn-odd' : ''}" x="4" y="${a}" width="${w - 8}" height="${b - a}" rx="12"/>`;
         z += `<text class="zn-t" transform="translate(16 ${(a + b) / 2}) rotate(-90)" text-anchor="middle">${esc(m.label)}</text>`;
@@ -394,9 +402,9 @@
       if (i === tabs.length - 1) g.classList.add('end');
     });
     let segs = '';
-    const pieces = [];
+    const pieces = [], used = {};
     for (let i = 1; i < tabs.length; i++) {
-      const sp = segPath(tabs[i - 1], tabs[i]);
+      const sp = segPath(tabs[i - 1], tabs[i], used);
       pieces.push(sp);
       const lkEl = svg.querySelector(`.lk[data-k="${keyOf(tabs[i - 1], tabs[i])}"]`);
       if (lkEl && !sp.line) lkEl.classList.add('show');
@@ -476,7 +484,7 @@
   };
 
   function fluxSpec(r) {
-    const X = { commencer: 6, raconter: 28, expliquer: 50, reagir: 72, conclure: 94 };
+    const X = { commencer: 0, raconter: 30, expliquer: 52, reagir: 74, conclure: 100 };
     const mx = t => X[MOMENT_OF[t].id];
     return {
       id: 'flux', title: 'Le trajet dans la conversation',
@@ -494,7 +502,11 @@
 
   function renderItin() {
     const r = state.route, out = $('#itin-out');
-    if (!r) { out.innerHTML = ''; return; }
+    if (!r) {
+      $('#status').textContent = 'Aucun trajet sur la carte.';
+      out.innerHTML = `<div class="empty"><p><b>Pas de trajet pour l’instant.</b></p><p>Choisis un départ et une arrivée, un modèle ou une question. Tu peux aussi toucher une station pour voir ses correspondances.</p></div>`;
+      return;
+    }
     const tabs = routeTabs(r);
     const lines = C.uniq(tabs.map(t => LINE_OF[t]));
     let xf = 0; for (let i = 1; i < tabs.length; i++) if (LINE_OF[tabs[i]] !== LINE_OF[tabs[i - 1]]) xf++;
@@ -627,6 +639,16 @@
       </div>`;
   }
 
+  /* Téléphone : la feuille couvre le bas de l'écran ; on remonte la station dans la partie visible. */
+  function revealOnMap(btn) {
+    if (window.matchMedia('(min-width: 1000px)').matches) return;
+    const r = btn.getBoundingClientRect(), top = Math.max(0, $('.topbar').getBoundingClientRect().bottom);
+    const free = window.innerHeight * 0.34;
+    const target = top + Math.max(40, (free - top) / 2);
+    const dy = (r.top + Math.min(r.height, 60) / 2) - target;
+    if (Math.abs(dy) > 8) window.scrollBy({ top: dy, behavior: reduce() ? 'auto' : 'smooth' });
+  }
+
   let lastFocus = null;
   function openStation(t) {
     const pn = $('#panel');
@@ -683,7 +705,7 @@
       <div class="modes" role="tablist" aria-label="Choisir un itinéraire">
         <button type="button" role="tab" class="mode" id="tab-trajet" data-mode="trajet" aria-controls="pane-trajet">Départ → arrivée</button>
         <button type="button" role="tab" class="mode" id="tab-modeles" data-mode="modeles" aria-controls="pane-modeles">Modèles</button>
-        <button type="button" role="tab" class="mode" id="tab-questions" data-mode="questions" aria-controls="pane-questions">Répondre à…</button>
+        <button type="button" role="tab" class="mode" id="tab-questions" data-mode="questions" aria-controls="pane-questions">Répondre</button>
       </div>
       <div class="pane" id="pane-trajet" data-pane="trajet" role="tabpanel" aria-labelledby="tab-trajet">
         <div class="od">
@@ -784,7 +806,7 @@
     document.addEventListener('click', e => {
       const t = e.target.closest('button, a');
       if (!t) return;
-      if (t.classList.contains('hit')) { const n = +t.dataset.st; if (state.sel === n) closePanel(); else openStation(n); return; }
+      if (t.classList.contains('hit')) { const n = +t.dataset.st; if (state.sel === n) closePanel(); else { openStation(n); revealOnMap(t); } return; }
       if (t.dataset.say != null) { speak(t.dataset.say); return; }
       if (t.dataset.open != null) { openStation(+t.dataset.open); return; }
       if (t.hasAttribute('data-close')) { closePanel(); return; }

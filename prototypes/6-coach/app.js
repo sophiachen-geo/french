@@ -7,8 +7,9 @@
   const S = window.SITE, M = S.meta, C = window.CADRES, V = window.VIZ, D = window.COACH;
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-  const esc = C.esc;
-  const md = V.md;
+  const nb = h => String(h).replace(/ ([;:?!»])/g, '\u00A0$1').replace(/« /g, '«\u00A0');
+  const esc = s => nb(C.esc(s));
+  const md = s => nb(V.md(s));
   const MAIN = $('#main');
   const LIVE = $('#live');
 
@@ -194,15 +195,15 @@
       { k: 'point', x: 99, lane: 0 }
     ] }]
   });
-  const POS = { 1: 22, 2: 40, 4: 58, 8: 76, 16: 94 };
+  const POS = { 1: 24, 2: 42, 4: 60, 8: 78, 16: 96 };
   function returnSpec(moves) {
     return {
-      axis: { labels: [[4, 'aujourd’hui'], [22, 'demain'], [40, '2 j'], [58, '4 j'], [76, '8 j'], [94, '16 j']] },
+      axis: { labels: [[2, ''], [24, 'demain'], [42, '2 j'], [60, '4 j'], [78, '8 j'], [96, '16 j']] },
       legend: [['main', 'pratiquée aujourd’hui'], ['cadre', 'prochain rendez-vous']],
       rows: moves.map(m => {
         const ci = card(m.id), d = INTERVAL[m.to];
         return { label: fullName(ci), sub: `boîte ${m.to} · ${d === 1 ? 'demain' : 'dans ' + d + ' jours'}`, marks: [
-          { k: 'point', x: 4 }, { k: 'arrow', x1: 7, x2: POS[d] - 3.5, c: 'muted', dashed: true }, { k: 'point', x: POS[d], c: 'cadre' }
+          { k: 'point', x: 2 }, { k: 'arrow', x1: 5, x2: POS[d] - 3.5, c: 'muted', dashed: true }, { k: 'point', x: POS[d], c: 'cadre' }
         ] };
       })
     };
@@ -287,37 +288,38 @@
 
   /* « Le chemin de ta réponse » : les 3 fonctions placées sur les moments d'une conversation. */
   function momentPath(fns) {
-    const ms = M.moments, W = 340, base = 92;
+    const ms = M.moments, W = 340, H = 140, base = 106, R = 15;
     const xs = ms.map((m, i) => 34 + i * (W - 68) / (ms.length - 1));
     const stIdx = t => ms.findIndex(m => m.tabs.includes(t));
     const pos = fns.map((t, k) => {
       const si = stIdx(t);
       const stack = fns.slice(0, k).filter(t2 => stIdx(t2) === si).length;
-      return { x: xs[si], y: base - 36 - stack * 31, k };
+      return { x: xs[si], y: base - 36 - stack * 42, k };
     });
-    let g = `<defs><marker id="mp-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" class="mp-head"/></marker></defs>`;
+    let g = `<defs><marker id="mp-arr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" class="mp-head"/></marker></defs>`;
     g += `<line class="mp-line" x1="${xs[0]}" x2="${xs[xs.length - 1]}" y1="${base}" y2="${base}"/>`;
     ms.forEach((m, i) => {
       const used = fns.some(t => stIdx(t) === i);
-      g += `<line class="mp-stem${used ? ' on' : ''}" x1="${xs[i]}" x2="${xs[i]}" y1="${base}" y2="${base - 18}"${used ? '' : ' style="display:none"'}/>`;
+      if (used) g += `<line class="mp-stem" x1="${xs[i]}" x2="${xs[i]}" y1="${base}" y2="${base - 36 + R}"/>`;
       g += `<circle class="mp-st${used ? ' on' : ''}" cx="${xs[i]}" cy="${base}" r="${used ? 5.5 : 4}"/><text class="mp-lab${used ? ' on' : ''}" x="${xs[i]}" y="${base + 24}" text-anchor="middle">${esc(m.label)}</text>`;
     });
     for (let k = 0; k < pos.length - 1; k++) {
       const a = pos[k], b = pos[k + 1];
       if (Math.abs(a.x - b.x) < 1) {
         const dir = b.y < a.y ? -1 : 1;
-        g += `<path class="mp-link" d="M${a.x + 15} ${a.y} C ${a.x + 30} ${a.y}, ${b.x + 30} ${b.y}, ${b.x + 16} ${b.y + dir * -2}" marker-end="url(#mp-arr)"/>`;
+        g += `<path class="mp-link" d="M${a.x} ${a.y + dir * (R + 2)} L${b.x} ${b.y - dir * (R + 3)}" marker-end="url(#mp-arr)"/>`;
       } else {
-        const top = Math.max(6, Math.min(a.y, b.y) - 34);
-        const sx = a.x + (b.x > a.x ? 11 : -11), ex = b.x + (b.x > a.x ? -12 : 12);
-        g += `<path class="mp-link" d="M${sx} ${a.y - 9} Q ${(a.x + b.x) / 2} ${top} ${ex} ${b.y - 10}" marker-end="url(#mp-arr)"/>`;
+        const right = b.x > a.x ? 1 : -1;
+        const top = Math.max(4, Math.min(a.y, b.y) - 30);
+        const sx = a.x + right * (R - 3), sy = a.y - R + 4, ex = b.x - right * (R - 2), ey = b.y - R + 2;
+        g += `<path class="mp-link" d="M${sx} ${sy} Q ${(sx + ex) / 2} ${top} ${ex} ${ey}" marker-end="url(#mp-arr)"/>`;
       }
     }
     pos.forEach(p => {
-      g += `<g class="mp-mk s${p.k + 1}"><circle cx="${p.x}" cy="${p.y}" r="13"/><text x="${p.x}" y="${p.y + 4.6}" text-anchor="middle">${p.k + 1}</text></g>`;
+      g += `<g class="mp-mk s${p.k + 1}"><circle cx="${p.x}" cy="${p.y}" r="${R}"/><text x="${p.x}" y="${p.y + 5}" text-anchor="middle">${p.k + 1}</text></g>`;
     });
     const desc = fns.map((t, k) => `${k + 1} : ${ESS[t].je} (${MOMENT[t].label.toLowerCase()})`).join(' ; ');
-    return `<svg class="mpath" viewBox="0 0 ${W} 126" role="img" aria-label="Moments de la conversation. ${esc(desc)}">${g}</svg>`;
+    return `<svg class="mpath" viewBox="0 0 ${W} ${H}" role="img" aria-label="Moments de la conversation. ${esc(desc)}">${g}</svg>`;
   }
 
   /* ---------- Séance ---------- */
@@ -372,7 +374,7 @@
       </section>
 
       <section class="stats" aria-labelledby="h-prog">
-        <div class="sec-head"><h2 id="h-prog">Ta progression</h2>${ex ? '<span class="tag-ex">Exemple</span>' : ''}</div>
+        <div class="sec-head"><h2 id="h-prog">Ta progression</h2>${ex ? '<span class="tag-ex">Exemple</span>' : isEmpty() ? '<button type="button" class="linkbtn" data-act="show-example">Voir un exemple</button>' : ''}</div>
         ${ex ? `<p class="ex-note">Aperçu fictif, pour te montrer l’écran : tes vraies données le remplacent dès ta première séance. <button type="button" class="linkbtn" data-act="hide-example">Masquer l’exemple</button></p>` : ''}
         <div class="stat-grid">
           <article class="stat stat-streak">
@@ -704,12 +706,18 @@
     const streak = streakOf(state);
     const back = dueIds(state, TOMORROW);
     const tomorrow = scenarioFor(addDays(TODAY, 1));
-    const ups = res.moves.filter(m => m.to > m.from).length;
+    const nNew = res.moves.filter(m => !m.from).length;
+    const nUp = res.moves.filter(m => m.from && m.to > m.from).length;
+    const nDown = res.moves.filter(m => m.from && m.to < m.from).length;
+    const parts = [];
+    if (nNew) parts.push(`${nNew} ${nNew > 1 ? 'entrent' : 'entre'} dans les boîtes`);
+    if (nUp) parts.push(`${nUp} ${nUp > 1 ? 'avancent' : 'avance'} d’une boîte`);
+    if (nDown) parts.push(`${nDown} ${nDown > 1 ? 'reviennent' : 'revient'} en boîte 1`);
     const inner = `<header class="s-head done-head">
         <div class="done-badge" aria-hidden="true">${I.check}</div>
         <p class="eyebrow">Étape 4 sur 4 · bilan enregistré</p>
         <h1 tabindex="-1">Bravo, séance terminée !</h1>
-        <p class="lead">${res.moves.length} formules évaluées, dont ${ups} qui avancent d’une boîte.${res.ok ? '' : ' <strong>Attention :</strong> ton navigateur ne permet pas d’enregistrer ; cette progression disparaîtra si tu fermes la page.'}</p>
+        <p class="lead">${res.moves.length} formules évaluées : ${parts.join(', ')}.${res.ok ? '' : ' <strong>Attention :</strong> ton navigateur ne permet pas d’enregistrer ; cette progression disparaîtra si tu fermes la page.'}</p>
       </header>
       <div class="done-grid">
         <section class="card done-streak" aria-labelledby="h-streak">
@@ -873,7 +881,7 @@
     const el = e.target.closest('[data-act]');
     if (!el) return;
     const act = el.dataset.act;
-    if (act === 'hide-example') { prefs.hideExample = true; savePrefs(); render(true); }
+    if (act === 'hide-example' || act === 'show-example') { prefs.hideExample = act === 'hide-example'; savePrefs(); render(true); }
     else if (act === 'sit-type') { SIT.type = el.dataset.v; rerenderKeep(); }
     else if (act === 'lt-box') { LT_BOX = +el.dataset.box; const box = $('#lt'); if (box) box.innerHTML = leitnerHTML(viewState()); const b = $(`.lt-col[data-box="${LT_BOX}"]`); if (b) b.focus(); }
     else if (act === 'goto-fn') { const sec = $('#fn-' + el.dataset.tab); if (sec) sec.scrollIntoView({ behavior: C.reduceMotion() ? 'auto' : 'smooth', block: 'start' }); }

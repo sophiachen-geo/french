@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pont d’idées · Prototype 3</title>
+<meta name="description" content="Relie deux idées avec le bon pont : la phrase se construit, le schéma se dessine.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script>(function(){try{var t=JSON.parse(localStorage.getItem('pont3:theme'));if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <p class="tb-id"><span class="tb-dot" aria-hidden="true"></span>Prototype 3 · Pont d’idées</p>
+    <nav class="tb-nav" aria-label="Navigation des prototypes">
+      <a href="../index.html">← Tous les prototypes</a>
+      <a href="../../index.html">Site complet</a>
+      <button type="button" id="theme" class="tb-theme"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17A8.5 8.5 0 0 0 12 3.5Z" fill="currentColor"/></svg><span>Thème : auto</span></button>
+    </nav>
+  </div>
+</header>
+
+<main id="app" class="wrap">
+
+  <section class="intro" aria-labelledby="h-intro">
+    <p class="kicker mono">Plan n° 03 — atelier de ponts</p>
+    <h1 id="h-intro">Deux idées. Un pont. <span class="hl">Une phrase.</span></h1>
+    <ol class="steps mono" aria-label="Comment ça marche">
+      <li><span>1</span> Choisis une situation</li>
+      <li><span>2</span> Choisis le lien</li>
+      <li><span>3</span> Choisis le pont</li>
+    </ol>
+  </section>
+
+  <section class="pairs-wrap" aria-labelledby="h-pairs">
+    <h2 class="sh" id="h-pairs"><span class="sh-n mono">01</span>Deux idées · <span class="sh-s">choisis une situation</span></h2>
+    <div class="pairs" id="pairs" role="group" aria-label="Situations"></div>
+  </section>
+
+  <div class="cols">
+    <div class="col col-l">
+
+      <section class="panel bench" id="bench" aria-label="Les deux idées et le pont">
+        <div class="cards">
+          <div id="card-a" class="card-slot"></div>
+          <div id="card-b" class="card-slot"></div>
+        </div>
+        <div class="bridge" id="bridge">
+          <div class="br-label" aria-hidden="true"></div>
+          <div class="br-draw"></div>
+        </div>
+        <div class="bench-f">
+          <p class="key mono"><span class="k-c">orange</span> = la partie introduite par le pont (cadre) · <span class="k-m">violet</span> = la phrase principale · <span class="k-o">①②</span> = l’ordre dans la phrase · flèche = le sens</p>
+          <p class="titleblock mono" id="titleblock"></p>
+        </div>
+      </section>
+
+      <section class="panel" id="s-rel" aria-labelledby="h-rel">
+        <h2 class="sh" id="h-rel"><span class="sh-n mono">02</span>Quel lien ? · <span class="sh-s">la question qu’on te pose</span></h2>
+        <div class="rels" id="rels" role="group" aria-label="Relations"></div>
+        <p class="rel-hint" id="rel-hint"></p>
+      </section>
+
+      <section class="panel" id="s-chips" aria-labelledby="h-chips">
+        <h2 class="sh" id="h-chips"><span class="sh-n mono">03</span>Quel pont ? · <span class="sh-s" id="chips-title"></span></h2>
+        <div class="chips" id="chips" role="group" aria-label="Connecteurs"></div>
+        <p class="modes mono" aria-label="Couleur des ponts : ce qui suit">
+          <span class="ml">ce qui suit le pont :</span>
+          <span class="mk m-nom">+ nom</span><span class="mk m-inf">+ inf.</span><span class="mk m-ind">+ ind.</span><span class="mk m-subj">+ subj.</span><span class="mk m-cond">+ cond.</span>
+        </p>
+      </section>
+
+    </div>
+    <div class="col col-r">
+
+      <section class="panel phrase" id="phrase" aria-labelledby="h-phrase">
+        <h2 class="sh" id="h-phrase"><span class="sh-n mono">04</span>Ta phrase</h2>
+        <p class="ph-meta" id="ph-meta"></p>
+        <p class="ph-ask" id="ph-ask"></p>
+        <div class="ph-stage">
+          <p class="ph-text" id="ph-text" tabindex="-1" aria-live="polite"></p>
+          <button type="button" class="ph-hide" id="ph-hide"></button>
+        </div>
+        <div class="ph-tools">
+          <button type="button" class="btn" id="btn-say"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg><span>Écouter</span></button>
+          <button type="button" class="btn" id="btn-practice" aria-pressed="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.8"/></svg><span>M’exercer (cacher)</span></button>
+        </div>
+        <h3 class="sub mono">Ce qui change</h3>
+        <div id="ph-chg"></div>
+        <p class="relance" id="ph-relance"></p>
+      </section>
+
+      <section class="panel" id="s-viz" aria-labelledby="h-viz">
+        <h2 class="sh" id="h-viz"><span class="sh-n mono">05</span>Le schéma</h2>
+        <div class="viz-grid">
+          <div class="viz-box viz-mine">
+            <h3 class="sub mono">Ta phrase, en schéma</h3>
+            <div id="viz-mine"></div>
+          </div>
+          <div class="viz-box viz-gen">
+            <h3 class="sub mono" id="viz-gen-h"></h3>
+            <div id="viz-gen"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel flip" id="flip" aria-labelledby="h-flip">
+        <h2 class="sh" id="h-flip"><span class="sh-n mono">06</span>Retourne le pont</h2>
+        <p class="flip-note" id="flip-note"></p>
+        <div class="flip-grid">
+          <div class="fl-col" id="flip-now"></div>
+          <div class="fl-mid" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5"/></svg></div>
+          <div class="fl-col fl-then" id="flip-then"></div>
+        </div>
+        <button type="button" class="btn btn-main" id="btn-flip"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5"/></svg><span>Retourner le pont</span></button>
+      </section>
+
+      <section class="panel" id="s-rule" aria-labelledby="h-rule">
+        <h2 class="sh" id="h-rule"><span class="sh-n mono">07</span>La règle du pont</h2>
+        <div id="rule"></div>
+      </section>
+
+      <section class="panel map" id="map" aria-labelledby="h-map">
+        <h2 class="sh" id="h-map"><span class="sh-n mono">08</span>Les ponts se répondent · <span class="sh-s">liens entre les fonctions</span></h2>
+        <div class="map-grid">
+          <div class="map-svg" id="map-svg"></div>
+          <div>
+            <ul class="map-list" id="map-list"></ul>
+            <h3 class="sub mono">Enchaîne plusieurs ponts</h3>
+            <ul class="chains" id="chains"></ul>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<div class="dock" id="dock" hidden>
+  <p class="dock-text" id="dock-text"></p>
+  <button type="button" class="dock-go" id="dock-go"><span>Voir</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>
+</div>
+
+<script>window.CADRES_BASE = '../../';</script>
+<script src="../../assets/registry.js"></script>
+<script src="../../content/meta.js"></script>
+<script src="../../content/onglet-01.js"></script>
+<script src="../../content/onglet-02.js"></script>
+<script src="../../content/onglet-03.js"></script>
+<script src="../../content/onglet-04.js"></script>
+<script src="../../content/onglet-05.js"></script>
+<script src="../../content/onglet-06.js"></script>
+<script src="../../content/onglet-07.js"></script>
+<script src="../../content/onglet-08.js"></script>
+<script src="../../content/onglet-09.js"></script>
+<script src="../../content/onglet-10.js"></script>
+<script src="../../content/onglet-11.js"></script>
+<script src="../../content/onglet-12.js"></script>
+<script src="../../content/guide.js"></script>
+<script src="../../content/relier.js"></script>
+<script src="../../content/fiches.js"></script>
+<script src="../../content/methode.js"></script>
+<script src="../../content/regles.js"></script>
+<script src="../../content/essentiels.js"></script>
+<script src="../../content/visuels.js"></script>
+<script src="../../assets/core.js"></script>
+<script src="../../assets/viz.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
