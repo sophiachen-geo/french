@@ -219,7 +219,7 @@
     const ci = M.chains.findIndex(ch => ch.steps[0][1] === a && ch.steps[ch.steps.length - 1][1] === b && a !== b);
     if (ci >= 0) return Object.assign(chainRoute(ci), { kind: 'pair', via: 'chain', a, b, kicker: 'Trajet conseillé · enchaînement fréquent' });
     const path = a === b ? [a] : shortest(a, b);
-    return { kind: 'pair', a, b, kicker: 'Trajet le plus direct', title: `${je(a)} → ${je(b)}`, stops: stopsFromTabs(path, null, THEME_DEFAULT) };
+    return { kind: 'pair', a, b, kicker: a === b ? 'Une seule station' : 'Trajet le plus direct', title: a === b ? je(a) : `${je(a)} → ${je(b)}`, stops: stopsFromTabs(path, null, THEME_DEFAULT) };
   }
   const routeTabs = r => r.stops.map(s => s.tab).filter((t, i, a) => i === 0 || a[i - 1] !== t);
 

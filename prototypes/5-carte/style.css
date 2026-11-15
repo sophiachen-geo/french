@@ -181,9 +181,10 @@ select {
 .map[data-layout="tall"] .zn-t { font-size: 10px; letter-spacing: .12em; }
 .lk { fill: none; stroke: var(--link); stroke-linecap: round; opacity: .55; transition: opacity .25s, stroke .25s; }
 .lk.minor { display: none; }
-.lk.adj { display: none; }
-.map.all-links .lk.minor:not(.adj) { display: inline; opacity: .45; }
+.map.all-links .lk.minor { display: inline; }
+.map.all-links:not(.dim) .lk.minor { opacity: .45; }
 .lk.show { display: inline; }
+.lk.adj, .lk.adj.show { display: none; }
 .ln-case { fill: none; stroke: var(--bg); stroke-linecap: round; stroke-linejoin: round; }
 .ln { fill: none; stroke: var(--lc); stroke-linecap: round; stroke-linejoin: round; transition: opacity .25s; }
 .rd circle { fill: var(--lc); }
@@ -428,14 +429,13 @@ select {
 .mx-dotk { display: inline-flex; align-items: center; gap: 6px; margin-left: 12px; }
 .mx-dotk i { width: 16px; height: 16px; border-radius: 4px; background: var(--ink); position: relative; display: inline-block; }
 .mx-dotk i::after { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: var(--bg); }
-.mx-wrap { display: grid; gap: 20px; }
+.mx-wrap { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 900px) { .mx-wrap { grid-template-columns: minmax(0, 620px) minmax(0, 1fr); align-items: start; } }
 .tl-box h3 { margin: 0 0 4px; font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: .1em; }
 .mx-top { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .tl { width: 100%; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: center; text-align: left; border: 1.5px solid var(--rule); background: var(--bg); border-radius: 14px; padding: 8px 12px; min-height: 44px; --lc: var(--ink-2); }
 .tl:hover { border-color: var(--ink-3); }
 .tl-st { display: inline-flex; align-items: center; }
-.tl-st .sd { --lc: initial; }
 .tl-j { width: 12px; height: 4px; background: var(--ink-3); }
 .tl-b { display: grid; gap: 3px; min-width: 0; }
 .tl-n { font-weight: 800; font-size: 15px; line-height: 1.25; }
