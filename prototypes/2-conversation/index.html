@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fil de conversation · Prototype 2</title>
+<meta name="description" content="Pratiquer les fonctions de la conversation en jasant avec Sam, tour par tour : choisir un geste, prendre un début de phrase, dire la suite à voix haute.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script>
+  (function () {
+    try { var t = localStorage.getItem('p2-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+  })();
+</script>
+</head>
+<body>
+<a class="skip" href="#thread">Aller à la conversation</a>
+
+<header class="bar">
+  <p class="bar-t"><b>Prototype 2</b> · Fil de conversation</p>
+  <nav class="bar-n" aria-label="Prototypes">
+    <a href="../index.html">← Tous les prototypes</a>
+    <a href="../../index.html">Site complet</a>
+  </nav>
+  <button type="button" class="icon-btn" id="theme-btn" data-act="theme" aria-label="Changer de thème"></button>
+</header>
+
+<div class="app">
+  <aside class="side side-l" aria-label="Situations">
+    <div class="side-in">
+      <p class="kick">Comment ça marche</p>
+      <ol class="howto" id="howto"></ol>
+      <p class="kick">Situations</p>
+      <div data-scn-list></div>
+    </div>
+  </aside>
+
+  <main class="chat" id="main">
+    <div class="chat-head">
+      <div class="ch-row">
+        <span class="av av-l" aria-hidden="true">S</span>
+        <div class="ch-who">
+          <h1>Sam</h1>
+          <p><span id="scn-type"></span> · <span id="scn-theme"></span></p>
+        </div>
+        <div class="ch-act">
+          <button type="button" class="pill" data-act="pick" aria-haspopup="dialog"><span id="icon-pick" aria-hidden="true"></span><span>Situations</span></button>
+          <button type="button" class="icon-btn" data-act="shuffle" aria-label="Situation au hasard" title="Situation au hasard"><span id="icon-shuffle" aria-hidden="true"></span></button>
+        </div>
+      </div>
+      <div class="strip-w"><ol class="strip" id="strip" aria-label="Ton fil : les gestes de la conversation"></ol></div>
+    </div>
+    <div class="thread" id="thread" role="log" aria-live="polite" aria-label="Conversation avec Sam" tabindex="-1"></div>
+    <div class="dock" id="dock"></div>
+  </main>
+
+  <aside class="side side-r" aria-label="Ton fil et schémas">
+    <div class="side-in">
+      <div id="fil-panel"></div>
+      <div class="ref" id="ref-panel"></div>
+    </div>
+  </aside>
+</div>
+
+<dialog class="sheet" id="scn-dialog" aria-labelledby="sheet-t">
+  <div class="sheet-h">
+    <h2 id="sheet-t">Choisis une situation</h2>
+    <button type="button" class="icon-btn" data-act="close" aria-label="Fermer"><span id="icon-close" aria-hidden="true"></span></button>
+  </div>
+  <div class="sheet-b">
+    <button type="button" class="btn wide" data-act="shuffle"><span id="icon-shuffle2" aria-hidden="true"></span><span>Une situation au hasard</span></button>
+    <div data-scn-list></div>
+  </div>
+</dialog>
+
+<script>window.CADRES_BASE = '../../';</script>
+<script src="../../assets/registry.js"></script>
+<script src="../../content/meta.js"></script>
+<script src="../../content/onglet-01.js"></script>
+<script src="../../content/onglet-02.js"></script>
+<script src="../../content/onglet-03.js"></script>
+<script src="../../content/onglet-04.js"></script>
+<script src="../../content/onglet-05.js"></script>
+<script src="../../content/onglet-06.js"></script>
+<script src="../../content/onglet-07.js"></script>
+<script src="../../content/onglet-08.js"></script>
+<script src="../../content/onglet-09.js"></script>
+<script src="../../content/onglet-10.js"></script>
+<script src="../../content/onglet-11.js"></script>
+<script src="../../content/onglet-12.js"></script>
+<script src="../../content/guide.js"></script>
+<script src="../../content/relier.js"></script>
+<script src="../../content/fiches.js"></script>
+<script src="../../content/methode.js"></script>
+<script src="../../content/regles.js"></script>
+<script src="../../content/essentiels.js"></script>
+<script src="../../content/visuels.js"></script>
+<script src="../../assets/core.js"></script>
+<script src="../../assets/viz.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

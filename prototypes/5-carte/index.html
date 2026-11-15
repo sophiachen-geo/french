@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Carte des liens · Prototype 5</title>
+<meta name="description" content="Prototype 5 : les 12 intentions de la conversation dessinées comme un plan de transport. Touche une station pour savoir quoi dire ; trace un trajet pour enchaîner tes idées.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,600&family=Overpass+Mono:wght@600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script>
+  (function () {
+    try { var t = JSON.parse(localStorage.getItem('carte5:theme')); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+  })();
+</script>
+</head>
+<body>
+<a class="skip" href="#map-card">Aller à la carte</a>
+
+<header class="topbar">
+  <div class="tb-in">
+    <a class="tb-brand" href="#top" id="top">
+      <svg viewBox="0 0 28 28" width="26" height="26" aria-hidden="true"><path d="M3 9h10l6 10h6" fill="none" stroke="#0b63c9" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 19h7l6-10h9" fill="none" stroke="#e0a100" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="14" cy="14" r="4.2" fill="#fff" stroke="#111418" stroke-width="2.2"/></svg>
+      <span>Prototype 5 · Carte des liens</span>
+    </a>
+    <nav class="tb-nav" aria-label="Navigation des prototypes">
+      <a href="../index.html">← Tous les prototypes</a>
+      <a href="../../index.html">Site complet</a>
+    </nav>
+    <button type="button" class="tb-theme" id="theme" aria-label="Changer de thème (clair ou sombre)">
+      <svg class="i-sun" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <svg class="i-moon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+  <section class="intro" aria-labelledby="h1">
+    <div>
+      <h1 id="h1">Carte des liens</h1>
+      <p>Chaque station est une chose que tu veux dire. Touche une station pour savoir <b>quoi dire</b> ; choisis un départ et une arrivée pour <b>enchaîner tes idées</b> comme dans une vraie conversation.</p>
+    </div>
+    <p class="stats"><span><b>12</b>stations</span><span><b>4</b>lignes</span><span><b id="n-links2">–</b>correspondances</span></p>
+  </section>
+
+  <div class="layout">
+    <section class="ctrl" id="itin" aria-labelledby="itin-h">
+      <div class="ctrl-h"><h2 id="itin-h">Ton trajet</h2></div>
+      <div id="itin-ctrl"></div>
+    </section>
+
+    <section class="map-card" id="map-card" aria-labelledby="carte-h" tabindex="-1">
+      <div class="map-tools">
+        <h2 id="carte-h">La carte</h2>
+        <label class="tgl"><input type="checkbox" id="all-links"><span>Tous les liens (<span id="n-links">–</span>)</span></label>
+        <button type="button" class="btn-txt" id="reset-map">Effacer le trajet</button>
+      </div>
+      <div class="map" id="map" role="group" aria-label="Plan : 12 stations sur 4 lignes. Chaque station est un bouton."></div>
+      <div class="legend" id="legend" aria-label="Légende"></div>
+    </section>
+
+    <section class="out" id="itin-out" aria-label="Arrêts du trajet"></section>
+  </div>
+  <p class="sr" id="status" aria-live="polite"></p>
+
+  <section class="sec" id="lignes" aria-labelledby="lignes-h">
+    <h2 id="lignes-h">Les quatre lignes</h2>
+    <p class="sec-lead">Une ligne = un module du site. Les stations d’une même ligne font le même genre de travail.</p>
+    <div id="lines" class="lines"></div>
+  </section>
+
+  <section class="sec" id="passerelles-s" aria-labelledby="pw-h">
+    <h2 id="pw-h">Les expressions-passerelles</h2>
+    <p class="sec-lead">Une seule expression, plusieurs stations : ce sont les correspondances les plus utiles à reconnaître en conversation.</p>
+    <div id="passerelles" class="pws"></div>
+  </section>
+
+  <section class="sec" id="tableau" aria-labelledby="mx-h">
+    <h2 id="mx-h">Toutes les correspondances</h2>
+    <p class="sec-lead">Chaque case relie deux stations. Plus elle est foncée, plus le lien est fort (enchaînements des modèles + expressions en commun). Touche une case pour tracer le trajet.</p>
+    <div id="matrix"></div>
+  </section>
+</main>
+
+<footer>Prototype 5 · Carte des liens — tout le contenu vient du site : intentions essentielles, modèles de discours, enchaînements fréquents, fiches et listes d’expressions.</footer>
+
+<aside class="panel" id="panel" role="dialog" aria-modal="false" aria-labelledby="pn-title" hidden>
+  <div class="pn-grab" aria-hidden="true"></div>
+  <div class="pn-scroll" id="pn-scroll"></div>
+</aside>
+
+<script>window.CADRES_BASE = '../../';</script>
+<script src="../../assets/registry.js"></script>
+<script src="../../content/meta.js"></script>
+<script src="../../content/onglet-01.js"></script>
+<script src="../../content/onglet-02.js"></script>
+<script src="../../content/onglet-03.js"></script>
+<script src="../../content/onglet-04.js"></script>
+<script src="../../content/onglet-05.js"></script>
+<script src="../../content/onglet-06.js"></script>
+<script src="../../content/onglet-07.js"></script>
+<script src="../../content/onglet-08.js"></script>
+<script src="../../content/onglet-09.js"></script>
+<script src="../../content/onglet-10.js"></script>
+<script src="../../content/onglet-11.js"></script>
+<script src="../../content/onglet-12.js"></script>
+<script src="../../content/guide.js"></script>
+<script src="../../content/relier.js"></script>
+<script src="../../content/fiches.js"></script>
+<script src="../../content/methode.js"></script>
+<script src="../../content/regles.js"></script>
+<script src="../../content/essentiels.js"></script>
+<script src="../../content/visuels.js"></script>
+<script src="../../assets/core.js"></script>
+<script src="../../assets/viz.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
