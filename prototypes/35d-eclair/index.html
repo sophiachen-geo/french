@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Série éclair</title>
+<meta name="description" content="Deux phrases, un pont : une carte à la fois, en séries de 10. Trouve la sorte de lien, choisis le pont, vois le schéma, la règle et le pont retourné.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,700..800&family=JetBrains+Mono:wght@600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script>(function () { try { var t = JSON.parse(localStorage.getItem('eclair:theme')); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {} })();</script>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <span class="brand"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M13.5 2.5 5 13.5h6.2L10 21.5l9-11.6h-6.3z" fill="currentColor"/></svg>Outil 2 · D · Série éclair</span>
+    <button type="button" class="icon-btn" id="theme" aria-label="Changer de thème (clair ou sombre)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5v17A8.5 8.5 0 0 0 12 3.5Z" fill="currentColor"/></svg></button>
+    <nav class="top-nav" aria-label="Navigation"><a href="../index.html">← Tous les prototypes</a><a href="../0-atlas/index.html">Ma feuille de progression</a><a href="../../index.html">Site complet</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="app" tabindex="-1"></main>
+
+<dialog class="codes" id="codes" aria-labelledby="codes-h">
+  <div class="codes-in" id="codes-in"></div>
+</dialog>
+
+<script>window.CADRES_BASE = '../../';</script>
+<script src="../../assets/registry.js"></script>
+<script src="../../content/meta.js"></script>
+<script src="../../content/onglet-01.js"></script>
+<script src="../../content/onglet-02.js"></script>
+<script src="../../content/onglet-03.js"></script>
+<script src="../../content/onglet-04.js"></script>
+<script src="../../content/onglet-05.js"></script>
+<script src="../../content/onglet-06.js"></script>
+<script src="../../content/onglet-07.js"></script>
+<script src="../../content/onglet-08.js"></script>
+<script src="../../content/onglet-09.js"></script>
+<script src="../../content/onglet-10.js"></script>
+<script src="../../content/onglet-11.js"></script>
+<script src="../../content/onglet-12.js"></script>
+<script src="../../content/guide.js"></script>
+<script src="../../content/relier.js"></script>
+<script src="../../content/fiches.js"></script>
+<script src="../../content/methode.js"></script>
+<script src="../../content/regles.js"></script>
+<script src="../../content/essentiels.js"></script>
+<script src="../../content/visuels.js"></script>
+<script src="../../assets/core.js"></script>
+<script src="../../assets/viz.js"></script>
+<script src="../../assets/progres.js"></script>
+<script src="../3-pont/catalogue.js"></script>
+<script src="../3-pont/banque/temps.js"></script>
+<script src="../3-pont/banque/cause.js"></script>
+<script src="../3-pont/banque/but.js"></script>
+<script src="../3-pont/banque/condition.js"></script>
+<script src="../3-pont/banque/opposition.js"></script>
+<script src="../3-pont/banque/concession.js"></script>
+<script src="../3-pont/banque/comparaison.js"></script>
+<script src="../3-pont/banque/ajout.js"></script>
+<script src="../3-pont/banque/relatif.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
