@@ -368,9 +368,8 @@ window.P14C = {
 
   /* Formes à ne pas rapprocher d'un schéma au libellé voisin (même mot, autre sens). */
   noDiag: {
-    3: ['en mois/année', 'en participe présent', 'à heure', 'le date', 'avant', 'après'],
-    10: ['sans nom'],
-    12: ['ok']
+    3: ['en mois/année', 'en participe présent', 'à heure', 'le date'],
+    10: ['sans nom']
   },
 
   /* Formes courantes surtout écrites (marche 3) pour les intentions sans forme marquée [S]. */

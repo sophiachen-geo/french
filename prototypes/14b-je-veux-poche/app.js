@@ -1178,6 +1178,8 @@
     document.addEventListener('change', e => { if (e.target && e.target.name === 'reg') setReg(e.target.value); });
     document.addEventListener('click', e => {
       const t = e.target;
+      const sk = t.closest('a.skip[href="#poche-h"]');
+      if (sk) { e.preventDefault(); if (wide.matches) $('#poche-h').focus(); else openPoche(); return; }
       const s = t.closest('[data-say]');
       if (s) { speak(s.getAttribute('data-say')); return; }
       const b = t.closest('[data-reg-set]');
