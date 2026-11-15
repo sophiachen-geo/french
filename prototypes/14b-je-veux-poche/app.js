@@ -502,7 +502,16 @@
   const DEMO = (M.demo && M.demo.rows) || [];
   function examplesFor(en) {
     const out = [];
-    const add = (ex, src) => { if (ex && !out.some(o => o.ex === ex)) out.push({ ex: String(ex).replace(/\*/g, ''), src }); };
+    /* Seulement si l'expression se retrouve vraiment dans la phrase (les schémas « a / b » montrent parfois l'autre). */
+    const head = en.it.head.replace(/\s*:.*$/, '');
+    const add = (ex, src) => {
+      if (!ex) return;
+      ex = String(ex).replace(/\*/g, '');
+      if (out.some(o => o.ex === ex)) return;
+      const got = findRanges(head, ex).reduce((n, [x, y]) => n + y - x, 0);
+      if (got < head.replace(/…/g, '').trim().length * 0.6) return;
+      out.push({ ex, src });
+    };
     const E = ESS[en.tab];
     E.cles.concat(E.qc).forEach(x => { if (P.cle(x.e) === en.k) add(x.ex, 'À l’oral'); });
     const fn = ficheFn(en);
@@ -511,7 +520,7 @@
     DEMO.forEach(r => { if (r.tab === en.tab && P.cle(r.construction) === en.k) add(r.phrase.replace(/[{}]/g, ''), 'Exemple du site'); });
     const r = ownRow(en);
     if (r && r.row.ex) add(r.row.ex, 'Exemple du schéma');
-    if (isSentence(en.it.plain)) add(en.it.plain, 'Exemple du site');
+    if (isSentence(en.it.plain) && !out.some(o => o.ex === en.it.plain)) out.push({ ex: en.it.plain, src: 'Exemple du site' });
     if (REG === 'formel') out.sort((a, b) => (b.src === 'À l’écrit') - (a.src === 'À l’écrit'));
     return out.slice(0, 2);
   }
@@ -535,15 +544,17 @@
     });
     return toks.join(' ');
   }
+  /* Après l'expression : le mode, avec l'explication du schéma « Quel mode ? » du site. */
   const KIND_TXT = { ind: 'indicatif', subj: 'subjonctif', cond: 'conditionnel', inf: 'infinitif' };
   function consLine(en) {
     const c = en.it.cons;
     if (!c) return '';
     const k = C.consKind(c);
-    const s = slotOf(c);
     const mode = KIND_TXT[k];
-    const txt = s[1] && s[0] !== s[1] ? `${s[0]} (${s[1]})` : s[0];
-    return `<p class="dc-cons"><span class="dc-k">Ensuite</span><span class="ktag k-${k}">+ ${esc(c)}</span><span>${esc(txt)}</span>${mode ? `<button type="button" class="dc-why" data-goto="modes" data-mode="${k}">Pourquoi ${mode === 'infinitif' ? 'l’' : 'le '}${mode} ?</button>` : ''}</p>`;
+    if (!mode) return '';
+    const modes = V.byId('modes');
+    const col = modes && modes.cols[['ind', 'subj', 'cond', 'inf'].indexOf(k)];
+    return `<p class="dc-cons"><span class="ktag k-${k}">+ ${esc(c)}</span><span><b>${cap1(mode)}</b>${col && col.sub ? ` : ${md(col.sub)}` : ''}</span><button type="button" class="dc-why" data-goto="modes" data-mode="${k}">Voir « Quel mode ? »</button></p>`;
   }
   function regBadges(codes) {
     return codes.map(c => {
@@ -552,7 +563,7 @@
     }).join('');
   }
 
-  const DISC = { tab: null, open: false, key: null, trail: {}, done: false, last: null };
+  const DISC = { tab: null, open: false, key: null, trail: {}, fresh: new Set() };
   const ICO = {
     spark: '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M12 2.5l2.2 6.3 6.3 2.2-6.3 2.2L12 19.5l-2.2-6.3L3.5 11l6.3-2.2z" fill="currentColor"/><path d="M19 15.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z" fill="currentColor"/></svg>',
     check: '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -614,12 +625,13 @@
     const otherSecs = Array.from(new Set(en.items.filter(x => x.section.id !== en.sec.id).map(x => `${x.section.num} ${x.section.title}`)));
     const siblings = Array.from(new Set(en.items.slice(1).map(x => x.plain).filter(p => p !== it.plain)));
     const say = exs.length ? exs[0].ex : head;
-    const statusTxt = { nouveau: 'Nouvelle forme', vu: 'Déjà vue', 'en-cours': 'En cours', maitrise: 'Connue' }[st];
+    const shown = rec.connu ? 'maitrise' : DISC.fresh.has(en.k) ? 'nouveau' : st;
+    const statusTxt = { nouveau: 'Nouvelle forme', vu: 'Déjà vue', 'en-cours': 'En cours', maitrise: 'Connue' }[shown];
     const itLink = C.siteLink(C.itemHref(it));
     const trail = (DISC.trail[tab] || []).filter(k => k !== en.k).slice(-8);
     return `<article class="dcard lvl-${levelOf(codes)}" aria-labelledby="dc-h">
       <div class="dc-top">
-        <span class="dc-new s-${st}">${ICO.spark}${esc(statusTxt)}</span>
+        <span class="dc-new s-${shown}">${ICO.spark}${esc(statusTxt)}</span>
         <button type="button" class="dc-x" data-disc="close">${ICO.close}<span>Fermer</span></button>
       </div>
       <p class="dc-where"><span class="dc-sn">${esc(en.sec.num || '')}</span><span>${esc(en.sec.title || '')}${where ? ` <span class="dc-sub">› ${esc(where)}</span>` : ''}</span></p>
@@ -699,6 +711,7 @@
     DISC.open = true;
     DISC.key = k;
     if (k) {
+      if (P.statut(k) === 'nouveau') DISC.fresh.add(k);
       P.marquer(k, 'vu', 'decouvrir');
       const t = DISC.trail[tab] || (DISC.trail[tab] = []);
       if (!t.includes(k)) { t.push(k); if (t.length > 12) t.shift(); }
@@ -938,7 +951,7 @@
   function syncBar() {
     const t = PO.cur;
     $('#pb-icon').innerHTML = t ? iconHTML(t) : '';
-    $('#pb-cur').innerHTML = t ? `<b>${pad(t)}</b> ${esc(ESS[t].je)}` : 'Les 12 intentions · modes, temps, registres';
+    $('#pb-cur').innerHTML = t ? `<b>${pad(t)}</b> ${esc(ESS[t].je)}` : 'Les 12 intentions, recto verso';
     poche.setAttribute('style', t ? moVar(t) : '');
     poche.classList.toggle('has-cur', !!t);
   }
@@ -1068,7 +1081,7 @@
     PO.cur = tab;
     if (tab) {
       if (DISC.tab !== tab) { DISC.tab = tab; DISC.open = false; DISC.key = null; }
-      if (m[2] && !DISC.open) { const en = pickNew(tab); DISC.open = true; DISC.key = en ? en.k : null; if (en) { P.marquer(en.k, 'vu', 'decouvrir'); DISC.trail[tab] = [en.k]; } }
+      if (m[2] && !DISC.open) { const en = pickNew(tab); DISC.open = true; DISC.key = en ? en.k : null; if (en) { DISC.fresh.add(en.k); P.marquer(en.k, 'vu', 'decouvrir'); DISC.trail[tab] = [en.k]; } }
       markShown(tab);
       root.innerHTML = intentHTML(tab);
       document.title = `${ESS[tab].je} — Je veux… en poche`;
@@ -1210,6 +1223,6 @@
     render();
   }
 
-  window.PB = { pool, examplesFor, nuancesFor, pickNew, findDiagram, discFormula, sumTab };
+  window.PB = { pool, examplesFor, nuancesFor, pickNew, findDiagram, discFormula, sumTab, show: (tab, k) => showForm(tab, k, true) };
   init();
 })();

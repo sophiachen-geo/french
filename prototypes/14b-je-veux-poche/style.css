@@ -123,6 +123,7 @@ button { font: inherit; color: inherit; }
 .skip { position: absolute; left: 12px; top: -60px; z-index: 60; padding: 10px 16px; border-radius: 10px; background: var(--hl); color: var(--hl-ink); font-weight: 700; }
 .skip:focus { top: 10px; }
 .wrap { width: 100%; max-width: 1200px; margin-inline: auto; padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right)); }
+.col-main { min-width: 0; }
 #app { min-width: 0; container-type: inline-size; container-name: app; }
 #app:focus { outline: none; }
 .hl {
@@ -223,8 +224,8 @@ button { font: inherit; color: inherit; }
 .int .int-ic { grid-area: ic; width: 132px; }
 .int-je { grid-area: je; font: 700 clamp(1.4rem, 6cqi, 1.75rem)/1.1 var(--f-display); letter-spacing: -.015em; }
 .int-q { grid-area: q; font-size: 1rem; line-height: 1.4; color: var(--ink-2); }
-.int-p { grid-area: p; display: flex; align-items: center; gap: 10px; font-size: .86rem; color: var(--ink-3); }
-.int-p .pbar { flex: none; width: 92px; }
+.int-p { grid-area: p; display: grid; gap: 5px; max-width: 240px; font-size: .86rem; line-height: 1.2; color: var(--ink-3); }
+.int-p .pbar { order: 2; }
 .int-go { grid-area: go; color: var(--ink-3); }
 .int:hover .int-go { color: var(--ink); }
 .home-foot { margin: 0; padding-left: 62px; }
@@ -370,7 +371,7 @@ button { font: inherit; color: inherit; }
 .rb.r-s { border-color: var(--ink); color: var(--ink); }
 .rb.r-d { border-style: dashed; }
 .dc-k { display: block; margin: 0 0 4px; font: 800 .74rem var(--f-display); text-transform: uppercase; letter-spacing: .1em; color: var(--ink-3); }
-.dc-cons { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 0; padding: 10px 14px; border-radius: 14px; background: var(--cadre-soft); }
+.dc-cons { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 0; padding: 8px 8px 8px 14px; border-radius: 14px; background: var(--surface-2); line-height: 1.35; }
 .dc-cons .dc-k { margin: 0; }
 .dc-cons .ktag { font-size: 14px; }
 .dc-why {
