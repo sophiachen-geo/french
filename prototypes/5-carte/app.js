@@ -753,8 +753,15 @@
       const desc = l ? `${l.nSeq ? l.nSeq + ' enchaînement' + (l.nSeq > 1 ? 's' : '') : ''}${l.nSeq && l.shared.length ? ', ' : ''}${l.shared.length ? l.shared.length + ' expression' + (l.shared.length > 1 ? 's' : '') + ' en commun' : ''}` : 'aucun lien direct';
       return `<button type="button" class="mx-c mx-v v${lvl}" data-trip="${a}-${b}" title="${a} ↔ ${b} : ${esc(desc)}" aria-label="De ${esc(je(a))} à ${esc(je(b))} : ${esc(desc)}">${l && l.nSeq ? '<i></i>' : ''}</button>`;
     }).join('')}`).join('');
-    return `<div class="mx-scroll"><div class="mx" role="group" aria-label="Tableau des correspondances">${head}${rows}</div></div>
-      <div class="mx-key"><span>Lien plus fort →</span>${[1, 2, 3, 4, 5].map(v => `<i class="mx-sw v${v}"></i>`).join('')}<span class="mx-dotk"><i></i> enchaînement attesté</span></div>`;
+    const top = ALL_LINKS.slice(0, 8).map(l => `<li><button type="button" class="tl" data-trip="${l.a}-${l.b}" aria-label="Tracer le trajet ${l.a} → ${l.b}">
+        <span class="tl-st">${stDot(l.a, 'xs')}<i class="tl-j"></i>${stDot(l.b, 'xs')}</span>
+        <span class="tl-b"><span class="tl-n">${esc(je(l.a))} ↔ ${esc(je(l.b))}</span>
+          <span class="tl-bar" aria-hidden="true"><i class="m-seq" style="width:${(2 * l.nSeq / MAXS * 100).toFixed(1)}%"></i><i class="m-sh" style="width:${(l.shared.length / MAXS * 100).toFixed(1)}%"></i></span>
+          <span class="tl-x">${l.nSeq ? `${l.nSeq} enchaînement${l.nSeq > 1 ? 's' : ''} · ` : ''}${l.shared.slice(0, 3).map(x => '« ' + esc(x.head) + ' »').join(', ')}${l.shared.length > 3 ? '…' : ''}</span></span>
+      </button></li>`).join('');
+    return `<div class="mx-wrap"><div><div class="mx-scroll"><div class="mx" role="group" aria-label="Tableau des correspondances">${head}${rows}</div></div>
+      <div class="mx-key"><span>Lien plus fort →</span>${[1, 2, 3, 4, 5].map(v => `<i class="mx-sw v${v}"></i>`).join('')}<span class="mx-dotk"><i></i> enchaînement attesté</span></div></div>
+      <div class="tl-box"><h3>Les 8 liens les plus forts</h3><p class="pn-help">Barre pleine : enchaînements des modèles ; hachures : expressions en commun.</p><ol class="mx-top">${top}</ol></div></div>`;
   }
 
   function linesHTML() {
